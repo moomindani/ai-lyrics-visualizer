@@ -44,33 +44,50 @@ function onAppReady(app) {
     llmBtn.addEventListener("click", () => startLLM());
   }
   if (!app.songUrl) {
-    // いつか君と話したミライは / タケノコ少年
-    player.createFromSongUrl("https://piapro.jp/t/--OD/20240202150903", {
+    // フューチャーノーツ / shikisai
+    player.createFromSongUrl("https://piapro.jp/t/XiaI/20240201203346", {
       video: {
         // 音楽地図訂正履歴
-         beatId: 4592296,
-         chordId: 2727636,
-         repetitiveSegmentId: 2824327,
-         // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2F--OD%2F20240202150903
-         lyricId: 59416,
-         lyricDiffId: 13963
-       },
-     });
+        beatId: 4592297,
+        chordId: 2727637,
+        repetitiveSegmentId: 2824328,
+        // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FXiaI%2F20240201203346
+        lyricId: 59417,
+        lyricDiffId: 13964
+      },
+    });
+    // // いつか君と話したミライは / タケノコ少年
+    // player.createFromSongUrl("https://piapro.jp/t/--OD/20240202150903", {
+    //   video: {
+    //     // 音楽地図訂正履歴
+    //      beatId: 4592296,
+    //      chordId: 2727636,
+    //      repetitiveSegmentId: 2824327,
+    //      // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2F--OD%2F20240202150903
+    //      lyricId: 59416,
+    //      lyricDiffId: 13963
+    //    },
+    //  });
   }
   c = null;
 }
 
 function startLLM(){
-  getReply("Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of refrained phrases from there? For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\" <lyrics>" + player.video.phrases + "</lyrics>").then(reply=> {
+  const prompt = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of refrained phrases from there?" +
+      "For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
+      "For another example, \"セカイ　セカイ　セカイ\n\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
+      "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+  getReply(prompt).then(reply=> {
     console.log(reply);
     let analyzedEl = document.createElement("div");
     analyzedEl.innerHTML = reply;
     const matches = analyzedEl.querySelectorAll("refrain")
+    const tmp_refrain_list = []
     matches.forEach((match) => {
       console.log("match refrain:" + match.textContent);
-      refrain_list.push(match.textContent)
+      tmp_refrain_list.push(match.textContent)
     });
-
+    refrain_list = Array.from(new Set(tmp_refrain_list)); // remove duplicates
   }).catch(error=> {
     console.error(error);
   });
