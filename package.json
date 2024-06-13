@@ -1,0 +1,33 @@
+{
+  "name": "ai-lyrics-visualizer",
+  "private": true,
+  "version": "1.0.0",
+  "description": "TextAlive App API から取得した歌詞を AI が分析して、その歌詞にあったかたちにヴィジュアライズするリリックアプリ",
+  "scripts": {
+    "dev": "parcel src/index.html --dist-dir dev",
+    "build": "parcel build src/index.html --public-url ./ --dist-dir docs --no-source-maps",
+    "clean": "del-cli .parcel-cache dev docs",
+    "prebuild": "del-cli docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:moomindani/ai-lyrics-visualizer.git"
+  },
+  "keywords": [
+    "textalive"
+  ],
+  "author": "Noritaka Sekiyama",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moomindani/ai-lyrics-visualizer/issues"
+  },
+  "homepage": "https://github.com/moomindani/ai-lyrics-visualizer#readme",
+  "dependencies": {
+    "textalive-app-api": "^0.3.0"
+  },
+  "devDependencies": {
+    "@mlc-ai/web-llm": "0.2.44",
+    "del-cli": "4.0.1",
+    "parcel": "2.0.0-beta.3.1"
+  }
+}

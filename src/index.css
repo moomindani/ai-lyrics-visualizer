@@ -1,0 +1,143 @@
+#content {
+  z-index: 10;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+#content-v {
+  z-index: 20;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+#overlay {
+  z-index: 30;
+}
+
+#container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  padding-left: 10%
+}
+
+#container p {
+  animation: fadein-left 1s ease-out forwards;
+  font-variation-settings: 'wght' 100;
+  font-size: 3vw;
+  color: #FFFFFF;
+  /* text-shadow: 1px 0 10px green; */
+  background: linear-gradient(transparent 0%, #000000 0%);
+  box-decoration-break: clone;
+  padding: 2px;
+  text-align: left;
+  user-select: none;
+}
+
+@keyframes fadein-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadein-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes emphasize {
+  0% {
+    font-variation-settings: 'wght' 600;
+    font-size: 3vw;
+  }
+  60% {
+    font-variation-settings: 'wght' 200;
+    font-size: 3vw;
+  }
+  100% {
+    font-variation-settings: 'wght' 100;
+    font-size: 3vw;
+  }
+}
+
+#container p strong {
+  animation: emphasize 1000ms;
+  font-size: 3vw;
+  font-variation-settings: 'wght' 100;
+  /*text-shadow: 0 0 1em blue, 0 0 0.2em blue;*/
+}
+
+#container-v {
+  writing-mode: vertical-rl;
+  font-size: 4vw;
+}
+
+#container-v p {
+  animation: fadein-top 1s ease-out forwards;
+  font-variation-settings: 'wght' 100;
+  font-size: 4vw;
+  color: #FFFFFF;
+  background: linear-gradient(transparent 0%, #000000 0%);
+  box-decoration-break: clone;
+  padding: 2px;
+}
+
+#container-v #refrain1 {
+  position: absolute;
+  left: 15%;
+  top: 15%;
+}
+
+#container-v #refrain2 {
+  position: absolute;
+  right: 15%;
+  top: 15%;
+}
+
+#media {
+  position: absolute;
+  right: 10px;
+  bottom: 30px;
+  background: rgba(0,0,0,0.2);
+}
+
+#meta {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  padding: 5px;
+  background: rgba(0,0,0,0.2);
+}
+
+#control {
+  position: absolute;
+  left: 10px;
+  bottom: 30px;
+  padding: 5px;
+  background: rgba(0,0,0,0.2);
+}
+
+#control > button {
+  margin-right: 5px;
+}
+#control > button:last-child {
+  margin-right: 0;
+}
+
+#beatbar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 20px;
+  background: #000;
+}
