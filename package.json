@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/moomindani/ai-lyrics-visualizer#readme",
   "dependencies": {
-    "textalive-app-api": "^0.3.0"
+    "textalive-app-api": "^0.4.0"
   },
   "devDependencies": {
     "@mlc-ai/web-llm": "0.2.44",
