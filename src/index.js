@@ -19,6 +19,8 @@ const llmBtn = document.querySelector("#llm");
 const positionEl = document.querySelector("#position strong");
 
 const beatbarEl = document.querySelector("#beatbar");
+const seekbar = document.querySelector("#seekbar");
+const paintedSeekbar = seekbar.querySelector("div");
 let newPhrase = false;
 let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
@@ -62,6 +64,17 @@ rewindBtn.addEventListener("click", (e) => {
 llmBtn.addEventListener("click", (e) => {
   e.preventDefault()
   startLLM()
+});
+
+/* シークバー */
+seekbar.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (player) {
+    player.requestMediaSeek(
+      (player.video.duration * e.offsetX) / seekbar.clientWidth
+    );
+  }
+  return false;
 });
 
 player.addListener({
@@ -133,6 +146,10 @@ player.addListener({
   /* 再生位置の情報が更新されたら呼ばれる */
   onTimeUpdate(position) {
     //console.log("onTimeUpdate: " + position)
+    // シークバーの表示を更新
+    paintedSeekbar.style.width = `${
+      parseInt((position * 1000) / player.video.duration) / 10
+    }%`;
 
     // finish if there is no chars
     if (!player.video.firstChar) {

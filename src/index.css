@@ -141,3 +141,18 @@
   height: 20px;
   background: #000;
 }
+
+#seekbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: rgb(106, 104, 104);
+}
+
+#seekbar > div {
+  width: 0;
+  height: 100%;
+  background: rgb(255, 0, 0);
+}
