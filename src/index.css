@@ -1,3 +1,145 @@
+#title {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e1e1e, #0f0f0f);
+  z-index: 9999;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+#title h1 {
+  font-size: 6vw;
+  color: #fff;
+  text-shadow: 0 0 5px #39c5bb, 0 0 10px #39c5bb, 0 0 15px #39c5bb, 0 0 20px #39c5bb, 0 0 35px #39c5bb;
+  animation: flicker 1.5s infinite alternate;
+}
+
+#visual {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-top: 20px;
+}
+
+#visual::before,
+#visual::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 70%;
+  height: 50%;
+  background: linear-gradient(45deg, #39c5bb, #80e27e);
+  transform: skew(20deg);
+  animation: flow 4s ease-in-out infinite;
+}
+
+#visual::before {
+  left: 0;
+}
+
+#visual::after {
+  right: 0;
+  animation-delay: -1.0s;
+}
+
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow: 0 0 5px #39c5bb, 0 0 10px #39c5bb, 0 0 15px #39c5bb, 0 0 20px #39c5bb, 0 0 35px #39c5bb;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+@keyframes flow {
+  0% {
+    transform: skew(20deg) translateX(-200%);
+  }
+  100% {
+    transform: skew(20deg) translateX(200%);
+  }
+}
+
+#song-select {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  z-index: 9998;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+#song-select h2 {
+  font-size: 4vw;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 5px #39c5bb;
+}
+
+#song-select p {
+  font-size: 2vw;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+#song-select div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+#songSelect, #songSelectNavi, #searchInput, #searchInputNavi {
+  padding: 10px;
+  font-size: 1.5vw;
+  border: none;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  width: 300px;
+  margin: 0 20px;
+}
+
+#song-select span {
+  font-size: 1.5vw;
+  margin: 0 20px;
+}
+
+#start-btn {
+  padding: 15px 30px;
+  font-size: 2vw;
+  color: #fff;
+  background: #39c5bb;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#start-btn:disabled {
+  background: #888;
+  cursor: default;
+}
+
+#start-btn:hover:not(:disabled) {
+  background: #2e9e97;
+}
+
 #content {
   z-index: 10;
   margin-top: 70px;
@@ -182,18 +324,21 @@
 #search-select {
   display: flex;
   align-items: center;
+  flex-grow: 1;
 }
 
-#searchInput, #songSelect {
-  padding: 5px;
+#searchInput, #searchInputNavi, #songSelect, #songSelectNavi {
+  padding: 10px;
   border: none;
   border-radius: 5px;
-  background: #fff;
-  color: #333;
-  width: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 250px;
+  margin-left: 20px;
+  font-size: 16px;
 }
 
-#searchInput {
+#searchInput, #searchInputNavi {
   margin-right: 10px;
 }
 

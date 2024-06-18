@@ -8,6 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
+    <div id="title">
+      <h1>AI lyrics Visualizer</h1>
+      <div id="visual"></div>
+    </div>
+    <div id="song-select">
+      <h2>AI Lyrics Visualizerへようこそ！</h2>
+      <p>聴きたい曲を選択するか、URLを入力してください。</p>
+      <div>
+        <select id="songSelectNavi">
+          <option value="">課題曲から選択</option>
+        </select>
+        <span>/</span>
+        <input type="text" id="searchInputNavi" placeholder="曲のURLを入力">
+      </div>
+    </div>
     <div id="content">
       <div id="container"><p class="hidden"></p></div>
       <div id="beatbar"></div>
@@ -31,10 +46,10 @@
             </div>
           </div>
           <div id="search-select">
-            <input type="text" id="searchInput" placeholder="曲を検索">
             <select id="songSelect">
               <option value="">課題曲から選択</option>
             </select>
+            <input type="text" id="searchInput" placeholder="URLを入力">
           </div>
         </div>
         <div id="seekbar">
@@ -42,9 +57,9 @@
         </div>
         <div id="control">
           <button id="play" disabled>再生</button>
-          <button id="jump" disabled>歌詞頭出し</button>
           <button id="pause" disabled>一時停止</button>
-          <button id="rewind" disabled>巻き戻し</button>
+          <button id="rewind" disabled>最初から</button>
+          <button id="jump" disabled>歌詞頭出し</button>
           <button id="llm" disabled>LLM</button>
           <span id="position"><strong>-</strong> [ms]</span>
         </div>

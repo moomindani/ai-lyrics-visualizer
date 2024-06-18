@@ -31,6 +31,16 @@ let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
 let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
 //let word_list_future = [];
 
+window.addEventListener('load', () => {
+  const title = document.getElementById('title');
+  setTimeout(() => {
+    title.style.opacity = 0;
+    setTimeout(() => {
+      title.style.display = 'none';
+    }, 1000);
+  }, 1500);
+});
+
 const songList = [
   {
     title: "フューチャーノーツ / shikisai",
@@ -112,17 +122,12 @@ const songList = [
   },
 ];
 
-// プルダウンの選択肢を動的に作成
-const songSelect = document.getElementById("songSelect");
-songList.forEach((song, index) => {
-  const option = document.createElement("option");
-  option.value = index;
-  option.text = song.title;
-  songSelect.appendChild(option);
-});
+const songSelect = document.getElementById('songSelect');
+const searchInput = document.getElementById('searchInput');
 
 // 曲の選択に応じて player.createFromSongUrl を呼び出す
 songSelect.addEventListener("change", (e) => {
+  fadeNaviationUI();
   const selectedIndex = parseInt(e.target.value);
   if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < songList.length) {
     const selectedSong = songList[selectedIndex];
@@ -131,6 +136,71 @@ songSelect.addEventListener("change", (e) => {
       player.requestPlay();
     });
   }
+});
+
+// URLの入力に応じて player.createFromSongUrl を呼び出す
+searchInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter" && searchInput.value) {
+    fadeNaviationUI();
+    // clear songSelect select box
+    songSelect.selectedIndex = 0;
+    const url = searchInput.value;
+    if (url) {
+      player.createFromSongUrl(url).then(() => {
+        // 曲の読み込みが完了したら再生を開始
+        player.requestPlay();
+      });
+    }
+  }
+});
+
+const songSelectNavi = document.getElementById('songSelectNavi');
+const searchInputNavi = document.getElementById('searchInputNavi');
+const songSelectUI = document.getElementById('song-select');
+
+function fadeNaviationUI() {
+  songSelectUI.style.opacity = 0;
+  setTimeout(() => {
+    songSelectUI.style.display = 'none';
+  }, 1000);
+}
+
+// 曲の選択に応じて player.createFromSongUrl を呼び出す
+songSelectNavi.addEventListener("change", (e) => {
+  fadeNaviationUI();
+  const selectedIndex = parseInt(e.target.value);
+  if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < songList.length) {
+    const selectedSong = songList[selectedIndex];
+    player.createFromSongUrl(selectedSong.url, selectedSong.options).then(() => {
+      // 曲の読み込みが完了したら再生を開始
+      player.requestPlay();
+    });
+  }
+});
+
+// URLの入力に応じて player.createFromSongUrl を呼び出す
+searchInputNavi.addEventListener("keypress", (e) => {
+  if (e.key === "Enter" && searchInputNavi.value) {
+    fadeNaviationUI();
+    // clear songSelect select box and show default
+    songSelect.selectedIndex = 0;
+    const url = searchInputNavi.value;
+    if (url) {
+      player.createFromSongUrl(url).then(() => {
+        // 曲の読み込みが完了したら再生を開始
+        player.requestPlay();
+      });
+    }
+  }
+});
+
+// プルダウンの選択肢を動的に作成
+songList.forEach((song, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = song.title;
+  songSelect.appendChild(option);
+  songSelectNavi.appendChild(option.cloneNode(true));
 });
 
 playBtn.addEventListener("click", (e) => {
@@ -187,32 +257,6 @@ player.addListener({
     console.log("onAppReady")
     if (!app.managed) {
       document.querySelector("#control").style.display = "block";
-    }
-    if (!app.songUrl) {
-      // // フューチャーノーツ / shikisai
-      // player.createFromSongUrl("https://piapro.jp/t/XiaI/20240201203346", {
-      //   video: {
-      //     // 音楽地図訂正履歴
-      //     beatId: 4592297,
-      //     chordId: 2727637,
-      //     repetitiveSegmentId: 2824328,
-      //     // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2FXiaI%2F20240201203346
-      //     lyricId: 59417,
-      //     lyricDiffId: 13964
-      //   },
-      // });
-      // いつか君と話したミライは / タケノコ少年
-      player.createFromSongUrl("https://piapro.jp/t/--OD/20240202150903", {
-        video: {
-          // 音楽地図訂正履歴
-           beatId: 4592296,
-           chordId: 2727636,
-           repetitiveSegmentId: 2824327,
-           // 歌詞タイミング訂正履歴: https://textalive.jp/lyrics/piapro.jp%2Ft%2F--OD%2F20240202150903
-           lyricId: 59416,
-           lyricDiffId: 13963
-         },
-       });
     }
     lastTime = -1;
   },
