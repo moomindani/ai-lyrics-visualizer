@@ -296,6 +296,13 @@ player.addListener({
       parseInt((position * 1000) / player.video.duration) / 10
     }%`;
 
+    const positionVisual = document.getElementById("position");
+    // 再生時間を表示
+    // transform millisecond to minutes : time
+    positionVisual.textContent = `${Math.floor(position / 60000)}:${
+      ("0" + Math.floor((position % 60000) / 1000)).slice(-2)
+    }`;
+
     // finish if there is no chars
     if (!player.video.firstChar) {
       return;
