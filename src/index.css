@@ -81,6 +81,42 @@
   font-variation-settings: 'wght' 100;
 }
 
+.hidden{
+  visibility: hidden;
+}
+
+.melody{
+  position: absolute;
+  right: -120px;
+  bottom: -100px;
+  border: 3px solid #e12885;
+  width: 300px;
+  height: 300px;
+  border-radius: 300%;
+  animation:1s circle forwards;
+}
+
+.future{
+  position: absolute;
+  right: -120px;
+  bottom: -100px;
+  border: 3px solid #86cecb;
+  width: 300px;
+  height: 300px;
+  border-radius: 300%;
+  animation:1s circle forwards;
+}
+
+@keyframes circle{
+  0%{
+    transform: scale(0.5);
+  }
+  100%{
+    transform:scale(2);
+    opacity: 0;
+  }
+}
+
 #container-v {
   writing-mode: vertical-rl;
   font-size: 4vw;

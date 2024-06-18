@@ -26,8 +26,10 @@ let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3:
 let refrainedPhrase = '';
 let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
 //let word_list_refrain = [];
-let word_list_melody = ["メロディ", "歌", "声", "音", "響"];
+let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
 //let word_list_melody = [];
+let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
+//let word_list_future = [];
 
 const songList = [
   {
@@ -260,7 +262,7 @@ player.addListener({
       resetChars();
     }
 
-    const chars = player.video.findCharChange(lastTime + 500, position + 500);
+    const chars = player.video.findCharChange(lastTime + 200, position + 200);
     for (const c of chars.entered) {
       // 新しい文字が発声されようとしている
       newChar(c);
@@ -280,6 +282,7 @@ function resetChars(){
   // html related
   let currentPhraseEl = document.querySelector("#container p");
   let newPhraseEl = document.createElement("p");
+  newPhraseEl.classList.add("hidden");
   let containerEl = document.querySelector("#container")
   containerEl.replaceChild(newPhraseEl, currentPhraseEl)
 
@@ -287,8 +290,11 @@ function resetChars(){
   let refrain2El = document.querySelector("#container-v #refrain2");
   let refrain3El = document.querySelector("#container-v #refrain3");
   refrain1El.textContent = '';
+  refrain1El.classList.add("hidden")
   refrain2El.textContent = '';
+  refrain2El.classList.add("hidden")
   refrain3El.textContent = '';
+  refrain3El.classList.add("hidden")
 
   // refrain related
   refrain_status = 0;
@@ -401,20 +407,31 @@ function newChar(current) {
     }
   }
 
+  let phraseEl = document.querySelector("#container p");
   if (refrain_status === 0) {
-    let phraseEl = document.querySelector("#container p");
-    phraseEl.innerHTML = phrase.replaceAt(char_index, "<strong>" + current.text + "</strong>");
+    phraseEl.innerHTML = phrase.replaceAt(char_index, "<strong >" + current.text + "</strong>");
+    phraseEl.classList.remove("hidden")
     console.log("innerHTML:" + phraseEl.innerHTML);
   }
 
   word_list_melody.forEach((element) => {
       if (phrase_after.startsWith(element)) {
         console.log("melody start:" + element);
-        let currentEl = document.querySelector("#container p strong");
-        currentEl.classList.add("melody");
-        console.log("currentEl outerHtml:" + currentEl.outerHTML);
+        phraseEl.innerHTML = phraseEl.innerHTML + "<div class='melody'></div>"
+        console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
       } else if (phrase_before.endsWith(element)) {
         console.log("melody end:" + element);
+      }
+    }
+  )
+
+  word_list_future.forEach((element) => {
+      if (phrase_after.startsWith(element)) {
+        console.log("future start:" + element);
+        phraseEl.innerHTML = phraseEl.innerHTML + "<div class='future'></div>"
+        console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
+      } else if (phrase_before.endsWith(element)) {
+        console.log("future end:" + element);
       }
     }
   )
@@ -427,6 +444,7 @@ function update_refrain(selector, id, element){
   let containerVEl = document.querySelector("#container-v");
   containerVEl.replaceChild(newRefrainEl, currentRefrainEl);
   newRefrainEl.textContent = element;
+  newRefrainEl.classList.remove("hidden")
   console.log("refrain " + id + " start: " + element);
   refrain_status ++;
 }
