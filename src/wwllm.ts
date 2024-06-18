@@ -23,8 +23,8 @@ async function run() {
   );
 }
 
-export async function getReply(prompt: string) {
-  console.log("wwllm getReply prompt=" + prompt);
+export async function getAnalyzedList(prompt: string) {
+  console.log("wwllm getAnalyzedList prompt=" + prompt);
   setLabel("prompt-label", prompt);
 
   let n= 1;

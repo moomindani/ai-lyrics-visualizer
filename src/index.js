@@ -1,5 +1,5 @@
 const { Player } = TextAliveApp;
-import { getReply } from './wwllm'
+import { getAnalyzedList } from './wwllm'
 
 const player = new Player({
   app: {
@@ -22,10 +22,10 @@ const paintedSeekbar = seekbar.querySelector("div");
 let newPhrase = false;
 let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
-let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain
+let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-// let refrain_list = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって"]
-let refrain_list = [];
+let refrain_list = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
+//let refrain_list = [];
 
 const songList = [
   {
@@ -286,8 +286,10 @@ function resetChars(){
 
   let refrain1El = document.querySelector("#container-v #refrain1");
   let refrain2El = document.querySelector("#container-v #refrain2");
+  let refrain3El = document.querySelector("#container-v #refrain3");
   refrain1El.textContent = '';
   refrain2El.textContent = '';
+  refrain3El.textContent = '';
 
   // refrain related
   refrain_status = 0;
@@ -299,7 +301,7 @@ function startLLM(){
       "For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
       "For another example, \"セカイ　セカイ　セカイ\n\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
       "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-  getReply(prompt).then(reply=> {
+  getAnalyzedList(prompt).then(reply=> {
     console.log(reply);
     let analyzedEl = document.createElement("div");
     analyzedEl.innerHTML = reply;
@@ -334,9 +336,6 @@ function newChar(current) {
   if (current.parent.parent.lastChar === current) {
     console.log("lastChar");
   }
-  if (current.parent.parent.firstChar === current) {
-    console.log("firstChar");
-  }
 
   // 新しいフレーズの開始
   if (!newPhrase && current.parent.parent.firstChar === current) {
@@ -359,58 +358,59 @@ function newChar(current) {
 
   let char_index = current.parent.parent.findIndex(current)
   let phrase = current.parent.parent.text
+  let phrase_before = phrase.substring(0, char_index)
+  let phrase_after = phrase.substring(char_index)
+  console.log("phrase_before:" + phrase_before)
+  console.log("phrase_after:" + phrase_after)
 
   refrain_list.forEach((element) => {
-      // console.log("phrase.substring(char_index):" + phrase.substring(char_index))
-      // console.log("phrase.substring(0, char_index):" + phrase.substring(0, char_index))
-      if (phrase.substring(char_index).startsWith(element)) {
-        if (refrain_status === 0 || refrain_status === 2) {
-          let currentRefrain1El = document.querySelector("#container-v #refrain1");
-          let newRefrain1El = document.createElement("p");
-          newRefrain1El.id = "refrain1"
-          let containerVEl = document.querySelector("#container-v")
-          containerVEl.replaceChild(newRefrain1El, currentRefrain1El)
-          newRefrain1El.textContent = element;
-          console.log("refrain1");
-          refrainedPhrase += element;
-          console.log("refrainedPhrase:" + refrainedPhrase);
-          refrain_status = 1;
-        } else if (refrain_status ===1) {
-          let currentRefrain2El = document.querySelector("#container-v #refrain2");
-          let newRefrain2El = document.createElement("p");
-          newRefrain2El.id = "refrain2"
-          let containerVEl = document.querySelector("#container-v")
-          containerVEl.replaceChild(newRefrain2El, currentRefrain2El)
-          newRefrain2El.textContent = element;
-          console.log("refrain2");
-          refrainedPhrase += element;
-          console.log("refrainedPhrase:" + refrainedPhrase);
-          refrain_status = 2;
+      if (phrase_after.startsWith(element)) {
+        if (refrain_status === 0 || refrain_status === 3) {
+          update_refrain("#container-v #refrain1", "refrain1", element);
+        } else if (refrain_status === 1) {
+          update_refrain("#container-v #refrain2", "refrain2", element);
+        } else if (refrain_status === 2) {
+          update_refrain("#container-v #refrain3", "refrain3", element);
         }
-      } else if (phrase.substring(0, char_index).endsWith(element)) {
+      } else if (phrase_before.endsWith(element)) {
+        refrainedPhrase += element;
+        console.log("refrainedPhrase:" + refrainedPhrase);
         if (refrain_status === 1) {
           console.log("refrain1 end");
-          console.log("refrainedPhrase:" + refrainedPhrase);
         } else if (refrain_status === 2) {
           console.log("refrain2 end");
-          console.log("refrainedPhrase:" + refrainedPhrase);
-          refrain_status = 0;
+        } else if (refrain_status === 3) {
+          console.log("refrain3 end");
         }
       }
     }
   )
 
-  if (refrain_status === 0) {
-    let phraseEl = document.querySelector("#container p");
-    if (refrainedPhrase != '') {
-      let index = phrase.indexOf(refrainedPhrase);
-      if (index !== -1) {
-        phrase = phrase.slice(0, index) + phrase.slice(index + refrainedPhrase.length);
-        console.log("minus refrain: " + phrase);
-        char_index -= refrainedPhrase.length;
-      }
+  if (refrainedPhrase != '') {
+    phrase = phrase.replace(refrainedPhrase, "");
+    console.log("phrase minus refrain: " + phrase);
+    let remaining_refrain = refrain_list.filter(element => phrase.includes(element))
+    if (remaining_refrain.length === 0) {
+      console.log("refrain end");
+      refrain_status = 0;
     }
+  }
+
+  if (refrain_status === 0) {
+    char_index -= refrainedPhrase.length;
+    let phraseEl = document.querySelector("#container p");
     phraseEl.innerHTML = phrase.replaceAt(char_index, "<strong>" + current.text + "</strong>");
     console.log("innerHTML:" + phraseEl.innerHTML)
   }
+}
+
+function update_refrain(selector, id, element){
+  let currentRefrainEl = document.querySelector(selector);
+  let newRefrainEl = document.createElement("p");
+  newRefrainEl.id = id
+  let containerVEl = document.querySelector("#container-v")
+  containerVEl.replaceChild(newRefrainEl, currentRefrainEl)
+  newRefrainEl.textContent = element;
+  console.log("refrain " + id + "start");
+  refrain_status ++;
 }

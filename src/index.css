@@ -101,6 +101,12 @@
   top: 15%;
 }
 
+#container-v #refrain3 {
+  position: absolute;
+  left: 40%;
+  top: 15%;
+}
+
 #player {
   display: flex;
   flex-direction: column;
