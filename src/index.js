@@ -24,8 +24,10 @@ let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-let refrain_list = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
-//let refrain_list = [];
+let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
+//let word_list_refrain = [];
+let word_list_melody = ["メロディ", "歌", "声", "音", "響"];
+//let word_list_melody = [];
 
 const songList = [
   {
@@ -236,9 +238,6 @@ player.addListener({
     document.querySelectorAll("button")
       .forEach((btn) => (btn.disabled = false));
 
-    // let p = player.video.firstPhrase;
-    // jumpBtn.disabled = !p;
-
     console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text)
     console.log("player.video.phrases:" + player.video.phrases)
   },
@@ -305,13 +304,13 @@ function startLLM(){
     console.log(reply);
     let analyzedEl = document.createElement("div");
     analyzedEl.innerHTML = reply;
-    const matches = analyzedEl.querySelectorAll("refrain")
-    const tmp_refrain_list = []
+    const matches = analyzedEl.querySelectorAll("refrain");
+    const tmp_refrain_list = [];
     matches.forEach((match) => {
       console.log("match refrain:" + match.textContent);
-      tmp_refrain_list.push(match.textContent)
+      tmp_refrain_list.push(match.textContent);
     });
-    refrain_list = Array.from(new Set(tmp_refrain_list)); // remove duplicates
+    word_list_refrain = Array.from(new Set(tmp_refrain_list)); // remove duplicates
   }).catch(error=> {
     console.error(error);
   });
@@ -329,8 +328,8 @@ function newChar(current) {
   console.log("word pos:" + current.parent.pos);
   console.log("phrase:" + current.parent.parent.text);
 
-  console.log("char index in phrase:" + current.parent.parent.findIndex(current) )
-  console.log("word index in phrase:" + current.parent.parent.findIndex(current.parent) )
+  console.log("char index in phrase:" + current.parent.parent.findIndex(current) );
+  console.log("word index in phrase:" + current.parent.parent.findIndex(current.parent) );
 
   // フレーズの最後の文字か否か
   if (current.parent.parent.lastChar === current) {
@@ -340,7 +339,7 @@ function newChar(current) {
   // 新しいフレーズの開始
   if (!newPhrase && current.parent.parent.firstChar === current) {
     newPhrase = true;
-    console.log("!!!new phrase!!!")
+    console.log("!!!new phrase!!!");
 
     resetChars()
   } else {
@@ -348,23 +347,24 @@ function newChar(current) {
   }
 
   if (max_vocal < player.getVocalAmplitude(current.startTime)) {
-    max_vocal = player.getVocalAmplitude(current.startTime)
+    max_vocal = player.getVocalAmplitude(current.startTime);
   }
   if (min_vocal > player.getVocalAmplitude(current.startTime)) {
-    min_vocal = player.getVocalAmplitude(current.startTime)
+    min_vocal = player.getVocalAmplitude(current.startTime);
   }
   console.log("player.getValenceArousal:" + player.getValenceArousal(current.startTime).a + "," + player.getValenceArousal(current.startTime).v);
   console.log("player.getVocalAmplitude:" + player.getVocalAmplitude(current.startTime) + "(max:"+ max_vocal + ",min:" + min_vocal + ")");
 
-  let char_index = current.parent.parent.findIndex(current)
-  let phrase = current.parent.parent.text
-  let phrase_before = phrase.substring(0, char_index)
-  let phrase_after = phrase.substring(char_index)
-  console.log("phrase_before:" + phrase_before)
-  console.log("phrase_after:" + phrase_after)
+  let char_index = current.parent.parent.findIndex(current);
+  let phrase = current.parent.parent.text;
+  let phrase_before = phrase.substring(0, char_index);
+  let phrase_after = phrase.substring(char_index);
+  console.log("phrase_before:" + phrase_before);
+  console.log("phrase_after:" + phrase_after);
 
-  refrain_list.forEach((element) => {
+  word_list_refrain.forEach((element) => {
       if (phrase_after.startsWith(element)) {
+        console.log("refrain word start:" + element)
         if (refrain_status === 0 || refrain_status === 3) {
           update_refrain("#container-v #refrain1", "refrain1", element);
         } else if (refrain_status === 1) {
@@ -372,15 +372,18 @@ function newChar(current) {
         } else if (refrain_status === 2) {
           update_refrain("#container-v #refrain3", "refrain3", element);
         }
-      } else if (phrase_before.endsWith(element)) {
+      }
+      if (phrase_before.endsWith(element)) {
         refrainedPhrase += element;
-        console.log("refrainedPhrase:" + refrainedPhrase);
+        console.log("refrain word end:" + element)
+        console.log("updated refrainedPhrase:" + refrainedPhrase);
+        console.log("updated refrain_status:" + refrain_status);
         if (refrain_status === 1) {
-          console.log("refrain1 end");
+          console.log("refrain1 word end:" + element);
         } else if (refrain_status === 2) {
-          console.log("refrain2 end");
+          console.log("refrain2 word end:" + element);
         } else if (refrain_status === 3) {
-          console.log("refrain3 end");
+          console.log("refrain3 word end:" + element);
         }
       }
     }
@@ -388,29 +391,42 @@ function newChar(current) {
 
   if (refrainedPhrase != '') {
     phrase = phrase.replace(refrainedPhrase, "");
+    console.log("refrained phrase detected: " + refrainedPhrase);
     console.log("phrase minus refrain: " + phrase);
-    let remaining_refrain = refrain_list.filter(element => phrase.includes(element))
+    let remaining_refrain = word_list_refrain.filter(element => phrase.includes(element))
     if (remaining_refrain.length === 0) {
-      console.log("refrain end");
+      console.log("refrain phrase end");
+      char_index -= refrainedPhrase.length;
       refrain_status = 0;
     }
   }
 
   if (refrain_status === 0) {
-    char_index -= refrainedPhrase.length;
     let phraseEl = document.querySelector("#container p");
     phraseEl.innerHTML = phrase.replaceAt(char_index, "<strong>" + current.text + "</strong>");
-    console.log("innerHTML:" + phraseEl.innerHTML)
+    console.log("innerHTML:" + phraseEl.innerHTML);
   }
+
+  word_list_melody.forEach((element) => {
+      if (phrase_after.startsWith(element)) {
+        console.log("melody start:" + element);
+        let currentEl = document.querySelector("#container p strong");
+        currentEl.classList.add("melody");
+        console.log("currentEl outerHtml:" + currentEl.outerHTML);
+      } else if (phrase_before.endsWith(element)) {
+        console.log("melody end:" + element);
+      }
+    }
+  )
 }
 
 function update_refrain(selector, id, element){
   let currentRefrainEl = document.querySelector(selector);
   let newRefrainEl = document.createElement("p");
-  newRefrainEl.id = id
-  let containerVEl = document.querySelector("#container-v")
-  containerVEl.replaceChild(newRefrainEl, currentRefrainEl)
+  newRefrainEl.id = id;
+  let containerVEl = document.querySelector("#container-v");
+  containerVEl.replaceChild(newRefrainEl, currentRefrainEl);
   newRefrainEl.textContent = element;
-  console.log("refrain " + id + "start");
+  console.log("refrain " + id + " start: " + element);
   refrain_status ++;
 }
