@@ -5,8 +5,6 @@ const player = new Player({
   app: {
     token: "WWvjJHTdwTORGwNI"
   },
-  mediaElement: document.querySelector("#media"),
-  mediaBannerPosition: "bottom right",
   valenceArousalEnabled: true,
   vocalAmplitudeEnabled: true
 });
@@ -28,6 +26,108 @@ let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain
 let refrainedPhrase = '';
 // let refrain_list = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって"]
 let refrain_list = [];
+
+const songList = [
+  {
+    title: "フューチャーノーツ / shikisai",
+    url: "https://piapro.jp/t/XiaI/20240201203346",
+    options: {
+      video: {
+        beatId: 4592297,
+        chordId: 2727637,
+        repetitiveSegmentId: 2824328,
+        lyricId: 59417,
+        lyricDiffId: 13964
+      },
+    },
+  },
+  {
+    title: "いつか君と話したミライは / タケノコ少年",
+    url: "https://piapro.jp/t/--OD/20240202150903",
+    options: {
+      video: {
+        beatId: 4592296,
+        chordId: 2727636,
+        repetitiveSegmentId: 2824327,
+        lyricId: 59416,
+        lyricDiffId: 13963
+      },
+    },
+  },
+  {
+    title: "未来交響曲 / ヤマギシコージ",
+    url: "https://piapro.jp/t/Rejk/20240202164429",
+    options: {
+      video: {
+        beatId: 4592298,
+        chordId: 2727638,
+        repetitiveSegmentId: 2824329,
+        lyricId: 59418,
+        lyricDiffId: 13965
+      },
+    },
+  },
+  {
+    title: "SUPERHERO / めろくる",
+    url: "https://piapro.jp/t/hZ35/20240130103028",
+    options: {
+      video: {
+        beatId: 4592293,
+        chordId: 2727635,
+        repetitiveSegmentId: 2824326,
+        lyricId: 59415,
+        lyricDiffId: 13962
+      },
+    },
+  },
+  {
+    title: "リアリティ / 歩く人",
+    url: "https://piapro.jp/t/ELIC/20240130010349",
+    options: {
+      video: {
+        beatId: 4592299,
+        chordId: 2727639,
+        repetitiveSegmentId: 2824330,
+        lyricId: 59419,
+        lyricDiffId: 13966
+      },
+    },
+  },
+  {
+    title: "The Marks / 2ouDNS",
+    url: "https://piapro.jp/t/xEA7/20240202002556",
+    options: {
+      video: {
+        beatId: 4592300,
+        chordId: 2727640,
+        repetitiveSegmentId: 2824331,
+        lyricId: 59420,
+        lyricDiffId: 13967
+      },
+    },
+  },
+];
+
+// プルダウンの選択肢を動的に作成
+const songSelect = document.getElementById("songSelect");
+songList.forEach((song, index) => {
+  const option = document.createElement("option");
+  option.value = index;
+  option.text = song.title;
+  songSelect.appendChild(option);
+});
+
+// 曲の選択に応じて player.createFromSongUrl を呼び出す
+songSelect.addEventListener("change", (e) => {
+  const selectedIndex = parseInt(e.target.value);
+  if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < songList.length) {
+    const selectedSong = songList[selectedIndex];
+    player.createFromSongUrl(selectedSong.url, selectedSong.options).then(() => {
+      // 曲の読み込みが完了したら再生を開始
+      player.requestPlay();
+    });
+  }
+});
 
 playBtn.addEventListener("click", (e) => {
   e.preventDefault()

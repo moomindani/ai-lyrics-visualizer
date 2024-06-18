@@ -24,7 +24,6 @@
   font-variation-settings: 'wght' 100;
   font-size: 3vw;
   color: #FFFFFF;
-  /* text-shadow: 1px 0 10px green; */
   background: linear-gradient(transparent 0%, #000000 0%);
   box-decoration-break: clone;
   padding: 2px;
@@ -73,7 +72,6 @@
   animation: emphasize 1000ms;
   font-size: 3vw;
   font-variation-settings: 'wght' 100;
-  /*text-shadow: 0 0 1em blue, 0 0 0.2em blue;*/
 }
 
 #container-v {
@@ -103,56 +101,92 @@
   top: 15%;
 }
 
-#media {
-  position: absolute;
-  right: 10px;
-  bottom: 30px;
-  background: rgba(0,0,0,0.2);
-}
-
-#meta {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  padding: 5px;
-  background: rgba(0,0,0,0.2);
-}
-
-#control {
-  position: absolute;
-  left: 10px;
-  bottom: 30px;
-  padding: 5px;
-  background: rgba(0,0,0,0.2);
-}
-
-#control > button {
-  margin-right: 5px;
-}
-#control > button:last-child {
-  margin-right: 0;
-}
-
-#beatbar {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 0;
-  height: 20px;
-  background: #000;
-}
-
-#seekbar {
+#player {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  padding: 10px;
+  background: linear-gradient(45deg, #222, #444);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 40;
+}
+
+#meta {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+#info {
+  flex-grow: 0;
+  margin-right: 20px;
+}
+
+#artist, #song {
+  margin-bottom: 5px;
+}
+
+#search-select {
+  display: flex;
+  align-items: center;
+}
+
+#searchInput, #songSelect {
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  background: #fff;
+  color: #333;
+  width: 200px;
+}
+
+#searchInput {
+  margin-right: 10px;
+}
+
+#control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  position: relative;
+}
+
+#control > button {
+  margin-right: 3px;
+  padding: 5px 10px;
+  background: #555;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#control > button:disabled {
+  background: #333;
+  cursor: default;
+}
+
+#position {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+}
+
+#seekbar {
+  width: 100%;
   height: 10px;
-  background: rgb(106, 104, 104);
+  background: #333;
 }
 
 #seekbar > div {
   width: 0;
   height: 100%;
-  background: rgb(255, 0, 0);
+  background: #f00;
 }

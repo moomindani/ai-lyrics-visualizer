@@ -19,26 +19,34 @@
       </div>
     </div>
     <div id="overlay">
-      <div id="media"></div>
-      <div id="meta">
-        <div id="artist">
-          <strong>artist:</strong> <span>-</span>
+      <div id="player">
+        <div id="meta">
+          <div id="info">
+            <div id="artist">
+              <strong>artist:</strong> <span>-</span>
+            </div>
+            <div id="song">
+              <strong>song:</strong> <span>-</span>
+            </div>
+          </div>
+          <div id="search-select">
+            <input type="text" id="searchInput" placeholder="曲を検索">
+            <select id="songSelect">
+              <option value="">課題曲から選択</option>
+            </select>
+          </div>
         </div>
-        <div id="song">
-          <strong>song:</strong> <span>-</span>
+        <div id="seekbar">
+          <div></div>
         </div>
-
-      </div>
-      <div id="control" style="display: none;">
-        <button id="play" disabled>再生</button>
-        <button id="jump" disabled>歌詞頭出し</button>
-        <button id="pause" disabled>一時停止</button>
-        <button id="rewind" disabled>巻き戻し</button>
-        <button id="llm" disabled>LLM</button>
-        <span id="position"><strong>-</strong> [ms]</span>
-      </div>
-      <div id="seekbar">
-        <div></div>
+        <div id="control">
+          <button id="play" disabled>再生</button>
+          <button id="jump" disabled>歌詞頭出し</button>
+          <button id="pause" disabled>一時停止</button>
+          <button id="rewind" disabled>巻き戻し</button>
+          <button id="llm" disabled>LLM</button>
+          <span id="position"><strong>-</strong> [ms]</span>
+        </div>
       </div>
     </div>
 
