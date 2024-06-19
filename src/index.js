@@ -24,12 +24,12 @@ let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
-let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
-let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
-// let word_list_refrain = [];
-// let word_list_melody = [];
-// let word_list_future = [];
+// let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
+// let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
+// let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
+let word_list_refrain = [];
+let word_list_melody = [];
+let word_list_future = [];
 
 window.addEventListener('load', () => {
   const title = document.getElementById('title');
@@ -352,29 +352,26 @@ function resetChars(){
   refrainedPhrase = "";
 }
 
-function analyze(prompt, selector) {
-  getAnalyzedList(prompt).then(reply=> {
-    console.log(reply);
-    let analyzedEl = document.createElement("div");
-    analyzedEl.innerHTML += reply;
-    const matches = analyzedEl.querySelectorAll(selector);
-    const tmp_list = [];
-    matches.forEach((match) => {
-      console.log("match refrain:" + match.textContent);
-      tmp_list.push(match.textContent);
-    });
-    return Array.from(new Set(tmp_list)); // remove duplicates
-  }).catch(error=> {
-    console.error(error);
-    return null;
-  });
-}
 function startLLM(){
   const prompt_refrain = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of refrained phrases from there?" +
       "For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
       "For another example, \"セカイ　セカイ　セカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
       "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-  word_list_refrain = analyze(prompt_refrain, "refrain");
+  getAnalyzedList(prompt_refrain).then(reply=> {
+    console.log(reply);
+    let analyzedEl = document.createElement("div");
+    analyzedEl.innerHTML += reply;
+    const matches = analyzedEl.querySelectorAll("refrain");
+    const tmp_list = [];
+    matches.forEach((match) => {
+      console.log("match refrain:" + match.textContent);
+      tmp_list.push(match.textContent);
+    });
+    word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
+  }).catch(error=> {
+    console.error(error);
+    return null;
+  });
 
   // TODO serlialize function execution
   // const prompt_melody = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of words related to sound, melody, song, or voices from there?" +
@@ -404,9 +401,13 @@ function newChar(current) {
   console.log("char index in phrase:" + current.parent.parent.findIndex(current) );
   console.log("word index in phrase:" + current.parent.parent.findIndex(current.parent) );
 
-  // フレーズの最後の文字か否か
+  // Word の最後の文字か否か
+  if (current.parent.lastChar === current) {
+    console.log("lastChar in the word");
+  }
+  // Phrase の最後の文字か否か
   if (current.parent.parent.lastChar === current) {
-    console.log("lastChar");
+    console.log("lastChar in the phrase");
   }
 
   // 新しいフレーズの開始
