@@ -24,12 +24,12 @@ let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-//let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
-let word_list_refrain = [];
-//let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
-let word_list_melody = [];
-//let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
-let word_list_future = [];
+let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
+let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
+let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
+// let word_list_refrain = [];
+// let word_list_melody = [];
+// let word_list_future = [];
 
 window.addEventListener('load', () => {
   const title = document.getElementById('title');
@@ -469,14 +469,15 @@ function newChar(current) {
     let remaining_refrain = word_list_refrain.filter(element => phrase.includes(element))
     if (remaining_refrain.length === 0) {
       console.log("refrain phrase end");
-      char_index -= refrainedPhrase.length;
       refrain_status = 0;
     }
   }
 
   let phraseEl = document.querySelector("#container p");
   if (refrain_status === 0) {
-    phraseEl.innerHTML = phrase.replaceAt(char_index, "<strong >" + current.text + "</strong>");
+    let currentEl = document.createElement("strong");
+    currentEl.textContent = current.text;
+    phraseEl.appendChild(currentEl);
     phraseEl.classList.remove("hidden")
     console.log("innerHTML:" + phraseEl.innerHTML);
   }
@@ -484,7 +485,9 @@ function newChar(current) {
   word_list_melody.forEach((element) => {
       if (phrase_after.startsWith(element)) {
         console.log("melody start:" + element);
-        phraseEl.innerHTML = phraseEl.innerHTML + "<div class='melody'></div>"
+        let melodyEl = document.createElement("div");
+        melodyEl.classList.add("melody");
+        phraseEl.appendChild(melodyEl);
         console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
       } else if (phrase_before.endsWith(element)) {
         console.log("melody end:" + element);
@@ -495,7 +498,9 @@ function newChar(current) {
   word_list_future.forEach((element) => {
       if (phrase_after.startsWith(element)) {
         console.log("future start:" + element);
-        phraseEl.innerHTML = phraseEl.innerHTML + "<div class='future'></div>"
+        let futureEl = document.createElement("div");
+        futureEl.classList.add("future");
+        phraseEl.appendChild(futureEl);
         console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
       } else if (phrase_before.endsWith(element)) {
         console.log("future end:" + element);

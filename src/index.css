@@ -218,7 +218,7 @@
 }
 
 #container p strong {
-  animation: emphasize 1000ms;
+  animation: emphasize 1000ms forwards;
   font-size: 3vw;
   font-variation-settings: 'wght' 100;
 }
