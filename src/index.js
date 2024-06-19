@@ -515,6 +515,7 @@ function newChar(current) {
   // Phrase の最後の文字か否か
   if (current.parent.parent.lastChar === current) {
     console.log("lastChar in the phrase");
+    phraseEl.style.animation = "fadeout 2s 1s ease-in forwards";
   }
 }
 

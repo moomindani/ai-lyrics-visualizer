@@ -169,7 +169,7 @@
 }
 
 #container p {
-  animation: fadein-left 1s ease-out forwards, fadeout 2s 5s ease-out forwards;
+  animation: fadein-left 1s ease-out forwards;
   font-variation-settings: 'wght' 100;
   font-size: 3vw;
   color: #FFFFFF;
