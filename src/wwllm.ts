@@ -13,6 +13,10 @@ function setLabel(id: string, text: string) {
 async function run() {
   const initProgressCallback = (report: webllm.InitProgressReport) => {
     setLabel("init-label", report.text);
+    const llmBtn = document.querySelector("llm") as HTMLButtonElement;
+    if (llmBtn !== null) {
+      llmBtn.disabled = false;
+    }
   };
   const selectedModel = "Llama-3-8B-Instruct-q4f32_1-MLC";
 

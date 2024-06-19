@@ -283,8 +283,12 @@ player.addListener({
   /* 再生コントロールができるようになったら呼ばれる */
   onTimerReady() {
     console.log("onTimerReady")
-    document.querySelectorAll("button")
-      .forEach((btn) => (btn.disabled = false));
+    const playterBtns = []
+    playterBtns.push(document.querySelector("play"))
+    playterBtns.push(document.querySelector("jump"))
+    playterBtns.push(document.querySelector("pause"))
+    playterBtns.push(document.querySelector("rewind"))
+    playterBtns.forEach((btn) => (btn.disabled = false));
 
     console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text)
     console.log("player.video.phrases:" + player.video.phrases)
