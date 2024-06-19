@@ -1,5 +1,6 @@
 const { Player } = TextAliveApp;
 import { getAnalyzedList } from './wwllm'
+import { drawBackground } from './background'
 
 const player = new Player({
   app: {
@@ -24,12 +25,12 @@ let lastTime = -1;
 let max_vocal=0, min_vocal=100000000;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-// let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
-// let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
-// let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
-let word_list_refrain = [];
-let word_list_melody = [];
-let word_list_future = [];
+let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
+let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
+let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
+// let word_list_refrain = [];
+// let word_list_melody = [];
+// let word_list_future = [];
 
 window.addEventListener('load', () => {
   const title = document.getElementById('title');
@@ -258,6 +259,7 @@ player.addListener({
     if (!app.managed) {
       document.querySelector("#control").style.display = "block";
     }
+    drawBackground("stars");
     lastTime = -1;
   },
 
