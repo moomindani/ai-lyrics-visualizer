@@ -401,15 +401,6 @@ function newChar(current) {
   console.log("char index in phrase:" + current.parent.parent.findIndex(current) );
   console.log("word index in phrase:" + current.parent.parent.findIndex(current.parent) );
 
-  // Word の最後の文字か否か
-  if (current.parent.lastChar === current) {
-    console.log("lastChar in the word");
-  }
-  // Phrase の最後の文字か否か
-  if (current.parent.parent.lastChar === current) {
-    console.log("lastChar in the phrase");
-  }
-
   // 新しいフレーズの開始
   if (!newPhrase && current.parent.parent.firstChar === current) {
     newPhrase = true;
@@ -508,6 +499,29 @@ function newChar(current) {
       }
     }
   )
+
+  // Word の最後の文字か否か
+  if (current.parent.lastChar === current) {
+    console.log("lastChar in the word");
+    // 英語の場合スペーサーを入れる
+    if (isASCII(current.text) && current.parent.next.pos !== "S") {
+      let spacerEl = document.createElement("div");
+      spacerEl.classList.add("spacer");
+      phraseEl.appendChild(spacerEl);
+    }
+  }
+  // Phrase の最後の文字か否か
+  if (current.parent.parent.lastChar === current) {
+    console.log("lastChar in the phrase");
+  }
+}
+
+function isASCII(char) {
+  // Get the character code of the input character
+  const charCode = char.charCodeAt(0);
+
+  // Check if the character code falls within the ASCII range (0-127)
+  return (charCode >= 0 && charCode <= 127);
 }
 
 function update_refrain(selector, id, element){
