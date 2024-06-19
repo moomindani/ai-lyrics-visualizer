@@ -218,7 +218,8 @@
 }
 
 #container p strong {
-  animation: emphasize 1000ms forwards;
+  position: relative;
+  animation: emphasize 1500ms forwards;
   font-size: 3vw;
   font-variation-settings: 'wght' 100;
 }
@@ -235,7 +236,7 @@
   width: 300px;
   height: 300px;
   border-radius: 300%;
-  animation:1s circle forwards;
+  animation:2s circle forwards;
 }
 
 .future{
@@ -246,7 +247,7 @@
   width: 300px;
   height: 300px;
   border-radius: 300%;
-  animation:1s circle forwards;
+  animation:2s circle forwards;
 }
 
 @keyframes circle{

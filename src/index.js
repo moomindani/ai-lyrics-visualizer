@@ -474,8 +474,8 @@ function newChar(current) {
   }
 
   let phraseEl = document.querySelector("#container p");
+  let currentEl = document.createElement("strong");
   if (refrain_status === 0) {
-    let currentEl = document.createElement("strong");
     currentEl.textContent = current.text;
     phraseEl.appendChild(currentEl);
     phraseEl.classList.remove("hidden")
@@ -487,8 +487,8 @@ function newChar(current) {
         console.log("melody start:" + element);
         let melodyEl = document.createElement("div");
         melodyEl.classList.add("melody");
-        phraseEl.appendChild(melodyEl);
-        console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
+        currentEl.appendChild(melodyEl);
+        console.log("currentEl.innerHTML:" + currentEl.innerHTML);
       } else if (phrase_before.endsWith(element)) {
         console.log("melody end:" + element);
       }
@@ -500,8 +500,8 @@ function newChar(current) {
         console.log("future start:" + element);
         let futureEl = document.createElement("div");
         futureEl.classList.add("future");
-        phraseEl.appendChild(futureEl);
-        console.log("phraseEl.innerHTML:" + phraseEl.innerHTML);
+        currentEl.appendChild(futureEl);
+        console.log("currentEl.innerHTML:" + currentEl.innerHTML);
       } else if (phrase_before.endsWith(element)) {
         console.log("future end:" + element);
       }
