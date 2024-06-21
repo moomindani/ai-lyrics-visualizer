@@ -1,12 +1,17 @@
+import { drawFuture } from './background_future'
+
 export function drawBackground(type) {
+  console.log("Drawing background for " + type);
   if (type === "stars") {
     drawStars();
+  } else if (type === "future") {
+    drawFuture();
   }
 }
 
 function drawStars(){
   const background = document.querySelector("#background");
-  background.classList.add("stars");
+  background.classList.add("bg_stars");
 
   const createStar = () => {
     const starEl = document.createElement("span");

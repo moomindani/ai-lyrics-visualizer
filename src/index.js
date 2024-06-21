@@ -260,7 +260,7 @@ player.addListener({
     if (!app.managed) {
       document.querySelector("#control").style.display = "block";
     }
-    drawBackground("stars");
+    drawBackground("future");
     lastTime = -1;
   },
 

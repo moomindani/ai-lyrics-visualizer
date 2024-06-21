@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "@mlc-ai/web-llm": "0.2.44",
+    "three": "^0.165.0",
     "buffer": "^6.0.3",
     "del-cli": "4.0.1",
     "parcel": "2.12.0",
