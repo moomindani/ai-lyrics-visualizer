@@ -22,6 +22,7 @@ const seekbar = document.querySelector("#seekbar");
 const paintedSeekbar = seekbar.querySelector("div");
 let newPhrase = false;
 let lastTime = -1;
+let lastCharIndexInPhrase = -1;
 let max_vocal=0, min_vocal=100000000;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
@@ -282,16 +283,14 @@ player.addListener({
 
   /* 再生コントロールができるようになったら呼ばれる */
   onTimerReady() {
-    console.log("onTimerReady")
-    const playterBtns = []
-    playterBtns.push(document.querySelector("play"))
-    playterBtns.push(document.querySelector("jump"))
-    playterBtns.push(document.querySelector("pause"))
-    playterBtns.push(document.querySelector("rewind"))
-    playterBtns.forEach((btn) => (btn.disabled = false));
+    console.log("onTimerReady");
+    playBtn.disabled = false;
+    jumpBtn.disabled = false;
+    pauseBtn.disabled = false;
+    rewindBtn.disabled = false;
 
-    console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text)
-    console.log("player.video.phrases:" + player.video.phrases)
+    console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text);
+    console.log("player.video.phrases:" + player.video.phrases);
   },
 
   /* 再生位置の情報が更新されたら呼ばれる */
@@ -404,7 +403,12 @@ function newChar(current) {
   console.log("word pos:" + current.parent.pos);
   console.log("phrase:" + current.parent.parent.text);
 
-  console.log("char index in phrase:" + current.parent.parent.findIndex(current) );
+  if (lastCharIndexInPhrase === current.parent.parent.findIndex(current)) {
+    return;
+  } else {
+    lastCharIndexInPhrase = current.parent.parent.findIndex(current);
+  }
+  console.log("char index in phrase:" + lastCharIndexInPhrase );
   console.log("word index in phrase:" + current.parent.parent.findIndex(current.parent) );
 
   // 新しいフレーズの開始
