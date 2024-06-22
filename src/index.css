@@ -355,11 +355,12 @@
 
 #searchInput, #searchInputNavi {
   margin-right: 10px;
+  width: 350px;
 }
 
 #control {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-top: 10px;
   position: relative;
@@ -381,10 +382,7 @@
 }
 
 #position {
-  /* position: absolute; */
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  margin-right: 5px;
   color: #fff;
 }
 
@@ -408,4 +406,50 @@
   height: 100%;
   display: flex;
   overflow: hidden;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-label {
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+  background-color: #555;
+  border-radius: 13px;
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.toggle-button {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+.toggle-input:checked + .toggle-label {
+  background-color: #39c5bb;
+}
+
+.toggle-input:checked + .toggle-label .toggle-button {
+  transform: translateX(24px);
+}
+
+.toggle-text {
+  color: #fff;
+  margin-left: 10px;
+  font-size: 14px;
 }

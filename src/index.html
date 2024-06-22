@@ -16,13 +16,13 @@
     <div id="background"></div>
     <div id="song-select">
       <h2>AI Lyrics Visualizerへようこそ！</h2>
-      <p>聴きたい曲を選択するか、URLを入力してください。</p>
+      <p>聴きたい曲を選んでください</p>
       <div>
         <select id="songSelectNavi">
-          <option value="">課題曲から選択</option>
+          <option value="">課題曲から選ぶ</option>
         </select>
         <span>/</span>
-        <input type="text" id="searchInputNavi" placeholder="曲のURLを入力">
+        <input type="text" id="searchInputNavi" placeholder="曲のURLを入力（ハイスペックマシン向け）">
       </div>
     </div>
     <div id="content">
@@ -50,7 +50,7 @@
             <select id="songSelect">
               <option value="">課題曲から選択</option>
             </select>
-            <input type="text" id="searchInput" placeholder="URLを入力">
+            <input type="text" id="searchInput" placeholder="曲のURLを入力（ハイスペックマシン向け）">
           </div>
         </div>
         <div id="seekbar">
@@ -62,7 +62,13 @@
           <button id="pause" disabled>一時停止</button>
           <button id="rewind" disabled>最初から</button>
           <button id="jump" disabled>歌詞頭出し</button>
-          <button id="llm" disabled>LLM</button>
+          <div class="toggle-container">
+            <input type="checkbox" id="aiToggle" class="toggle-input" checked>
+            <label for="aiToggle" class="toggle-label">
+              <span class="toggle-button"></span>
+            </label>
+            <span class="toggle-text">AI演出</span>
+          </div>
         </div>
       </div>
     </div>

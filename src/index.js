@@ -1,6 +1,7 @@
 const { Player } = TextAliveApp;
 import { getAnalyzedList } from './wwllm'
 import { drawBackground } from './background'
+import { songListMap } from './songList.js';
 
 const player = new Player({
   app: {
@@ -14,7 +15,6 @@ const playBtn = document.querySelector("#play");
 const jumpBtn = document.querySelector("#jump");
 const pauseBtn = document.querySelector("#pause");
 const rewindBtn = document.querySelector("#rewind");
-const llmBtn = document.querySelector("#llm");
 const positionEl = document.querySelector("#position strong");
 
 const beatbarEl = document.querySelector("#beatbar");
@@ -24,14 +24,12 @@ let newPhrase = false;
 let lastTime = -1;
 let lastCharIndexInPhrase = -1;
 let max_vocal=0, min_vocal=100000000;
+let current_song = null;
 let refrain_status =0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
-let word_list_refrain = ["何十回も", "何百回も", "何千回も", "何万回も", "何回でも", "何回だって", "未来"]
-let word_list_melody = ["メロディ", "歌", "声", "音", "響", "叫"];
-let word_list_future = ["未来", "ミライ", "魔法", "奇跡", "キセキ", "光", "願い", "想い"];
-// let word_list_refrain = [];
-// let word_list_melody = [];
-// let word_list_future = [];
+let word_list_refrain = [];
+let word_list_melody = [];
+let word_list_future = [];
 
 window.addEventListener('load', () => {
   const title = document.getElementById('title');
@@ -43,101 +41,85 @@ window.addEventListener('load', () => {
   }, 1500);
 });
 
-const songList = [
-  {
-    title: "フューチャーノーツ / shikisai",
-    url: "https://piapro.jp/t/XiaI/20240201203346",
-    options: {
-      video: {
-        beatId: 4592297,
-        chordId: 2727637,
-        repetitiveSegmentId: 2824328,
-        lyricId: 59417,
-        lyricDiffId: 13964
-      },
-    },
-  },
-  {
-    title: "いつか君と話したミライは / タケノコ少年",
-    url: "https://piapro.jp/t/--OD/20240202150903",
-    options: {
-      video: {
-        beatId: 4592296,
-        chordId: 2727636,
-        repetitiveSegmentId: 2824327,
-        lyricId: 59416,
-        lyricDiffId: 13963
-      },
-    },
-  },
-  {
-    title: "未来交響曲 / ヤマギシコージ",
-    url: "https://piapro.jp/t/Rejk/20240202164429",
-    options: {
-      video: {
-        beatId: 4592298,
-        chordId: 2727638,
-        repetitiveSegmentId: 2824329,
-        lyricId: 59418,
-        lyricDiffId: 13965
-      },
-    },
-  },
-  {
-    title: "SUPERHERO / めろくる",
-    url: "https://piapro.jp/t/hZ35/20240130103028",
-    options: {
-      video: {
-        beatId: 4592293,
-        chordId: 2727635,
-        repetitiveSegmentId: 2824326,
-        lyricId: 59415,
-        lyricDiffId: 13962
-      },
-    },
-  },
-  {
-    title: "リアリティ / 歩く人",
-    url: "https://piapro.jp/t/ELIC/20240130010349",
-    options: {
-      video: {
-        beatId: 4592299,
-        chordId: 2727639,
-        repetitiveSegmentId: 2824330,
-        lyricId: 59419,
-        lyricDiffId: 13966
-      },
-    },
-  },
-  {
-    title: "The Marks / 2ouDNS",
-    url: "https://piapro.jp/t/xEA7/20240202002556",
-    options: {
-      video: {
-        beatId: 4592300,
-        chordId: 2727640,
-        repetitiveSegmentId: 2824331,
-        lyricId: 59420,
-        lyricDiffId: 13967
-      },
-    },
-  },
-];
-
 const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
+const enbalLeyricVideo = document.getElementById('aiToggle');
 
-// 曲の選択に応じて player.createFromSongUrl を呼び出す
-songSelect.addEventListener("change", (e) => {
-  fadeNaviationUI();
-  const selectedIndex = parseInt(e.target.value);
-  if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < songList.length) {
-    const selectedSong = songList[selectedIndex];
-    player.createFromSongUrl(selectedSong.url, selectedSong.options).then(() => {
+function loadLeyricVideo() {
+  music_info = songListMap.get(current_song)
+    if (music_info.cachedLlmData) {
+        if (music_info.cachedLlmData.refrainedPhrase) {
+          let analyzedEl = document.createElement("div");
+          analyzedEl.innerHTML += music_info.cachedLlmData.refrainedPhrase;
+          const matches = analyzedEl.querySelectorAll("refrain");
+          const tmp_list = [];
+          matches.forEach((match) => {
+            console.log("match refrain:" + match.textContent);
+            tmp_list.push(match.textContent);
+          });
+          word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
+          console.log("word_list_refrain:" + word_list_refrain);
+        }
+        if (music_info.cachedLlmData.melody) {
+          let analyzedEl = document.createElement("div");
+          analyzedEl.innerHTML += music_info.cachedLlmData.melody;
+          const matches = analyzedEl.querySelectorAll("melody");
+          const tmp_list = [];
+          matches.forEach((match) => {
+            console.log("match melody:" + match.textContent);
+            tmp_list.push(match.textContent);
+          });
+          word_list_melody = Array.from(new Set(tmp_list)); // remove duplicates
+          console.log("word_list_melody:" + word_list_melody);
+        }
+        if (music_info.cachedLlmData.future) {
+          let analyzedEl = document.createElement("div");
+          analyzedEl.innerHTML += music_info.cachedLlmData.future;
+          const matches = analyzedEl.querySelectorAll("future");
+          const tmp_list = [];
+          matches.forEach((match) => {
+            console.log("match future:" + match.textContent);
+            tmp_list.push(match.textContent);
+          });
+          word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
+          console.log("word_list_future:" + word_list_future);
+        }
+  }
+}
+
+function clearLeyricVideo() {
+  word_list_refrain = [];
+  word_list_melody = [];
+  word_list_future = [];
+}
+
+enbalLeyricVideo.addEventListener("change", (e) => {
+  if (enbalLeyricVideo.checked) {
+    loadLeyricVideo();
+  }else{
+    clearLeyricVideo();
+  }
+});
+
+// 曲の選択に応じて player.createFromSongUrl を呼び出すfunc
+function selectSong(e) {
+  current_song = e.target.value;
+  music_info = songListMap.get(current_song)
+  if (songListMap.has(current_song)) {
+    if (enbalLeyricVideo.checked) {
+      loadLeyricVideo();
+    }
+    player.createFromSongUrl(current_song, music_info.options).then(() => {
       // 曲の読み込みが完了したら再生を開始
       player.requestPlay();
     });
   }
+}
+
+// 曲の選択に応じて player.createFromSongUrl を呼び出す
+songSelect.addEventListener("change", (e) => {
+  fadeNaviationUI();
+  selectSong(e);
 });
 
 // URLの入力に応じて player.createFromSongUrl を呼び出す
@@ -170,14 +152,7 @@ function fadeNaviationUI() {
 // 曲の選択に応じて player.createFromSongUrl を呼び出す
 songSelectNavi.addEventListener("change", (e) => {
   fadeNaviationUI();
-  const selectedIndex = parseInt(e.target.value);
-  if (!isNaN(selectedIndex) && selectedIndex >= 0 && selectedIndex < songList.length) {
-    const selectedSong = songList[selectedIndex];
-    player.createFromSongUrl(selectedSong.url, selectedSong.options).then(() => {
-      // 曲の読み込みが完了したら再生を開始
-      player.requestPlay();
-    });
-  }
+  selectSong(e);
 });
 
 // URLの入力に応じて player.createFromSongUrl を呼び出す
@@ -197,9 +172,10 @@ searchInputNavi.addEventListener("keypress", (e) => {
 });
 
 // プルダウンの選択肢を動的に作成
-songList.forEach((song, index) => {
+// iterate song list map
+songListMap.forEach((song,key) => {
   const option = document.createElement("option");
-  option.value = index;
+  option.value = key;
   option.text = song.title;
   songSelect.appendChild(option);
   songSelectNavi.appendChild(option.cloneNode(true));
@@ -237,10 +213,6 @@ rewindBtn.addEventListener("click", (e) => {
     player.requestMediaSeek(0)
   }
 });
-llmBtn.addEventListener("click", (e) => {
-  e.preventDefault()
-  startLLM()
-});
 
 /* シークバー */
 seekbar.addEventListener("click", (e) => {
@@ -258,7 +230,7 @@ player.addListener({
   onAppReady(app) {
     console.log("onAppReady")
     if (!app.managed) {
-      document.querySelector("#control").style.display = "block";
+      document.querySelector("#control").style.display = "flex";
     }
     drawBackground("future");
     lastTime = -1;
@@ -361,6 +333,8 @@ function startLLM(){
   const prompt_refrain = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of refrained phrases from there?" +
       "For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
       "For another example, \"セカイ　セカイ　セカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
+      "If there are multiple identical results, please group them together." +
+      "Please just response <melody> tags of extract result, do not include other info" +
       "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
   getAnalyzedList(prompt_refrain).then(reply=> {
     console.log(reply);
@@ -380,14 +354,18 @@ function startLLM(){
 
   // TODO serlialize function execution
   // const prompt_melody = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of words related to sound, melody, song, or voices from there?" +
-  //     "For example, \"紡いだ言葉とメロディが今も\" needs to be converted to \"紡いだ言葉と<melody>メロディ</melody>が今も\". " +
-  //     "For another example, \"何回でも何回でも想いはこの声に乗せて\" needs to be converted to \"何回でも何回でも想いはこの<melody>声</melody>に乗せて\". " +
-  //     "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+  // "For example, \"紡いだ言葉とメロディが今も\" needs to be converted to \"<melody>メロディ</melody>\"" +
+  // "For another example, \"何回でも何回でも想いはこの声に乗せて\" needs to be converted to \"<melody>声</melody>\" " +
+  // "If there are multiple identical results, please group them together." +
+  // "Please just response <melody> tags of extract result, do not include other info" +
+  // "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
   // word_list_melody = analyze(prompt_melody, "melody");
-  //
+  
   // const prompt_future = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of words related to future, lights, hope, or shine?" +
   //     "For example, \"五線譜の魔法 砂漠に芽吹くミライ\" needs to be converted to \"五線譜の魔法 砂漠に芽吹く<future>ミライ</future>\". " +
   //     "For another example, \"精一杯のこの歌が光指す道となって\" needs to be converted to \"精一杯のこの歌が<future>光</future>指す道となって\". " +
+  //     "If there are multiple identical results, please group them together." +
+  //     "Please just response <future> tags of extract result, do not include other info" +
   //     "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
   // word_list_future = analyze(prompt_future, "future");
 }

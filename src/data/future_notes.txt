@@ -1,0 +1,5 @@
+After analyzing the lyrics, I found the following refrained phrases:
+
+<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain> (appears three times)
+<refrain>ミライ</refrain><refrain>ミライ</refrain><refrain>ミライ</refrain> (appears three times)
+Note that the refrained phrases are the repeated phrases that are not part of the main lyrics. In this case, the refrained phrases are the repeated instances of "セカイ" and "ミライ".

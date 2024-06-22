@@ -1,6 +1,6 @@
 import * as webllm from "@mlc-ai/web-llm";
 
-let engine: webllm.MLCEngineInterface = null;
+let engine: webllm.MLCEngineInterface;
 
 function setLabel(id: string, text: string) {
   const label = document.getElementById(id);
@@ -59,6 +59,3 @@ export async function getAnalyzedList(prompt: string) {
   console.log(reply0.usage);
   return replyAll;
 }
-
-
-run();
