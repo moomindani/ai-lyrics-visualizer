@@ -43,10 +43,10 @@ window.addEventListener('load', () => {
 
 const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
-const enbalLeyricVideo = document.getElementById('aiToggle');
+const enbalLyricVideo = document.getElementById('aiToggle');
 
-function loadLeyricVideo() {
-  music_info = songListMap.get(current_song)
+function loadLyricVideo() {
+  const music_info = songListMap.get(current_song)
     if (music_info.cachedLlmData) {
         if (music_info.cachedLlmData.refrainedPhrase) {
           let analyzedEl = document.createElement("div");
@@ -87,27 +87,27 @@ function loadLeyricVideo() {
   }
 }
 
-function clearLeyricVideo() {
+function clearLyricVideo() {
   word_list_refrain = [];
   word_list_melody = [];
   word_list_future = [];
 }
 
-enbalLeyricVideo.addEventListener("change", (e) => {
-  if (enbalLeyricVideo.checked) {
-    loadLeyricVideo();
+enbalLyricVideo.addEventListener("change", (e) => {
+  if (enbalLyricVideo.checked) {
+    loadLyricVideo();
   }else{
-    clearLeyricVideo();
+    clearLyricVideo();
   }
 });
 
 // 曲の選択に応じて player.createFromSongUrl を呼び出すfunc
 function selectSong(e) {
   current_song = e.target.value;
-  music_info = songListMap.get(current_song)
+  const music_info = songListMap.get(current_song)
   if (songListMap.has(current_song)) {
-    if (enbalLeyricVideo.checked) {
-      loadLeyricVideo();
+    if (enbalLyricVideo.checked) {
+      loadLyricVideo();
     }
     player.createFromSongUrl(current_song, music_info.options).then(() => {
       // 曲の読み込みが完了したら再生を開始
@@ -118,14 +118,14 @@ function selectSong(e) {
 
 // 曲の選択に応じて player.createFromSongUrl を呼び出す
 songSelect.addEventListener("change", (e) => {
-  fadeNaviationUI();
+  fadeNavigationUI();
   selectSong(e);
 });
 
 // URLの入力に応じて player.createFromSongUrl を呼び出す
 searchInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter" && searchInput.value) {
-    fadeNaviationUI();
+    fadeNavigationUI();
     // clear songSelect select box
     songSelect.selectedIndex = 0;
     const url = searchInput.value;
@@ -142,7 +142,7 @@ const songSelectNavi = document.getElementById('songSelectNavi');
 const searchInputNavi = document.getElementById('searchInputNavi');
 const songSelectUI = document.getElementById('song-select');
 
-function fadeNaviationUI() {
+function fadeNavigationUI() {
   songSelectUI.style.opacity = 0;
   setTimeout(() => {
     songSelectUI.style.display = 'none';
@@ -151,14 +151,14 @@ function fadeNaviationUI() {
 
 // 曲の選択に応じて player.createFromSongUrl を呼び出す
 songSelectNavi.addEventListener("change", (e) => {
-  fadeNaviationUI();
+  fadeNavigationUI();
   selectSong(e);
 });
 
 // URLの入力に応じて player.createFromSongUrl を呼び出す
 searchInputNavi.addEventListener("keypress", (e) => {
   if (e.key === "Enter" && searchInputNavi.value) {
-    fadeNaviationUI();
+    fadeNavigationUI();
     // clear songSelect select box and show default
     songSelect.selectedIndex = 0;
     const url = searchInputNavi.value;
@@ -262,7 +262,9 @@ player.addListener({
     rewindBtn.disabled = false;
 
     console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text);
-    console.log("player.video.phrases:" + player.video.phrases);
+    console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text);
+    console.log("player.data.songMap.segments:" + player.data.songMap.segments);
+    console.log("player.getChoruses(): " + player.getChoruses());
   },
 
   /* 再生位置の情報が更新されたら呼ばれる */
@@ -314,15 +316,10 @@ function resetChars(){
   let containerEl = document.querySelector("#container")
   containerEl.replaceChild(newPhraseEl, currentPhraseEl)
 
-  let refrain1El = document.querySelector("#container-v #refrain1");
-  let refrain2El = document.querySelector("#container-v #refrain2");
-  let refrain3El = document.querySelector("#container-v #refrain3");
-  refrain1El.textContent = '';
-  refrain1El.classList.add("hidden")
-  refrain2El.textContent = '';
-  refrain2El.classList.add("hidden")
-  refrain3El.textContent = '';
-  refrain3El.classList.add("hidden")
+  let containerVEl = document.querySelector("#container-v");
+  while(containerVEl.firstChild){
+    containerVEl.removeChild(containerVEl.firstChild);
+  }
 
   // refrain related
   refrain_status = 0;
@@ -351,23 +348,6 @@ function startLLM(){
     console.error(error);
     return null;
   });
-
-  // TODO serlialize function execution
-  // const prompt_melody = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of words related to sound, melody, song, or voices from there?" +
-  // "For example, \"紡いだ言葉とメロディが今も\" needs to be converted to \"<melody>メロディ</melody>\"" +
-  // "For another example, \"何回でも何回でも想いはこの声に乗せて\" needs to be converted to \"<melody>声</melody>\" " +
-  // "If there are multiple identical results, please group them together." +
-  // "Please just response <melody> tags of extract result, do not include other info" +
-  // "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-  // word_list_melody = analyze(prompt_melody, "melody");
-  
-  // const prompt_future = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of words related to future, lights, hope, or shine?" +
-  //     "For example, \"五線譜の魔法 砂漠に芽吹くミライ\" needs to be converted to \"五線譜の魔法 砂漠に芽吹く<future>ミライ</future>\". " +
-  //     "For another example, \"精一杯のこの歌が光指す道となって\" needs to be converted to \"精一杯のこの歌が<future>光</future>指す道となって\". " +
-  //     "If there are multiple identical results, please group them together." +
-  //     "Please just response <future> tags of extract result, do not include other info" +
-  //     "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-  // word_list_future = analyze(prompt_future, "future");
 }
 
 String.prototype.replaceAt = function(index, replacement) {
@@ -381,6 +361,7 @@ function newChar(current) {
   console.log("word pos:" + current.parent.pos);
   console.log("phrase:" + current.parent.parent.text);
 
+  // フレーズ内の文字が進んでない場合、新しい文字と認識しない（先頭文字が稀にダブる問題の対策）
   if (lastCharIndexInPhrase === current.parent.parent.findIndex(current)) {
     return;
   } else {
@@ -418,31 +399,19 @@ function newChar(current) {
   word_list_refrain.forEach((element) => {
       if (phrase_after.startsWith(element)) {
         console.log("refrain word start:" + element)
-        if (refrain_status === 0 || refrain_status === 3) {
-          update_refrain("#container-v #refrain1", "refrain1", element);
-        } else if (refrain_status === 1) {
-          update_refrain("#container-v #refrain2", "refrain2", element);
-        } else if (refrain_status === 2) {
-          update_refrain("#container-v #refrain3", "refrain3", element);
-        }
+        update_refrain(element);
       }
       if (phrase_before.endsWith(element)) {
         refrainedPhrase += element;
+        let currentRefrainEl = document.querySelector("container-v refrain" + refrain_status+1);
         console.log("refrain word end:" + element)
         console.log("updated refrainedPhrase:" + refrainedPhrase);
         console.log("updated refrain_status:" + refrain_status);
-        if (refrain_status === 1) {
-          console.log("refrain1 word end:" + element);
-        } else if (refrain_status === 2) {
-          console.log("refrain2 word end:" + element);
-        } else if (refrain_status === 3) {
-          console.log("refrain3 word end:" + element);
-        }
       }
     }
   )
 
-  if (refrainedPhrase != '') {
+  if (refrainedPhrase !== '') {
     phrase = phrase.replace(refrainedPhrase, "");
     console.log("refrained phrase detected: " + refrainedPhrase);
     console.log("phrase minus refrain: " + phrase);
@@ -450,6 +419,8 @@ function newChar(current) {
     if (remaining_refrain.length === 0) {
       console.log("refrain phrase end");
       refrain_status = 0;
+      // リフレイン終了時に画面上の文字を初期化
+      resetChars();
     }
   }
 
@@ -498,7 +469,7 @@ function newChar(current) {
       phraseEl.appendChild(spacerEl);
     }
   }
-  // Phrase の最後の文字か否か
+  // Phrase の最後の文字が出力されたら少し待ってフェードアウト開始
   if (current.parent.parent.lastChar === current) {
     console.log("lastChar in the phrase");
     phraseEl.style.animation = "fadeout 2s 1s ease-in forwards";
@@ -513,14 +484,41 @@ function isASCII(char) {
   return (charCode >= 0 && charCode <= 127);
 }
 
-function update_refrain(selector, id, element){
-  let currentRefrainEl = document.querySelector(selector);
+function update_refrain(element){
+  // リフレイン開始時に画面上の文字を初期化
+  if (refrain_status === 0) {
+    console.log("refrain phrase start");
+    resetChars();
+  }
+  refrain_status ++;
+  console.log("refrain " + refrain_status + " start: " + element);
+  let id = "refrain" + refrain_status;
+
   let newRefrainEl = document.createElement("p");
   newRefrainEl.id = id;
-  let containerVEl = document.querySelector("#container-v");
-  containerVEl.replaceChild(newRefrainEl, currentRefrainEl);
   newRefrainEl.textContent = element;
   newRefrainEl.classList.remove("hidden")
-  console.log("refrain " + id + " start: " + element);
-  refrain_status ++;
+
+  // CSS プロパティを動的に設定
+  let pos = getRefrainPosition(refrain_status-1);
+  newRefrainEl.style.position = "absolute";
+  newRefrainEl.style.top = pos.top;
+  newRefrainEl.style.left = pos.left;
+  newRefrainEl.style.right = pos.right;
+
+  let containerVEl = document.querySelector("#container-v");
+  containerVEl.appendChild(newRefrainEl);
+}
+
+function getRefrainPosition(id) {
+  const positions = [
+    { left: '15%', right: 'auto', top: '15%'},  // 1番目: 左端
+    { left: 'auto', right: '15%', top: '15%' },  // 2番目: 右端
+    { left: '40%', right: 'auto', top: '25%' },  // 3番目: 中央寄り左
+    { left: '5%', right: 'auto', top: '35%' },   // 4番目: 左寄り
+    { left: 'auto', right: '5%', top: '35%' }    // 5番目: 右寄り
+  ];
+
+  const index = id % positions.length;
+  return positions[index];
 }

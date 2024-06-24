@@ -1,6 +1,7 @@
 node_modules
 .parcel-cache
 .idea
+.env
 dev
 docs
 package-lock.json

@@ -289,24 +289,6 @@
   padding: 2px;
 }
 
-#container-v #refrain1 {
-  position: absolute;
-  left: 15%;
-  top: 15%;
-}
-
-#container-v #refrain2 {
-  position: absolute;
-  right: 15%;
-  top: 15%;
-}
-
-#container-v #refrain3 {
-  position: absolute;
-  left: 40%;
-  top: 15%;
-}
-
 #player {
   display: flex;
   flex-direction: column;
