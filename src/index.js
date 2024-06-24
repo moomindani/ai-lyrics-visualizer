@@ -236,7 +236,7 @@ player.addListener({
         if (!app.managed) {
             document.querySelector("#control").style.display = "flex";
         }
-        background = createBackground("stars");
+        background = createBackground("future");
         background.draw();
         lastTime = -1;
     },

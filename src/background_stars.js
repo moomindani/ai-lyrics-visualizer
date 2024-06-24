@@ -4,8 +4,6 @@ import {Background} from './background'
 export class BackgroundStars extends Background {
     constructor() {
         super();
-        this.stars = [];
-        // Initialize stars
     }
 
     draw() {
