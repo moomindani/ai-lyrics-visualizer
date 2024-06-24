@@ -11,10 +11,3 @@ export function createBackground(type) {
             throw new Error('Invalid background type');
     }
 }
-
-export function clearBackground() {
-    const background = document.querySelector("#background");
-    while (background.firstChild) {
-        background.removeChild(background.firstChild);
-    }
-}

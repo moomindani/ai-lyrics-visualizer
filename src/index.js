@@ -31,7 +31,7 @@ let word_list_refrain = [];
 let word_list_melody = [];
 let word_list_future = [];
 
-let background;
+let background = null;
 
 window.addEventListener('load', () => {
     const title = document.getElementById('title');
@@ -48,8 +48,14 @@ const searchInput = document.getElementById('searchInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
 
 function loadLyricVideo() {
-    background = createBackground("future");
-    background.draw();
+    if (background === null) {
+        background = createBackground("future");
+        background.draw();
+    } else {
+        // TODO: 曲の選択変更に対応
+        const backgroundEl = document.querySelector("#background");
+        backgroundEl.classList.remove("hidden");
+    }
 
     const music_info = songListMap.get(current_song)
     if (music_info.cachedLlmData) {
@@ -96,7 +102,8 @@ function clearLyricVideo() {
     word_list_refrain = [];
     word_list_melody = [];
     word_list_future = [];
-    clearBackground();
+    const backgroundEl = document.querySelector("#background");
+    backgroundEl.classList.add("hidden");
 }
 
 enbalLyricVideo.addEventListener("change", (e) => {
