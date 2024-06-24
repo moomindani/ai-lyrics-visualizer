@@ -1,6 +1,6 @@
 const {Player} = TextAliveApp;
 import {getAnalyzedList} from './wwllm'
-import {createBackground} from './background_factory'
+import {createBackground, clearBackground} from './background_factory'
 import {songListMap} from './songList.js';
 
 const player = new Player({
@@ -48,6 +48,9 @@ const searchInput = document.getElementById('searchInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
 
 function loadLyricVideo() {
+    background = createBackground("future");
+    background.draw();
+
     const music_info = songListMap.get(current_song)
     if (music_info.cachedLlmData) {
         if (music_info.cachedLlmData.refrainedPhrase) {
@@ -93,6 +96,7 @@ function clearLyricVideo() {
     word_list_refrain = [];
     word_list_melody = [];
     word_list_future = [];
+    clearBackground();
 }
 
 enbalLyricVideo.addEventListener("change", (e) => {
@@ -236,8 +240,6 @@ player.addListener({
         if (!app.managed) {
             document.querySelector("#control").style.display = "flex";
         }
-        background = createBackground("future");
-        background.draw();
         lastTime = -1;
     },
 
