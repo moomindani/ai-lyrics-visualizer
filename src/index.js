@@ -1,6 +1,6 @@
 const {Player} = TextAliveApp;
 import {getAnalyzedList} from './wwllm'
-import {createBackground, clearBackground} from './background_factory'
+import {createBackground} from './background_factory'
 import {songListMap} from './songList.js';
 
 const player = new Player({
@@ -15,16 +15,19 @@ const playBtn = document.querySelector("#play");
 const jumpBtn = document.querySelector("#jump");
 const pauseBtn = document.querySelector("#pause");
 const rewindBtn = document.querySelector("#rewind");
-const positionEl = document.querySelector("#position strong");
 
-const beatbarEl = document.querySelector("#beatbar");
 const seekbar = document.querySelector("#seekbar");
 const paintedSeekbar = seekbar.querySelector("div");
+
 let newPhrase = false;
 let lastTime = -1;
 let lastCharIndexInPhrase = -1;
+let segments = [];
+let currentSegment = -1;
+
 let max_vocal = 0, min_vocal = 100000000;
 let current_song = null;
+
 let refrain_status = 0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
 let word_list_refrain = [];
@@ -277,8 +280,28 @@ player.addListener({
 
         console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text);
         console.log("player.data.lyricsBody.text:" + player.data.lyricsBody.text);
-        console.log("player.data.songMap.segments:" + player.data.songMap.segments);
-        console.log("player.getChoruses(): " + player.getChoruses());
+
+        // セグメント情報を取得
+        let rawSegments = player.data.songMap.segments;
+        let tmpSegments = [];
+        for (let i = 0; i < rawSegments.length; i++) {
+            if (rawSegments[i].chorus) {
+                Array.from(rawSegments[i].segments, (z) => {
+                    z.chorus = true;
+                    z.section = i;
+                    tmpSegments.push(z);
+                })
+            } else {
+                Array.from(rawSegments[i].segments, (z) => {
+                    z.chorus = false;
+                    z.section = i;
+                    tmpSegments.push(z);
+                })
+            }
+        }
+        segments = tmpSegments.sort(function (a, b) {
+            return (a.startTime < b.startTime) ? -1 : 1;
+        });
     },
 
     /* 再生位置の情報が更新されたら呼ばれる */
@@ -305,6 +328,19 @@ player.addListener({
         if (lastTime > position + 1000) {
             resetChars();
         }
+
+        // セグメント上の現在の位置とセクションを算出 (currentSection=1, chorus=true がサビ)
+        let segmentCount = 0;
+        for (let i = 0; i < segments.length; i++) {
+            if (segments[i].startTime < position) {
+                segmentCount++;
+            }
+        }
+        if (currentSegment !== segmentCount) {
+            currentSegment = segmentCount;
+        }
+        let currentSection = segments[segmentCount-1].section;
+        console.log("Current section: " + currentSection + " chorus=" + segments[segmentCount-1].chorus);
 
         const chars = player.video.findCharChange(lastTime + 200, position + 200);
         for (const c of chars.entered) {
