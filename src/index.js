@@ -24,6 +24,7 @@ let lastTime = -1;
 let lastCharIndexInPhrase = -1;
 let segments = [];
 let currentSegment = -1;
+let lastIsChorus = false;
 
 let max_vocal = 0, min_vocal = 100000000;
 let current_song = null;
@@ -339,12 +340,19 @@ player.addListener({
         if (currentSegment !== segmentCount) {
             currentSegment = segmentCount;
         }
-        let currentSection = segments[segmentCount - 1].section;
-        let isChorus = segments[segmentCount - 1].chorus;
+        let currentSection = segments[currentSegment - 1].section;
+        let isChorus = segments[currentSegment - 1].chorus;
         console.log("Current section: " + currentSection + " chorus=" + isChorus);
         if (background !== null) {
             background.setChorus(isChorus);
+
+            // サビの終了
+            if(lastIsChorus && !isChorus) {
+                console.log("Chorus end")
+                background.postChorusAnimation();
+            }
         }
+        lastIsChorus = isChorus;
 
         // 新しいビートを検出
         const beats = player.findBeatChange(lastTime, position);
@@ -368,6 +376,20 @@ player.addListener({
         for (const c of chars.entered) {
             // 新しい文字が発声されようとしている
             newChar(c);
+        }
+
+        // 2000ミリ秒後がサビならサビ前演出
+        let segmentLaterCount = 0;
+        for (let i = 0; i < segments.length; i++) {
+            if (segments[i].startTime < position + 2000) {
+                segmentLaterCount++;
+            }
+        }
+        if(segments[segmentLaterCount-1].chorus) {
+            console.log("!!!Chorus coming soon!!!")
+            if (background !== null) {
+                background.preChorusAnimation();
+            }
         }
 
         // 次回呼ばれるときのために再生時刻を保存しておく
@@ -540,9 +562,11 @@ function newChar(current) {
             phraseEl.appendChild(spacerEl);
         }
     }
-    // Phrase の最後の文字が出力されたら少し待ってフェードアウト開始
+    // Phrase の最後の文字が出力されたとき
     if (current.parent.parent.lastChar === current) {
         console.log("lastChar in the phrase");
+
+        // 少し待ってフェードアウト開始
         phraseEl.style.animation = "fadeout 2s 1s ease-in forwards";
     }
 }

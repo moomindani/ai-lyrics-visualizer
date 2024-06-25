@@ -7,14 +7,20 @@ export class BackgroundFuture extends Background {
 
     constructor() {
         super();
-        this.scene;
-        this.camera;
-        this.renderer;
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.particles;
-        this.lightBeams;
+        this.lightBeams = new THREE.Group();
+        this.flares = new THREE.Group();
         this.particleCount = 500;
         this.beamCount = 20;
+        this.maxFlares = 50;
         this.frame = 0;
+
+        const textureLoader = new THREE.TextureLoader();
+        this.textureFlare = textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png');
     }
 
     draw() {
@@ -25,12 +31,7 @@ export class BackgroundFuture extends Background {
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         });
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.camera.position.z = 50;
-
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         const background = document.querySelector("#background");
         background.appendChild(this.renderer.domElement);
@@ -98,8 +99,6 @@ export class BackgroundFuture extends Background {
     }
 
     createLightBeams() {
-        this.lightBeams = new THREE.Group();
-
         for (let i = 0; i < this.beamCount; i++) {
             const beam = this.createLightBeam();
             this.lightBeams.add(beam);
@@ -132,12 +131,77 @@ export class BackgroundFuture extends Background {
         return beam;
     }
 
+    createFlares() {
+        // 初期フレアの作成
+        for (let i = 0; i < this.maxFlares; i++) {
+            const flare = this.createFlare(this.textureFlare);
+            this.flares.add(flare);
+        }
+        this.scene.add(this.flares);
+    }
+
+    createFlare(texture) {
+        // シェーダーマテリアルの作成
+        const material = new THREE.ShaderMaterial({
+            uniforms: {
+                map: {value: texture},
+                color: {value: new THREE.Color(1, 1, 0.8)}, // 黄白色
+                opacity: {value: 0}
+            },
+            vertexShader: `
+                    varying vec2 vUv;
+                    void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+            fragmentShader: `
+                    uniform sampler2D map;
+                    uniform vec3 color;
+                    uniform float opacity;
+                    varying vec2 vUv;
+                    void main() {
+                        vec4 texColor = texture2D(map, vUv);
+                        float brightness = (texColor.r + texColor.g + texColor.b) / 3.0;
+                        gl_FragColor = vec4(color, 1.0) * vec4(brightness, brightness, brightness, brightness * opacity);
+                    }
+                `,
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        });
+
+        const flare = new THREE.Sprite(material);
+
+        // ランダムな位置の設定
+        flare.position.set(
+            (Math.random() - 0.5) * 20,
+            (Math.random() - 0.5) * 20,
+            Math.random() * 10 + 30
+        );
+
+        // フレアのサイズを画面の1/5程度に設定
+        const screenSize = Math.min(window.innerWidth, window.innerHeight);
+        const flareSize = screenSize / 5 * (Math.random() * 0.5 + 0.75);
+        flare.scale.set(flareSize / 100, flareSize / 100, 1);
+
+        // アニメーションのための追加プロパティ
+        flare.userData = {
+            maxOpacity: Math.random() * 0.5 + 0.5,
+            fadeInSpeed: (Math.random() * 0.05 + 0.02) * 10,
+            fadeOutSpeed: (Math.random() * 0.03 + 0.01) * 10,
+            state: 'fadeIn'
+        };
+
+        return flare;
+    }
+
     animate = () => {
         requestAnimationFrame(this.animate);
         this.frame++;
         if (this.isAnimating) {
             this.animateParticles();
             this.animateLightBeams();
+            this.animateFlares();
 
             // カメラの揺れ（疾走感の強調）
             // this.camera.position.x = Math.sin(this.frame * 0.02) * 2;
@@ -199,6 +263,18 @@ export class BackgroundFuture extends Background {
         }
     }
 
+    preChorusAnimation() {
+        console.log('Animating before chorus');
+        if (this.isAnimating) {
+            this.createFlares();
+        }
+    }
+
+    postChorusAnimation() {
+        console.log('Animating after chorus');
+        this.removeAllFlares();
+    }
+
     animateLightBeams() {
         // 削除する光線を格納する配列
         const beamsToRemove = [];
@@ -232,5 +308,50 @@ export class BackgroundFuture extends Background {
         // メモリリークを防ぐためにジオメトリとマテリアルを破棄
         beam.geometry.dispose();
         beam.material.dispose();
+    }
+
+    animateFlares() {
+        // フレアのアニメーション
+        this.flares.children.forEach((flare, index) => {
+            if (flare.userData.state === 'fadeIn') {
+                flare.material.uniforms.opacity.value += flare.userData.fadeInSpeed;
+                if (flare.material.uniforms.opacity.value >= flare.userData.maxOpacity) {
+                    flare.userData.state = 'fadeOut';
+                }
+            } else { // fadeOut
+                flare.material.uniforms.opacity.value -= flare.userData.fadeOutSpeed;
+                if (flare.material.uniforms.opacity.value <= 0) {
+                    this.flares.remove(flare);
+
+                    // サビ中でなければ再利用
+                    if (!this.isChorus) {
+                        const newFlare = this.createFlare(flare.material.uniforms.map.value);
+                        this.flares.add(newFlare);
+                    }
+                }
+            }
+        });
+    }
+
+    removeAllFlares() {
+        // フレアを徐々にフェードアウトさせる
+        this.flares.children.forEach((flare) => {
+            flare.userData.state = 'fadeOut';
+            flare.userData.fadeOutSpeed *= 2; // フェードアウトを速める
+        });
+
+        // 完全に透明になったフレアを削除
+        this.flares.children = this.flares.children.filter((flare) => {
+            if (flare.material.uniforms.opacity.value <= 0) {
+                flare.material.dispose();
+                return false; // このフレアを削除
+            }
+            return true; // このフレアを保持
+        });
+
+        // すべてのフレアが消えたら、flares グループを空にする
+        if (this.flares.children.length === 0) {
+            this.flares.clear();
+        }
     }
 }

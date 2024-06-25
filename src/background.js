@@ -23,4 +23,13 @@ export class Background {
     beatAnimation() {
         throw new Error('beatAnimation method must be implemented by child classes');
     }
+
+    preChorusAnimation() {
+        throw new Error('preChorusAnimation method must be implemented by child classes');
+    }
+
+    postChorusAnimation() {
+        throw new Error('postChorusAnimation method must be implemented by child classes');
+    }
+
 }
