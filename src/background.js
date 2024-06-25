@@ -4,6 +4,7 @@ export class Background {
             throw new Error("Abstract classes can't be instantiated.");
         }
         this.isAnimating = true;
+        this.isChorus = false;
     }
 
     draw() {
@@ -13,5 +14,13 @@ export class Background {
 
     toggleAnimation() {
         this.isAnimating = !this.isAnimating;
+    }
+
+    setChorus(isChorus){
+        this.isChorus = isChorus;
+    }
+
+    beatAnimation() {
+        throw new Error('beatAnimation method must be implemented by child classes');
     }
 }

@@ -101,27 +101,35 @@ export class BackgroundFuture extends Background {
         this.lightBeams = new THREE.Group();
 
         for (let i = 0; i < this.beamCount; i++) {
-            const geometry = new THREE.CylinderGeometry(0.1, 0.1, 100, 32);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x00ffff,
-                transparent: true,
-                opacity: 0.3
-            });
-            const beam = new THREE.Mesh(geometry, material);
-
-            beam.position.set(
-                (Math.random() - 0.5) * 100,
-                (Math.random() - 0.5) * 100,
-                Math.random() * 100
-            );
-
-            // ビームを z 軸に沿って配置
-            beam.rotation.x = Math.PI / 2;
-
+            const beam = this.createLightBeam();
             this.lightBeams.add(beam);
         }
 
         this.scene.add(this.lightBeams);
+    }
+
+    createLightBeam() {
+        const geometry = new THREE.CylinderGeometry(0.1, 0.1, 100, 32);
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x00ffff,
+            transparent: true,
+            opacity: 0.3
+        });
+        const beam = new THREE.Mesh(geometry, material);
+
+        beam.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100,
+            Math.random() * 100
+        );
+
+        // ビームを z 軸に沿って配置
+        beam.rotation.x = Math.PI / 2;
+
+        // ビームの生存期間を設定
+        beam.userData.lifetime = 100;
+
+        return beam;
     }
 
     animate = () => {
@@ -132,8 +140,8 @@ export class BackgroundFuture extends Background {
             this.animateLightBeams();
 
             // カメラの揺れ（疾走感の強調）
-            this.camera.position.x = Math.sin(this.frame * 0.02) * 2;
-            this.camera.position.y = Math.cos(this.frame * 0.02) * 2;
+            // this.camera.position.x = Math.sin(this.frame * 0.02) * 2;
+            // this.camera.position.y = Math.cos(this.frame * 0.02) * 2;
         }
 
         this.renderer.render(this.scene, this.camera);
@@ -165,22 +173,64 @@ export class BackgroundFuture extends Background {
         this.particles.geometry.attributes.color.needsUpdate = true;
     }
 
+    beatAnimation() {
+        console.log('Animating with beats');
+        if (this.isAnimating) {
+            // ビームを追加
+            let beamPlus = 2;
+
+            // サビならものすごく追加
+            if (this.isChorus) {
+                beamPlus = 100;
+            }
+            this.beamCount += beamPlus;
+            for (let i = 0; i < beamPlus; i++) {
+                const beam = this.createLightBeam();
+                this.lightBeams.add(beam);
+            }
+
+            console.log("Beam count:" + this.lightBeams.children.length);
+
+            // ビームの不透明度を変化させる
+            this.lightBeams.children.forEach((beam, index) => {
+                beam.material.opacity = 0.3 + 0.2 * Math.sin(this.frame * 0.05 + index);
+            });
+            this.renderer.render(this.scene, this.camera);
+        }
+    }
+
     animateLightBeams() {
+        // 削除する光線を格納する配列
+        const beamsToRemove = [];
+
         this.lightBeams.children.forEach((beam, index) => {
             // ビームの移動（パーティクルと同じ方向）
             beam.position.z -= 0.3;
 
-            // 画面外に出たビームを再配置
+            // 画面外に出たビームを削除
             if (beam.position.z < -50) {
-                beam.position.set(
-                    (Math.random() - 0.5) * 100,
-                    (Math.random() - 0.5) * 100,
-                    50
-                );
+                beamsToRemove.push(beam);
             }
 
-            // ビームの不透明度を変化させる
-            beam.material.opacity = 0.3 + 0.2 * Math.sin(this.frame * 0.05 + index);
+            if (beam.userData.lifetime !== undefined) {
+                beam.userData.lifetime -= 1;
+                if (beam.userData.lifetime <= 0) {
+                    beamsToRemove.push(beam);
+                }
+            }
         });
+
+        // マークされた光線を削除
+        beamsToRemove.forEach(beam => {
+            this.removeLightBeam(beam);
+        });
+    }
+
+    // 特定の光線を削除するメソッド
+    removeLightBeam(beam) {
+        this.lightBeams.remove(beam);
+        // メモリリークを防ぐためにジオメトリとマテリアルを破棄
+        beam.geometry.dispose();
+        beam.material.dispose();
     }
 }

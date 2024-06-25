@@ -339,8 +339,30 @@ player.addListener({
         if (currentSegment !== segmentCount) {
             currentSegment = segmentCount;
         }
-        let currentSection = segments[segmentCount-1].section;
-        console.log("Current section: " + currentSection + " chorus=" + segments[segmentCount-1].chorus);
+        let currentSection = segments[segmentCount - 1].section;
+        let isChorus = segments[segmentCount - 1].chorus;
+        console.log("Current section: " + currentSection + " chorus=" + isChorus);
+        if (background !== null) {
+            background.setChorus(isChorus);
+        }
+
+        // 新しいビートを検出
+        const beats = player.findBeatChange(lastTime, position);
+        if (
+            lastTime >= 0 &&
+            // ↑初期化された直後はビート検出しない
+            beats.entered.length > 0
+            // ↑二拍ごとにしたければ
+            //   && beats.entered.find((b) => b.position % 2 === 1)
+            // のような条件を足してチェックすればよい
+        ) {
+            // ビート同期のアニメーションを発火させる
+            requestAnimationFrame(() => {
+                if (background !== null) {
+                    background.beatAnimation();
+                }
+            });
+        }
 
         const chars = player.video.findCharChange(lastTime + 200, position + 200);
         for (const c of chars.entered) {
