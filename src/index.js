@@ -52,6 +52,7 @@ const searchInput = document.getElementById('searchInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
 
 function loadLyricVideo() {
+    // 背景
     if (background === null) {
         background = createBackground("future");
         background.draw();
@@ -61,6 +62,16 @@ function loadLyricVideo() {
         backgroundEl.classList.remove("hidden");
     }
 
+    // フォント
+    // const fontFamily = "'Noto Serif JP', serif";
+    // const fontFamily = "'Noto Sans JP', sans-serif";
+    const fontFamily = "'Murecho', sans-serif";
+    let containerEl = document.querySelector("#container")
+    containerEl.style.fontFamily = fontFamily;
+    let containerVEl = document.querySelector("#container-v");
+    containerVEl.style.fontFamily = fontFamily;
+
+    // リフレイン、メロディ、未来
     const music_info = songListMap.get(current_song)
     if (music_info.cachedLlmData) {
         if (music_info.cachedLlmData.refrainedPhrase) {
