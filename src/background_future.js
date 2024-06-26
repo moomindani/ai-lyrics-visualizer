@@ -24,6 +24,8 @@ export class BackgroundFuture extends Background {
         this.particleCount = 500;
         this.beamCount = 20;
         this.maxFlares = 50;
+        this.textParticleLifetime = 5000;
+
         this.frame = 0;
         this.startTime = DATETIME_NOT_SET;
         const textureLoader = new THREE.TextureLoader();
@@ -45,7 +47,6 @@ export class BackgroundFuture extends Background {
         this.createBackground();
         this.createParticles();
         this.createLightBeams();
-
         this.animate();
     }
 
@@ -268,6 +269,58 @@ export class BackgroundFuture extends Background {
         return flare;
     }
 
+
+    drawText(text) {
+        const textCanvas = document.createElement('canvas');
+        const textContext = textCanvas.getContext('2d');
+        textCanvas.width = window.innerWidth;
+        textCanvas.height = window.innerHeight;
+
+        textContext.fillStyle = 'black';
+        textContext.fillRect(0, 0, textCanvas.width, textCanvas.height);
+
+        textContext.font = 'bold 600px "Murecho", sans-serif';
+        textContext.textAlign = 'center';
+        textContext.textBaseline = 'middle';
+        textContext.fillStyle = 'white';
+        textContext.fillText(text, textCanvas.width / 2, textCanvas.height / 2);
+
+        const imageData = textContext.getImageData(0, 0, textCanvas.width, textCanvas.height);
+        const particles = [];
+
+        for (let y = 0; y < textCanvas.height; y += 5) {
+            for (let x = 0; x < textCanvas.width; x += 5) {
+                if (imageData.data[(y * textCanvas.width + x) * 4] > 128) {
+                    const particle = new THREE.Vector3(
+                        (x - textCanvas.width / 2) / 50,
+                        (textCanvas.height / 2 - y) / 50,
+                        0
+                    );
+                    particles.push(particle.x, particle.y, particle.z);
+                }
+            }
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(particles, 3));
+
+        const material = new THREE.PointsMaterial({
+            color: 0x00ffff,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.7,
+            blending: THREE.AdditiveBlending
+        });
+
+
+        this.textParticleSystem = new THREE.Points(geometry, material);
+        this.textParticleSystem.position.z = 30;  // パーティクルシステムをカメラに近づける
+        this.scene.add(this.textParticleSystem);
+
+        // フェードアウト開始時間を設定
+        this.textFadeOutStartTime = Date.now() + 3000; // 3秒後
+    }
+
     animate = () => {
         requestAnimationFrame(this.animate);
         this.frame++;
@@ -276,13 +329,14 @@ export class BackgroundFuture extends Background {
             this.animateLightBeams();
             this.animateFlares();
 
+            let elapsedTime = 0;
+            if (this.startTime !== DATETIME_NOT_SET) {
+                elapsedTime = Date.now() - this.startTime;
+            }
             if (this.isPreChorus) {
-                let elapsedTime = 0;
-                if (this.startTime !== DATETIME_NOT_SET) {
-                    elapsedTime = Date.now() - this.startTime;
-                }
                 this.updateBackground(this.frame * 0.01, elapsedTime);
             }
+            this.animateText(elapsedTime);
 
             // カメラの揺れ（疾走感の強調）
             // this.camera.position.x = Math.sin(this.frame * 0.02) * 2;
@@ -418,6 +472,40 @@ export class BackgroundFuture extends Background {
         });
     }
 
+    animateText(elapsedTime) {
+        // パーティクルテキストのアニメーション
+        if (this.textParticleSystem) {
+            const positions = this.textParticleSystem.geometry.attributes.position.array;
+
+            for (let i = 0; i < positions.length; i += 3) {
+                // 位置の更新
+                positions[i] += Math.sin(elapsedTime * 0.001 + i) * 0.001;
+                positions[i + 1] += Math.cos(elapsedTime * 0.002 + i) * 0.001;
+                positions[i + 2] = Math.sin(elapsedTime * 0.001 + i) * 0.1;
+            }
+            this.textParticleSystem.geometry.attributes.position.needsUpdate = true;
+
+            this.textParticleSystem.rotation.y = Math.sin(elapsedTime * 0.0005) * 0.1;
+
+            // フェードアウト処理
+            const currentTime = Date.now();
+            if (currentTime > this.textFadeOutStartTime) {
+                const fadeOutDuration = 1000; // 1秒かけてフェードアウト
+                const fadeOutProgress = (currentTime - this.textFadeOutStartTime) / fadeOutDuration;
+                if (fadeOutProgress >= 1) {
+                    // フェードアウト完了後、パーティクルシステムを削除
+                    this.scene.remove(this.textParticleSystem);
+                    this.textParticleSystem.geometry.dispose();
+                    this.textParticleSystem.material.dispose();
+                    this.textParticleSystem = null;
+                } else {
+                    // フェードアウト中
+                    this.textParticleSystem.material.opacity = 0.7 * (1 - fadeOutProgress);
+                }
+            }
+        }
+    }
+
     removeAllFlares() {
         // フレアを徐々にフェードアウトさせる
         this.flares.children.forEach((flare) => {
@@ -466,5 +554,13 @@ export class BackgroundFuture extends Background {
             elapsedTime = Date.now() - this.startTime;
         }
         this.updateBackground(this.frame * 0.01, elapsedTime);
+
+        // テキストパーティクルシステムのサイズを再計算
+        if (this.textParticleSystem) {
+            const scale = Math.min(1.5, this.camera.aspect);  // スケールを大きく
+            this.textParticleSystem.scale.set(scale, scale, 1);
+            this.textParticleSystem.position.z = 30 * scale;
+        }
+
     }
 }

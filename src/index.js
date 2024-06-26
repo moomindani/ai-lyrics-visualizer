@@ -565,6 +565,10 @@ function newChar(current) {
                 futureEl.classList.add("future");
                 currentEl.appendChild(futureEl);
                 console.log("currentEl.innerHTML:" + currentEl.innerHTML);
+
+                if (background !== null) {
+                    background.drawText(element);
+                }
             } else if (phrase_before.endsWith(element)) {
                 console.log("future end:" + element);
             }

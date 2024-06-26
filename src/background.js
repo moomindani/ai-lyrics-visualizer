@@ -37,4 +37,7 @@ export class Background {
         throw new Error('postChorusAnimation method must be implemented by child classes');
     }
 
+    drawText() {
+        throw new Error('drawText method must be implemented by child classes');
+    }
 }
