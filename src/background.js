@@ -5,6 +5,7 @@ export class Background {
         }
         this.isAnimating = true;
         this.isChorus = false;
+        this.isPreChorus = false;
     }
 
     draw() {
@@ -18,6 +19,10 @@ export class Background {
 
     setChorus(isChorus){
         this.isChorus = isChorus;
+    }
+
+    setPreChorus(isPreChorus){
+        this.isPreChorus = isPreChorus;
     }
 
     beatAnimation() {

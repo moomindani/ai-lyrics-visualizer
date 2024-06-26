@@ -345,6 +345,9 @@ player.addListener({
         console.log("Current section: " + currentSection + " chorus=" + isChorus);
         if (background !== null) {
             background.setChorus(isChorus);
+            if(isChorus) {
+                background.setPreChorus(false);
+            }
 
             // サビの終了
             if(lastIsChorus && !isChorus) {
@@ -389,6 +392,11 @@ player.addListener({
             console.log("!!!Chorus coming soon!!!")
             if (background !== null) {
                 background.preChorusAnimation();
+                background.setPreChorus(true);
+            }
+        } else {
+            if (background !== null) {
+                background.setPreChorus(false);
             }
         }
 

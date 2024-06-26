@@ -1,6 +1,7 @@
 import {Background} from './background'
 import * as THREE from 'three';
 
+const DATETIME_NOT_SET = -1;
 
 // BackgroundFuture class
 export class BackgroundFuture extends Background {
@@ -11,6 +12,12 @@ export class BackgroundFuture extends Background {
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.backgroundCanvas;
+        this.backgroundContext;
+        this.backgroundMesh;
+        this.staticBackgroundCanvas;
+        this.staticBackgroundContext;
+
         this.particles;
         this.lightBeams = new THREE.Group();
         this.flares = new THREE.Group();
@@ -18,7 +25,7 @@ export class BackgroundFuture extends Background {
         this.beamCount = 20;
         this.maxFlares = 50;
         this.frame = 0;
-
+        this.startTime = DATETIME_NOT_SET;
         const textureLoader = new THREE.TextureLoader();
         this.textureFlare = textureLoader.load('https://threejs.org/examples/textures/lensflare/lensflare0.png');
     }
@@ -27,9 +34,7 @@ export class BackgroundFuture extends Background {
         // Implementation for drawing future background
         console.log('Drawing future background');
         window.addEventListener('resize', () => {
-            this.camera.aspect = window.innerWidth / window.innerHeight;
-            this.camera.updateProjectionMatrix();
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.onWindowResize()
         });
         this.camera.position.z = 50;
 
@@ -40,24 +45,92 @@ export class BackgroundFuture extends Background {
         this.createBackground();
         this.createParticles();
         this.createLightBeams();
+
         this.animate();
     }
 
     createBackground() {
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = 1;
-        canvas.height = 256;
+        this.backgroundCanvas = document.createElement('canvas');
+        this.backgroundCanvas.width = window.innerWidth;
+        this.backgroundCanvas.height = window.innerHeight;
+        this.backgroundContext = this.backgroundCanvas.getContext('2d');
 
-        const gradient = context.createLinearGradient(0, 0, 0, 256);
-        gradient.addColorStop(0, '#0066cc');  // より濃い青
-        gradient.addColorStop(1, '#00aa88');  // より濃いエメラルドグリーン
+        this.staticBackgroundCanvas = document.createElement('canvas');
+        this.staticBackgroundCanvas.width = window.innerWidth;
+        this.staticBackgroundCanvas.height = window.innerHeight;
+        this.staticBackgroundContext = this.staticBackgroundCanvas.getContext('2d');
 
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, 1, 256);
+        this.drawStaticBackground();
 
-        const texture = new THREE.CanvasTexture(canvas);
-        this.scene.background = texture;
+        const texture = new THREE.CanvasTexture(this.backgroundCanvas);
+        const material = new THREE.MeshBasicMaterial({map: texture});
+
+        // 背景メッシュのサイズを調整
+        const aspect = window.innerWidth / window.innerHeight;
+        const distance = this.camera.position.z;
+        const vFov = this.camera.fov * Math.PI / 180;
+        const planeHeight = 2 * Math.tan(vFov / 2) * distance;
+        const planeWidth = planeHeight * aspect;
+
+        this.backgroundMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(planeWidth, planeHeight),
+            material
+        );
+        this.backgroundMesh.position.z = 0;
+        this.scene.add(this.backgroundMesh);
+
+        this.updateBackground(0, 0);
+    }
+
+    drawStaticBackground() {
+        const width = this.staticBackgroundCanvas.width;
+        const height = this.staticBackgroundCanvas.height;
+
+        // 背景のグラデーション（青からエメラルドグリーン）を描画
+        const backgroundGradient = this.staticBackgroundContext.createLinearGradient(0, 0, 0, height);
+        backgroundGradient.addColorStop(0, '#0066cc');  // 濃い青
+        backgroundGradient.addColorStop(1, '#00aa88');  // 濃いエメラルドグリーン
+
+        this.staticBackgroundContext.fillStyle = backgroundGradient;
+        this.staticBackgroundContext.fillRect(0, 0, width, height);
+    }
+
+    updateBackground(time, elapsedTime) {
+        console.log("updateBackground(" + time + ", " + elapsedTime + ")");
+        const width = this.backgroundCanvas.width;
+        const height = this.backgroundCanvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const outerRadius = Math.max(this.backgroundCanvas.width, this.backgroundCanvas.height);
+
+        // 静的な背景を描画
+        this.backgroundContext.drawImage(this.staticBackgroundCanvas, 0, 0);
+
+        if (this.isPreChorus) {
+            // 中央の光るエフェクト
+            let glowOpacity = Math.min(1, elapsedTime / 2000);  // 2秒で 1に到達
+            if (this.isChorus) {
+                glowOpacity = 0;
+            }
+
+            if (glowOpacity > 0) {
+                const glowStrength = (0.5 + 0.5 * Math.sin(time * 0.5)) * glowOpacity;
+                const radialGradient = this.backgroundContext.createRadialGradient(
+                    centerX, centerY, 0,
+                    centerX, centerY, outerRadius
+                );
+                radialGradient.addColorStop(0, `rgba(255, 255, 230, ${glowStrength})`);
+                radialGradient.addColorStop(0.5, `rgba(255, 255, 230, ${0.1 * glowOpacity})`);
+                radialGradient.addColorStop(1, 'rgba(255, 255, 230, 0)');
+
+                this.backgroundContext.globalCompositeOperation = 'lighter';
+                this.backgroundContext.fillStyle = radialGradient;
+                this.backgroundContext.fillRect(0, 0, width, height);
+                this.backgroundContext.globalCompositeOperation = 'source-over';
+            }
+        }
+
+        this.backgroundMesh.material.map.needsUpdate = true;
     }
 
     createParticles() {
@@ -174,7 +247,7 @@ export class BackgroundFuture extends Background {
 
         // ランダムな位置の設定
         flare.position.set(
-            (Math.random() - 0.5) * 20,
+            (Math.random() - 0.5) * 40,
             (Math.random() - 0.5) * 20,
             Math.random() * 10 + 30
         );
@@ -202,6 +275,14 @@ export class BackgroundFuture extends Background {
             this.animateParticles();
             this.animateLightBeams();
             this.animateFlares();
+
+            if (this.isPreChorus) {
+                let elapsedTime = 0;
+                if (this.startTime !== DATETIME_NOT_SET) {
+                    elapsedTime = Date.now() - this.startTime;
+                }
+                this.updateBackground(this.frame * 0.01, elapsedTime);
+            }
 
             // カメラの揺れ（疾走感の強調）
             // this.camera.position.x = Math.sin(this.frame * 0.02) * 2;
@@ -265,6 +346,9 @@ export class BackgroundFuture extends Background {
 
     preChorusAnimation() {
         console.log('Animating before chorus');
+        if (this.startTime === DATETIME_NOT_SET) {
+            this.startTime = Date.now();
+        }
         if (this.isAnimating) {
             this.createFlares();
         }
@@ -272,6 +356,7 @@ export class BackgroundFuture extends Background {
 
     postChorusAnimation() {
         console.log('Animating after chorus');
+        this.startTime = DATETIME_NOT_SET;
         this.removeAllFlares();
     }
 
@@ -353,5 +438,33 @@ export class BackgroundFuture extends Background {
         if (this.flares.children.length === 0) {
             this.flares.clear();
         }
+    }
+
+    onWindowResize() {
+        const aspect = window.innerWidth / window.innerHeight;
+        this.camera.aspect = aspect;
+        this.camera.updateProjectionMatrix();
+
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        this.backgroundCanvas.width = window.innerWidth;
+        this.backgroundCanvas.height = window.innerHeight;
+        this.staticBackgroundCanvas.width = window.innerWidth;
+        this.staticBackgroundCanvas.height = window.innerHeight;
+
+        // 背景メッシュのサイズを再計算
+        const distance = this.camera.position.z;
+        const vFov = this.camera.fov * Math.PI / 180;
+        const planeHeight = 2 * Math.tan(vFov / 2) * distance;
+        const planeWidth = planeHeight * aspect;
+        this.backgroundMesh.geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+
+        this.drawStaticBackground();
+
+        let elapsedTime = 0;
+        if (this.startTime !== DATETIME_NOT_SET) {
+            elapsedTime = Date.now() - this.startTime;
+        }
+        this.updateBackground(this.frame * 0.01, elapsedTime);
     }
 }
