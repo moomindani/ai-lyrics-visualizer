@@ -22,7 +22,7 @@ export class BackgroundFuture extends Background {
         this.particles;
         this.lightBeams = new THREE.Group();
         this.flares = new THREE.Group();
-        this.particleCount = 500;
+        this.particleCount = 1000;
         this.beamCount = 20;
         this.maxFlares = 50;
         this.textParticleLifetime = 5000;
@@ -90,10 +90,10 @@ export class BackgroundFuture extends Background {
         const width = this.staticBackgroundCanvas.width;
         const height = this.staticBackgroundCanvas.height;
 
-        // 背景のグラデーション（青からエメラルドグリーン）を描画
+        // 背景のグラデーションを描画
         const backgroundGradient = this.staticBackgroundContext.createLinearGradient(0, 0, 0, height);
-        backgroundGradient.addColorStop(0, '#0066cc');  // 濃い青
-        backgroundGradient.addColorStop(1, '#00aa88');  // 濃いエメラルドグリーン
+        backgroundGradient.addColorStop(0, this.colorBase);
+        backgroundGradient.addColorStop(1, this.colorMain);
 
         this.staticBackgroundContext.fillStyle = backgroundGradient;
         this.staticBackgroundContext.fillRect(0, 0, width, height);
@@ -286,14 +286,14 @@ export class BackgroundFuture extends Background {
         // 音符の頭部（楕円体）
         const headGeometry = new THREE.SphereGeometry(0.12, 32, 16);
         headGeometry.scale(1, 0.8, 0.5);
-        const headMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const headMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
         const head = new THREE.Mesh(headGeometry, headMaterial);
         head.rotation.x = Math.PI / 4;
         noteGroup.add(head);
 
         // 符幹（縦線）
         const stemGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.67, 8);
-        const stemMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const stemMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
         const stem = new THREE.Mesh(stemGeometry, stemMaterial);
         stem.position.y = -0.335;
         stem.position.x = 0.1;
@@ -306,7 +306,7 @@ export class BackgroundFuture extends Background {
             new THREE.Vector3(0.4, -0.27, 0)
         );
         const flagGeometry = new THREE.TubeGeometry(flagCurve, 20, 0.04, 8, false);
-        const flagMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const flagMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
         const flag = new THREE.Mesh(flagGeometry, flagMaterial);
         noteGroup.add(flag);
 

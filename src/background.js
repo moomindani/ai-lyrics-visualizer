@@ -6,6 +6,18 @@ export class Background {
         this.isAnimating = true;
         this.isChorus = false;
         this.isPreChorus = false;
+        this.colorMain = null;
+        this.colorBase = null;
+        this.colorAccent = null;
+    }
+
+    setColors(colorMain, colorBase, colorAccent) {
+        this.colorMain = colorMain;
+        this.colorBase = colorBase;
+        this.colorAccent = colorAccent;
+        console.log("Configured main color: " + colorMain);
+        console.log("Configured base color: " + colorBase);
+        console.log("Configured accent color: " + colorAccent);
     }
 
     draw() {
@@ -41,7 +53,7 @@ export class Background {
         throw new Error('postChorusAnimation method must be implemented by child classes');
     }
 
-    drawText() {
+    drawText(text) {
         throw new Error('drawText method must be implemented by child classes');
     }
 
