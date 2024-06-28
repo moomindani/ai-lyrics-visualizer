@@ -248,7 +248,6 @@ body, html {
   position: absolute;
   right: -120px;
   bottom: -100px;
-  border: 3px solid #e12885;
   width: 300px;
   height: 300px;
   border-radius: 300%;
@@ -259,7 +258,6 @@ body, html {
   position: absolute;
   right: -120px;
   bottom: -100px;
-  border: 3px solid #86cecb;
   width: 300px;
   height: 300px;
   border-radius: 300%;

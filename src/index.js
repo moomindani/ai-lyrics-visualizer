@@ -36,6 +36,11 @@ let word_list_melody = [];
 let word_list_future = [];
 let word_list_key = [];
 
+let color_main = null;
+let color_base = null;
+let color_accent = null;
+
+
 let background = null;
 
 window.addEventListener('load', () => {
@@ -56,25 +61,36 @@ function loadLyricVideo() {
     // 背景
     if (background === null) {
         background = createBackground("future");
-        background.draw();
     } else {
         // TODO: 曲の選択変更に対応
         const backgroundEl = document.querySelector("#background");
         backgroundEl.classList.remove("hidden");
     }
 
-    // フォント
-    // const fontFamily = "'Noto Serif JP', serif";
-    // const fontFamily = "'Noto Sans JP', sans-serif";
-    const fontFamily = "'Murecho', sans-serif";
-    let containerEl = document.querySelector("#container")
-    containerEl.style.fontFamily = fontFamily;
-    let containerVEl = document.querySelector("#container-v");
-    containerVEl.style.fontFamily = fontFamily;
-
-    // リフレイン、メロディ、未来
     const music_info = songListMap.get(current_song)
     if (music_info.cachedLlmData) {
+        // フォント
+        // const fontFamily = "'Noto Serif JP', serif";
+        // const fontFamily = "'Noto Sans JP', sans-serif";
+        const fontFamily = "'Murecho', sans-serif";
+        let containerEl = document.querySelector("#container")
+        containerEl.style.fontFamily = fontFamily;
+        let containerVEl = document.querySelector("#container-v");
+        containerVEl.style.fontFamily = fontFamily;
+
+        // カラーコード
+        if (music_info.cachedLlmData.mainColor) {
+            color_main = music_info.cachedLlmData.mainColor;
+        }
+        if (music_info.cachedLlmData.baseColor) {
+            color_base = music_info.cachedLlmData.baseColor;
+        }
+        if (music_info.cachedLlmData.accentColor) {
+            color_accent = music_info.cachedLlmData.accentColor;
+        }
+        background.setColors(color_main, color_base, color_accent);
+
+        // リフレイン
         if (music_info.cachedLlmData.refrainedPhrase) {
             let analyzedEl = document.createElement("div");
             analyzedEl.innerHTML += music_info.cachedLlmData.refrainedPhrase;
@@ -87,6 +103,8 @@ function loadLyricVideo() {
             word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
             console.log("word_list_refrain:" + word_list_refrain);
         }
+
+        // メロディ
         if (music_info.cachedLlmData.melody) {
             let analyzedEl = document.createElement("div");
             analyzedEl.innerHTML += music_info.cachedLlmData.melody;
@@ -99,6 +117,8 @@ function loadLyricVideo() {
             word_list_melody = Array.from(new Set(tmp_list)); // remove duplicates
             console.log("word_list_melody:" + word_list_melody);
         }
+
+        // 未来
         if (music_info.cachedLlmData.future) {
             let analyzedEl = document.createElement("div");
             analyzedEl.innerHTML += music_info.cachedLlmData.future;
@@ -111,6 +131,8 @@ function loadLyricVideo() {
             word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
             console.log("word_list_future:" + word_list_future);
         }
+
+        // キーフレーズ
         if (music_info.cachedLlmData.keyPhrase) {
             let analyzedEl = document.createElement("div");
             analyzedEl.innerHTML += music_info.cachedLlmData.keyPhrase;
@@ -124,9 +146,12 @@ function loadLyricVideo() {
             console.log("word_list_key:" + word_list_key);
         }
 
-        // Refrain と KeyPhrase だったら KeyPhrase を優先
+        // リフレインとキーフレーズだったらキーフレーズを優先
         word_list_refrain = word_list_refrain.filter(word => !word_list_key.includes(word));
     }
+
+    // 背景を描画
+    background.draw();
 }
 
 function clearLyricVideo() {
@@ -596,6 +621,7 @@ function newChar(current) {
                 console.log("melody start:" + element);
                 let melodyEl = document.createElement("div");
                 melodyEl.classList.add("melody");
+                melodyEl.style.border = '3px solid ' + color_accent;
                 currentEl.appendChild(melodyEl);
                 console.log("currentEl.innerHTML:" + currentEl.innerHTML);
 
@@ -613,6 +639,7 @@ function newChar(current) {
                 console.log("future start:" + element);
                 let futureEl = document.createElement("div");
                 futureEl.classList.add("future");
+                futureEl.style.border = '3px solid ' + color_main;
                 currentEl.appendChild(futureEl);
                 console.log("currentEl.innerHTML:" + currentEl.innerHTML);
 

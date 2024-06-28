@@ -34,8 +34,8 @@ const songList = [
         <melody>音</melody>
         <melody>セカイ</melody>
         <melody>音</melody>
-      `,
-      future : `<future>ミライ</future>
+        `,
+        future : `<future>ミライ</future>
         <future>ミライ</future>
         <future>ミライ</future>
         <future>セカイ</future>
@@ -43,7 +43,10 @@ const songList = [
         <future>セカイ</future>
         <future>セカイ</future>
         <future>セカイ</future>
-        <future>セカイ</future>`
+        <future>セカイ</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`
       },
     },
     {
@@ -76,7 +79,10 @@ const songList = [
         <future>ミライ</future>
         <future>光</future>
         <future>ミライ</future>
-        <future>光</future>`
+        <future>光</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`
        },
     },
     {
@@ -117,7 +123,10 @@ const songList = [
         <future>芽吹いて</future>
         <future>光</future>
         <future>未</future>
-        <future>未来</future>`
+        <future>未来</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`
       }
     },
     {
@@ -172,6 +181,9 @@ const songList = [
         <future>Beautiful sky</future>
         <future>未来</future>
         <future>未来</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`,
         keyPhrase : `<key>“SUPERHERO”</key>`
       }
     },
@@ -213,7 +225,10 @@ const songList = [
         <future>未来</future>
         <future>光</future>
         <future>未来</future>
-        <future>未来</future>`
+        <future>未来</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`
       }
     },
     {
@@ -238,7 +253,10 @@ const songList = [
         <melody>感情</melody>
         <melody>歌</melody>`,
         future : `<future>ミライ</future>
-        <future>光</future>`
+        <future>光</future>`,
+        mainColor: `#00aa88`,
+        baseColor: `#0066cc`,
+        accentColor: `#e12885`
       }
     },
   ];
