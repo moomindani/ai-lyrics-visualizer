@@ -40,12 +40,6 @@
       <div id="player">
         <div id="meta">
           <div id="info">
-            <div id="artist">
-              <strong>artist:</strong> <span>-</span>
-            </div>
-            <div id="song">
-              <strong>song:</strong> <span>-</span>
-            </div>
           </div>
           <div id="search-select">
             <select id="songSelect">
@@ -70,20 +64,18 @@
             </label>
             <span class="toggle-text">AI演出</span>
           </div>
+          <div id="info">
+            <div id="artist">
+              <strong>artist:</strong> <span>-</span>
+            </div>
+            <div id="song">
+              <strong>song:</strong> <span>-</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <script type="module" src="./wwllm.ts"></script>
-    <label id="init-label"> </label>
-
-    <h3>Prompt</h3>
-    <label id="prompt-label"> </label>
-
-    <h3>Response</h3>
-    <label id="generate-label"> </label>
-    <br />
-    <label id="stats-label"> </label>
-
     <script type="module" src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script type="module" src="https://unpkg.com/textalive-app-api/dist/index.js"></script>
     <script type="module" src="./index.js"></script>
