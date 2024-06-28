@@ -493,10 +493,10 @@ function resetChars() {
 }
 
 function startLLM() {
-    const prompt_refrain = "Can you analyze this lyrics marked in lyrics tag, and retrieve all occurrences of refrained phrases from there?" +
-        "For example, \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
-        "For another example, \"セカイ　セカイ　セカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
-        "If there are multiple identical results, please group them together." +
+    const prompt_refrain = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
+        "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
+        "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
+        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
         "Please just response <melody> tags of extract result, do not include other info" +
         "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
     getAnalyzedList(prompt_refrain).then(reply => {
