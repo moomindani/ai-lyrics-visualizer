@@ -128,9 +128,10 @@ function getSongInfo(url) {
     if (songListMap.has(url).cachedLlmData) {
         return songListMap.get(url).cachedLlmData;
     }
+    // TODO: tmpTestResの定義からsaveLLMAnalysisToLocalStorageの呼び出しまでは本来は不要
     // cache from local storage
     // follwing is the exsample of usage
-    tmpTestRes =  {
+    let tmpTestRes =  {
         refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
         <refrain>何十回も</refrain><refrain>何百回も</refrain><refrain>星の降る夜を超えて</refrain>
         <refrain>何千回も</refrain><refrain>何万回も</refrain><refrain>確かな愛を叫ぶよ</refrain>
@@ -156,7 +157,12 @@ function getSongInfo(url) {
     saveLLMAnalysisToLocalStorage(url, tmpTestRes);
     
     let localCache = loadLLMAnalysisFromLocalStorage(url);
-    if(localCache) {
+    if (localCache) {
+        return localCache;
+    } else {
+        // LLM を呼んで testRes を作って保存する
+        let localCache = loadLLMAnalysis()
+        saveLLMAnalysisToLocalStorage(url, localCache);
         return localCache;
     }
 }
@@ -296,7 +302,6 @@ function selectSong(e) {
             if (background !== null) {
                 background.enableAnimation();
             }
-            startLLM()
         });
     }
 }
@@ -323,7 +328,6 @@ searchInput.addEventListener("keypress", (e) => {
                 if (background !== null) {
                     background.enableAnimation();
                 }
-                startLLM()
             });
         }
     }
@@ -382,7 +386,6 @@ searchInputNavi.addEventListener("keypress", (e) => {
                 if (background !== null) {
                     background.enableAnimation();
                 }
-                startLLM()
             });
         }
     }
@@ -428,7 +431,6 @@ playBtn.addEventListener("click", (e) => {
             if (background !== null) {
                 background.enableAnimation();
             }
-            startLLM()
         }
     }
 });
@@ -662,15 +664,14 @@ function resetChars() {
     keyPhraseEl.appendChild(keyPhrasePEl);
 }
 
-function startLLM() {
+function loadLLMAnalysis() {
     if (openai_api_key) {
         llm = createLlm("openai");
         llm.setApiKey(openai_api_key)
     } else if (current_song_url) {
         llm = createLlm("webllm");
-    } else {
-        // TODO キャッシュがきたら考える
     }
+    // TODO: OpenAI と WebLLM で prompt の reply を得る
     const prompt = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
     "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
     "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
@@ -679,6 +680,9 @@ function startLLM() {
     "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
     const ret = llm.getResponse(prompt);
     console.log("llm reply:" + ret);
+
+    // TODO: TempRes 的なのを返す
+    return null;
 }
 
 String.prototype.replaceAt = function (index, replacement) {
