@@ -47,6 +47,42 @@ window.addEventListener('load', () => {
     }, 1500);
 });
 
+const player_ui = document.getElementById('player');
+let lastTouchTime = 0;
+const inactivityThreshold = 3000; 
+
+function minimizePlayer() {
+    player_ui.classList.add('minimized');
+}
+
+function showPlayer() {
+    player_ui.classList.remove('minimized');
+}
+
+function checkInactivity() {
+    if (Date.now() - lastTouchTime > inactivityThreshold) {
+        minimizePlayer();
+    }
+}
+
+function handleInteraction() {
+    showPlayer();
+    lastTouchTime = Date.now();
+}
+
+document.addEventListener('mouseenter', handleInteraction);
+document.addEventListener('touchstart', handleInteraction);
+
+player_ui.addEventListener('mouseleave', () => {
+    lastTouchTime = Date.now();
+});
+
+player_ui.addEventListener('touchstart', (e) => {
+    handleInteraction();
+});
+
+setInterval(checkInactivity, 1000);
+
 const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
@@ -134,6 +170,7 @@ function selectSong(e) {
     current_song = e.target.value;
     const music_info = songListMap.get(current_song)
     if (songListMap.has(current_song)) {
+        showPlayer();
         if (enbalLyricVideo.checked) {
             loadLyricVideo();
         }
@@ -266,6 +303,7 @@ player.addListener({
             document.querySelector("#control").style.display = "flex";
         }
         lastTime = -1;
+        showPlayer();
     },
 
     /* 楽曲が変わったら呼ばれる */
