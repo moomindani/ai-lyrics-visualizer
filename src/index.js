@@ -42,6 +42,7 @@ let color_accent = null;
 
 let llm = null;
 let openai_api_key = null;
+let song_url = null;
 
 let background = null;
 
@@ -250,6 +251,7 @@ searchInput.addEventListener("keypress", (e) => {
         if (url) {
             player.createFromSongUrl(url).then(() => {
                 // 曲の読み込みが完了したら再生を開始
+                song_url = url;
                 player.requestPlay();
                 background.enableAnimation();
                 startLLM()
@@ -296,6 +298,7 @@ searchInputNavi.addEventListener("keypress", (e) => {
         if (url) {
             player.createFromSongUrl(url).then(() => {
                 // 曲の読み込みが完了したら再生を開始
+                song_url = url;
                 player.requestPlay();
                 background.enableAnimation();
                 startLLM()
@@ -569,8 +572,10 @@ function startLLM() {
     if (openai_api_key) {
         llm = createLlm("openai");
         llm.setApiKey(openai_api_key)
-    } else {
+    } else if (song_url) {
         llm = createLlm("webllm");
+    } else {
+        // TODO キャッシュがきたら考える
     }
     const prompt = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
     "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
