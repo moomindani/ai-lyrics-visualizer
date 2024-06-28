@@ -1,5 +1,5 @@
 const {Player} = TextAliveApp;
-import {getAnalyzedList} from './wwllm'
+import {createLlm} from './llm_factory'
 import {createBackground} from './background_factory'
 import {songListMap} from './songList.js';
 
@@ -40,6 +40,8 @@ let color_main = null;
 let color_base = null;
 let color_accent = null;
 
+let llm = null;
+let openai_api_key = null;
 
 let background = null;
 
@@ -91,6 +93,7 @@ setInterval(checkInactivity, 1000);
 
 const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
+const apiKeyInput = document.getElementById('apiKeyInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
 
 function loadLyricVideo() {
@@ -226,6 +229,7 @@ function selectSong(e) {
             // 曲の読み込みが完了したら再生を開始
             player.requestPlay();
             background.enableAnimation();
+            startLLM()
         });
     }
 }
@@ -248,13 +252,25 @@ searchInput.addEventListener("keypress", (e) => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 background.enableAnimation();
+                startLLM()
             });
+        }
+    }
+});
+
+apiKeyInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && apiKeyInput.value) {
+        fadeNavigationUI();
+        const key = apiKeyInput.value;
+        if (key) {
+            openai_api_key = key;
         }
     }
 });
 
 const songSelectNavi = document.getElementById('songSelectNavi');
 const searchInputNavi = document.getElementById('searchInputNavi');
+const apiKeyInputNavi = document.getElementById('apiKeyInputNavi');
 const songSelectUI = document.getElementById('song-select');
 
 function fadeNavigationUI() {
@@ -282,7 +298,19 @@ searchInputNavi.addEventListener("keypress", (e) => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 background.enableAnimation();
+                startLLM()
             });
+        }
+    }
+});
+
+// 入力された Open AI API キーを格納する（取扱注意）
+apiKeyInputNavi.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && apiKeyInputNavi.value) {
+        fadeNavigationUI();
+        const key = apiKeyInputNavi.value;
+        if (key) {
+            openai_api_key = key;
         }
     }
 });
@@ -305,6 +333,7 @@ playBtn.addEventListener("click", (e) => {
         } else {
             player.requestPlay();
             background.enableAnimation();
+            startLLM()
         }
     }
 });
@@ -537,27 +566,20 @@ function resetChars() {
 }
 
 function startLLM() {
-    const prompt_refrain = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
-        "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
-        "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
-        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
-        "Please just response <melody> tags of extract result, do not include other info" +
-        "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-    getAnalyzedList(prompt_refrain).then(reply => {
-        console.log(reply);
-        let analyzedEl = document.createElement("div");
-        analyzedEl.innerHTML += reply;
-        const matches = analyzedEl.querySelectorAll("refrain");
-        const tmp_list = [];
-        matches.forEach((match) => {
-            console.log("match refrain:" + match.textContent);
-            tmp_list.push(match.textContent);
-        });
-        word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
-    }).catch(error => {
-        console.error(error);
-        return null;
-    });
+    if (openai_api_key) {
+        llm = createLlm("openai");
+        llm.setApiKey(openai_api_key)
+    } else {
+        llm = createLlm("webllm");
+    }
+    const prompt = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
+    "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
+    "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
+    "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
+    "Please just response <melody> tags of extract result, do not include other info" +
+    "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const ret = llm.getResponse(prompt);
+    console.log("llm reply:" + ret);
 }
 
 String.prototype.replaceAt = function (index, replacement) {
