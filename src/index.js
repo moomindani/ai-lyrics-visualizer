@@ -140,6 +140,7 @@ function selectSong(e) {
         player.createFromSongUrl(current_song, music_info.options).then(() => {
             // 曲の読み込みが完了したら再生を開始
             player.requestPlay();
+            background.enableAnimation();
         });
     }
 }
@@ -161,6 +162,7 @@ searchInput.addEventListener("keypress", (e) => {
             player.createFromSongUrl(url).then(() => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
+                background.enableAnimation();
             });
         }
     }
@@ -194,6 +196,7 @@ searchInputNavi.addEventListener("keypress", (e) => {
             player.createFromSongUrl(url).then(() => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
+                background.enableAnimation();
             });
         }
     }
@@ -216,7 +219,7 @@ playBtn.addEventListener("click", (e) => {
             // do nothing
         } else {
             player.requestPlay();
-            background.toggleAnimation();
+            background.enableAnimation();
         }
     }
 });
@@ -231,7 +234,7 @@ pauseBtn.addEventListener("click", (e) => {
     if (player) {
         if (player.isPlaying) {
             player.requestPause();
-            background.toggleAnimation();
+            background.disableAnimation();
         } else {
             // do nothing
         }

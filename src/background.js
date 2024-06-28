@@ -13,7 +13,11 @@ export class Background {
         throw new Error('draw method must be implemented by child classes');
     }
 
-    toggleAnimation() {
+    enableAnimation() {
+        this.isAnimating = !this.isAnimating;
+    }
+
+    disableAnimation() {
         this.isAnimating = !this.isAnimating;
     }
 

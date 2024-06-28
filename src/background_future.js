@@ -623,14 +623,6 @@ export class BackgroundFuture extends Background {
             this.notes.remove(note);
             this.disposeNote(note);
         });
-
-        // 削除した分の新しい音符を追加
-        const newNotesCount = notesToRemove.length;
-        for (let i = 0; i < newNotesCount; i++) {
-            const newNote = this.createNote();
-            newNote.position.z = -50 - Math.random() * 20; // 奥からスタート
-            this.notes.add(newNote);
-        }
     }
 
     disposeNote(note) {
