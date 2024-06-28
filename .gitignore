@@ -2,6 +2,7 @@ node_modules
 .parcel-cache
 .idea
 .env
+.DS_Store
 dev
 docs
 package-lock.json

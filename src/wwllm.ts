@@ -19,6 +19,7 @@ async function run() {
     }
   };
   const selectedModel = "Llama-3-8B-Instruct-q4f32_1-MLC";
+//  const selectedModel = "Llama-3-70B-Instruct-q3f16_1-MLC";
 
   engine = await webllm.CreateWebWorkerMLCEngine(
     new Worker(new URL("./ww.ts", import.meta.url), { type: "module" }),
