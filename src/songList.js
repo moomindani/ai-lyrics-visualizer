@@ -171,7 +171,8 @@ const songList = [
         <future>明日</future>
         <future>Beautiful sky</future>
         <future>未来</future>
-        <future>未来</future>`
+        <future>未来</future>`,
+        keyPhrase : `<key>“SUPERHERO”</key>`
       }
     },
     {

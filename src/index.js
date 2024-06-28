@@ -34,6 +34,7 @@ let refrainedPhrase = '';
 let word_list_refrain = [];
 let word_list_melody = [];
 let word_list_future = [];
+let word_list_key = [];
 
 let background = null;
 
@@ -110,6 +111,21 @@ function loadLyricVideo() {
             word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
             console.log("word_list_future:" + word_list_future);
         }
+        if (music_info.cachedLlmData.keyPhrase) {
+            let analyzedEl = document.createElement("div");
+            analyzedEl.innerHTML += music_info.cachedLlmData.keyPhrase;
+            const matches = analyzedEl.querySelectorAll("key");
+            const tmp_list = [];
+            matches.forEach((match) => {
+                console.log("match key:" + match.textContent);
+                tmp_list.push(match.textContent);
+            });
+            word_list_key = Array.from(new Set(tmp_list)); // remove duplicates
+            console.log("word_list_key:" + word_list_key);
+        }
+
+        // Refrain と KeyPhrase だったら KeyPhrase を優先
+        word_list_refrain = word_list_refrain.filter(word => !word_list_key.includes(word));
     }
 }
 
@@ -117,6 +133,7 @@ function clearLyricVideo() {
     word_list_refrain = [];
     word_list_melody = [];
     word_list_future = [];
+    word_list_key = [];
     const backgroundEl = document.querySelector("#background");
     backgroundEl.classList.add("hidden");
 }
@@ -439,6 +456,15 @@ function resetChars() {
     // refrain related
     refrain_status = 0;
     refrainedPhrase = "";
+
+    // key phrase related
+    let keyPhraseEl = document.querySelector("#key-phrase");
+    keyPhraseEl.classList.add("hidden");
+    while (keyPhraseEl.firstChild) {
+        keyPhraseEl.removeChild(keyPhraseEl.firstChild);
+    }
+    let keyPhrasePEl = document.createElement("p");
+    keyPhraseEl.appendChild(keyPhrasePEl);
 }
 
 function startLLM() {
@@ -510,6 +536,23 @@ function newChar(current) {
     let phrase_after = phrase.substring(char_index);
     console.log("phrase_before:" + phrase_before);
     console.log("phrase_after:" + phrase_after);
+
+    word_list_key.forEach((element) => {
+            if (phrase_after.startsWith(element)) {
+                console.log("key phrase start:" + element);
+                const keyPhraseEl = document.querySelector("#key-phrase");
+                const keyPhrasePEl = document.createElement("p");
+                keyPhraseEl.classList.remove("hidden");
+                keyPhrasePEl.textContent = element;
+                keyPhraseEl.appendChild(keyPhrasePEl);
+            }
+            else if (phrase_before.endsWith(element) || current.parent.parent.lastChar === current) {
+                console.log("key phrase end:" + element);
+                const keyPhrasePEl = document.createElement("p");
+                keyPhrasePEl.style.animation = "fadeout 0.5s 1s ease-in forwards";
+            }
+        }
+    )
 
     word_list_refrain.forEach((element) => {
             if (phrase_after.startsWith(element)) {
