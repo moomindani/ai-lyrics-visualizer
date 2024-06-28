@@ -543,9 +543,9 @@ export class BackgroundFuture extends Background {
 
             for (let i = 0; i < positions.length; i += 3) {
                 // 位置の更新
-                positions[i] += Math.sin(elapsedTime * 0.001 + i) * 0.001;
-                positions[i + 1] += Math.cos(elapsedTime * 0.002 + i) * 0.001;
-                positions[i + 2] = Math.sin(elapsedTime * 0.001 + i) * 0.1;
+                positions[i] += Math.sin(elapsedTime * 0.001 + i) * 0.01;
+                positions[i + 1] += Math.cos(elapsedTime * 0.002 + i) * 0.01;
+                positions[i + 2] = Math.sin(elapsedTime * 0.001 + i) * 0.1 + 0.1;
             }
             this.textParticleSystem.geometry.attributes.position.needsUpdate = true;
 
