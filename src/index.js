@@ -188,6 +188,12 @@ function loadLyricVideo() {
 
     // 背景を描画
     background.draw();
+
+    // 幕を開ける
+    const curtainTop = document.querySelector('.curtain-top');
+    const curtainBottom = document.querySelector('.curtain-bottom');
+    curtainTop.classList.add('open-top');
+    curtainBottom.classList.add('open-bottom');
 }
 
 function clearLyricVideo() {
