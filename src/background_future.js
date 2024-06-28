@@ -10,6 +10,7 @@ export class BackgroundFuture extends Background {
         super();
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.CAMERA_POSITION_Z = 50;
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.backgroundCanvas;
@@ -25,6 +26,8 @@ export class BackgroundFuture extends Background {
         this.beamCount = 20;
         this.maxFlares = 50;
         this.textParticleLifetime = 5000;
+        this.noteCount = 50;
+        this.notes = new THREE.Group();
 
         this.frame = 0;
         this.startTime = DATETIME_NOT_SET;
@@ -38,7 +41,7 @@ export class BackgroundFuture extends Background {
         window.addEventListener('resize', () => {
             this.onWindowResize()
         });
-        this.camera.position.z = 50;
+        this.camera.position.z = this.CAMERA_POSITION_Z;
 
         const background = document.querySelector("#background");
         background.appendChild(this.renderer.domElement);
@@ -150,7 +153,7 @@ export class BackgroundFuture extends Background {
         for (let i = 0; i < this.particleCount * 3; i += 3) {
             positions[i] = (Math.random() - 0.5) * 100;
             positions[i + 1] = (Math.random() - 0.5) * 100;
-            positions[i + 2] = (Math.random() - 0.5) * 100;
+            positions[i + 2] = -50 - Math.random() * 100; // 奥の方からスタート
 
             const color = brightColors[Math.floor(Math.random() * brightColors.length)];
             colors[i] = color[0];
@@ -182,7 +185,7 @@ export class BackgroundFuture extends Background {
     }
 
     createLightBeam() {
-        const geometry = new THREE.CylinderGeometry(0.1, 0.1, 100, 32);
+        const geometry = new THREE.CylinderGeometry(0.1, 0.1, 200, 32);
         const material = new THREE.MeshBasicMaterial({
             color: 0x00ffff,
             transparent: true,
@@ -191,9 +194,9 @@ export class BackgroundFuture extends Background {
         const beam = new THREE.Mesh(geometry, material);
 
         beam.position.set(
-            (Math.random() - 0.5) * 100,
-            (Math.random() - 0.5) * 100,
-            Math.random() * 100
+            (Math.random() - 0.5) * 50,
+            (Math.random() - 0.5) * 50,
+            -50 - Math.random() * 100 // 奥の方からスタート
         );
 
         // ビームを z 軸に沿って配置
@@ -269,6 +272,62 @@ export class BackgroundFuture extends Background {
         return flare;
     }
 
+    createNotes() {
+        for (let i = 0; i < this.noteCount; i++) {
+            const note = this.createNote();
+            this.notes.add(note);
+        }
+        this.scene.add(this.notes);
+    }
+
+    createNote() {
+        const noteGroup = new THREE.Group();
+
+        // 音符の頭部（楕円体）
+        const headGeometry = new THREE.SphereGeometry(0.12, 32, 16);
+        headGeometry.scale(1, 0.8, 0.5);
+        const headMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const head = new THREE.Mesh(headGeometry, headMaterial);
+        head.rotation.x = Math.PI / 4;
+        noteGroup.add(head);
+
+        // 符幹（縦線）
+        const stemGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.67, 8);
+        const stemMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const stem = new THREE.Mesh(stemGeometry, stemMaterial);
+        stem.position.y = -0.335;
+        stem.position.x = 0.1;
+        noteGroup.add(stem);
+
+        // 符尾（旗）
+        const flagCurve = new THREE.QuadraticBezierCurve3(
+            new THREE.Vector3(0.1, -0.67, 0),
+            new THREE.Vector3(0.3, -0.47, 0),
+            new THREE.Vector3(0.4, -0.27, 0)
+        );
+        const flagGeometry = new THREE.TubeGeometry(flagCurve, 20, 0.04, 8, false);
+        const flagMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff });
+        const flag = new THREE.Mesh(flagGeometry, flagMaterial);
+        noteGroup.add(flag);
+
+        // 初期の回転を設定（音符の旗がおおむね上を向くように）
+        noteGroup.rotation.x = Math.random() * Math.PI / 4; // 少しランダムな傾き
+        noteGroup.rotation.y = Math.random() * Math.PI * 2; // Y軸周りのランダムな回転
+        noteGroup.rotation.z = Math.PI / 2 + (Math.random() - 0.5) * Math.PI / 4; // 基本的に上向きだが、少し揺らぎを持たせる
+
+        // ランダムな位置を設定
+        noteGroup.position.set(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100,
+            0 - Math.random() * 50 // 奥の方からスタート
+        );
+
+        // スケールをランダムに設定
+        const scale = Math.random() * 0.5 + 0.5;
+        noteGroup.scale.set(scale, scale, scale);
+
+        return noteGroup;
+    }
 
     drawText(text) {
         const textCanvas = document.createElement('canvas');
@@ -288,8 +347,8 @@ export class BackgroundFuture extends Background {
         const imageData = textContext.getImageData(0, 0, textCanvas.width, textCanvas.height);
         const particles = [];
 
-        for (let y = 0; y < textCanvas.height; y += 5) {
-            for (let x = 0; x < textCanvas.width; x += 5) {
+        for (let y = 0; y < textCanvas.height; y += 20) {
+            for (let x = 0; x < textCanvas.width; x += 20) {
                 if (imageData.data[(y * textCanvas.width + x) * 4] > 128) {
                     const particle = new THREE.Vector3(
                         (x - textCanvas.width / 2) / 50,
@@ -321,6 +380,10 @@ export class BackgroundFuture extends Background {
         this.textFadeOutStartTime = Date.now() + 3000; // 3秒後
     }
 
+    drawNotes() {
+        this.createNotes();
+    }
+
     animate = () => {
         requestAnimationFrame(this.animate);
         this.frame++;
@@ -328,6 +391,7 @@ export class BackgroundFuture extends Background {
             this.animateParticles();
             this.animateLightBeams();
             this.animateFlares();
+            this.animateNotes();
 
             let elapsedTime = 0;
             if (this.startTime !== DATETIME_NOT_SET) {
@@ -352,13 +416,13 @@ export class BackgroundFuture extends Background {
 
         for (let i = 0; i < this.particleCount * 3; i += 3) {
             // パーティクルの移動（疾走感の演出）
-            positions[i + 2] -= 0.3;
+            positions[i + 2] += 0.3;
 
             // 画面外に出たパーティクルを再配置
-            if (positions[i + 2] < -50) {
-                positions[i + 2] = 50;
+            if (positions[i + 2] > this.CAMERA_POSITION_Z) {
                 positions[i] = (Math.random() - 0.5) * 100;
                 positions[i + 1] = (Math.random() - 0.5) * 100;
+                positions[i + 2] = -50 - Math.random() * 100; // 奥の方からスタート
             }
 
             // 色の変化（メリハリの演出）
@@ -420,10 +484,10 @@ export class BackgroundFuture extends Background {
 
         this.lightBeams.children.forEach((beam, index) => {
             // ビームの移動（パーティクルと同じ方向）
-            beam.position.z -= 0.3;
+            beam.position.z += 0.3;
 
             // 画面外に出たビームを削除
-            if (beam.position.z < -50) {
+            if (beam.position.z > this.CAMERA_POSITION_Z) {
                 beamsToRemove.push(beam);
             }
 
@@ -526,6 +590,62 @@ export class BackgroundFuture extends Background {
         if (this.flares.children.length === 0) {
             this.flares.clear();
         }
+    }
+
+    animateNotes() {
+        const notesToRemove = [];
+
+        this.notes.children.forEach((note, index) => {
+            // Z軸方向に移動（奥から手前へ）
+            note.position.z += 0.3;
+
+            // 画面手前に出た音符を削除リストに追加
+            if (note.position.z > 50) {
+                notesToRemove.push(note);
+            } else {
+                // 自然な揺れの効果
+                note.rotation.x += Math.sin(this.frame * 0.02 + index) * 0.005;
+                note.rotation.y += Math.cos(this.frame * 0.015 + index) * 0.005;
+                note.rotation.z += Math.sin(this.frame * 0.01 + index) * 0.005;
+
+                // スケールをゆっくり変化させる
+                const scaleChange = Math.sin(this.frame * 0.01 + index) * 0.001;
+                note.scale.addScalar(scaleChange);
+
+                // 近づくにつれて大きくする
+                const scale = 0.5 + (note.position.z + 50) / 60; // 0.5 から 1.5 の範囲で変化
+                note.scale.setScalar(scale);
+            }
+        });
+
+        // 削除リストの音符を処理
+        notesToRemove.forEach(note => {
+            this.notes.remove(note);
+            this.disposeNote(note);
+        });
+
+        // 削除した分の新しい音符を追加
+        const newNotesCount = notesToRemove.length;
+        for (let i = 0; i < newNotesCount; i++) {
+            const newNote = this.createNote();
+            newNote.position.z = -50 - Math.random() * 20; // 奥からスタート
+            this.notes.add(newNote);
+        }
+    }
+
+    disposeNote(note) {
+        note.traverse(child => {
+            if (child.geometry) {
+                child.geometry.dispose();
+            }
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(material => material.dispose());
+                } else {
+                    child.material.dispose();
+                }
+            }
+        });
     }
 
     onWindowResize() {

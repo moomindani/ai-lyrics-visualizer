@@ -40,4 +40,8 @@ export class Background {
     drawText() {
         throw new Error('drawText method must be implemented by child classes');
     }
+
+    drawNotes() {
+        throw new Error('drawNotes method must be implemented by child classes');
+    }
 }

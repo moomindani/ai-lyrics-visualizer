@@ -552,6 +552,10 @@ function newChar(current) {
                 melodyEl.classList.add("melody");
                 currentEl.appendChild(melodyEl);
                 console.log("currentEl.innerHTML:" + currentEl.innerHTML);
+
+                if (background !== null) {
+                    background.drawNotes();
+                }
             } else if (phrase_before.endsWith(element)) {
                 console.log("melody end:" + element);
             }
