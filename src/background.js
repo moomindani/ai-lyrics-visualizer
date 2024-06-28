@@ -14,11 +14,11 @@ export class Background {
     }
 
     enableAnimation() {
-        this.isAnimating = !this.isAnimating;
+        this.isAnimating = true;
     }
 
     disableAnimation() {
-        this.isAnimating = !this.isAnimating;
+        this.isAnimating = false;
     }
 
     setChorus(isChorus){
