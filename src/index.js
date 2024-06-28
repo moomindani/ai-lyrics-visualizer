@@ -27,7 +27,7 @@ let currentSegment = -1;
 let lastIsChorus = false;
 
 let max_vocal = 0, min_vocal = 100000000;
-let current_song = null;
+let current_song_url = null;
 
 let refrain_status = 0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
 let refrainedPhrase = '';
@@ -42,7 +42,6 @@ let color_accent = null;
 
 let llm = null;
 let openai_api_key = null;
-let song_url = null;
 
 let background = null;
 
@@ -172,7 +171,7 @@ function loadLyricVideo() {
         backgroundEl.classList.remove("hidden");
     }
 
-    let llmAnalysis = getSongInfo(current_song);
+    let llmAnalysis = getSongInfo(current_song_url);
     if (llmAnalysis) {
         // フォント
         // const fontFamily = "'Noto Serif JP', serif";
@@ -284,17 +283,19 @@ enbalLyricVideo.addEventListener("change", (e) => {
 
 // 曲の選択に応じて player.createFromSongUrl を呼び出すfunc
 function selectSong(e) {
-    current_song = e.target.value;
-    const music_info = songListMap.get(current_song)
-    if (songListMap.has(current_song)) {
+    current_song_url = e.target.value;
+    const music_info = songListMap.get(current_song_url)
+    if (songListMap.has(current_song_url)) {
         showPlayer();
         if (enbalLyricVideo.checked) {
             loadLyricVideo();
         }
-        player.createFromSongUrl(current_song, music_info.options).then(() => {
+        player.createFromSongUrl(current_song_url, music_info.options).then(() => {
             // 曲の読み込みが完了したら再生を開始
             player.requestPlay();
-            background.enableAnimation();
+            if (background !== null) {
+                background.enableAnimation();
+            }
             startLLM()
         });
     }
@@ -315,10 +316,13 @@ searchInput.addEventListener("keypress", (e) => {
         const url = searchInput.value;
         if (url) {
             player.createFromSongUrl(url).then(() => {
+                current_song_url = url;
+                loadLyricVideo();
                 // 曲の読み込みが完了したら再生を開始
-                song_url = url;
                 player.requestPlay();
-                background.enableAnimation();
+                if (background !== null) {
+                    background.enableAnimation();
+                }
                 startLLM()
             });
         }
@@ -327,6 +331,15 @@ searchInput.addEventListener("keypress", (e) => {
 
 apiKeyInput.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && apiKeyInput.value) {
+        fadeNavigationUI();
+        const key = apiKeyInput.value;
+        if (key) {
+            openai_api_key = key;
+        }
+    }
+});
+apiKeyInput.addEventListener('blur', () => {
+    if (apiKeyInput.value) {
         fadeNavigationUI();
         const key = apiKeyInput.value;
         if (key) {
@@ -362,10 +375,13 @@ searchInputNavi.addEventListener("keypress", (e) => {
         const url = searchInputNavi.value;
         if (url) {
             player.createFromSongUrl(url).then(() => {
+                current_song_url = url;
+                loadLyricVideo();
                 // 曲の読み込みが完了したら再生を開始
-                song_url = url;
                 player.requestPlay();
-                background.enableAnimation();
+                if (background !== null) {
+                    background.enableAnimation();
+                }
                 startLLM()
             });
         }
@@ -375,6 +391,15 @@ searchInputNavi.addEventListener("keypress", (e) => {
 // 入力された Open AI API キーを格納する（取扱注意）
 apiKeyInputNavi.addEventListener("keypress", (e) => {
     if (e.key === "Enter" && apiKeyInputNavi.value) {
+        fadeNavigationUI();
+        const key = apiKeyInputNavi.value;
+        if (key) {
+            openai_api_key = key;
+        }
+    }
+});
+apiKeyInputNavi.addEventListener('blur', () => {
+    if (apiKeyInputNavi.value) {
         fadeNavigationUI();
         const key = apiKeyInputNavi.value;
         if (key) {
@@ -400,7 +425,9 @@ playBtn.addEventListener("click", (e) => {
             // do nothing
         } else {
             player.requestPlay();
-            background.enableAnimation();
+            if (background !== null) {
+                background.enableAnimation();
+            }
             startLLM()
         }
     }
@@ -416,7 +443,9 @@ pauseBtn.addEventListener("click", (e) => {
     if (player) {
         if (player.isPlaying) {
             player.requestPause();
-            background.disableAnimation();
+            if (background !== null) {
+                background.disableAnimation();
+            }
         } else {
             // do nothing
         }
@@ -637,7 +666,7 @@ function startLLM() {
     if (openai_api_key) {
         llm = createLlm("openai");
         llm.setApiKey(openai_api_key)
-    } else if (song_url) {
+    } else if (current_song_url) {
         llm = createLlm("webllm");
     } else {
         // TODO キャッシュがきたら考える
