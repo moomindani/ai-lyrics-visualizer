@@ -286,14 +286,14 @@ export class BackgroundFuture extends Background {
         // 音符の頭部（楕円体）
         const headGeometry = new THREE.SphereGeometry(0.12, 32, 16);
         headGeometry.scale(1, 0.8, 0.5);
-        const headMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
+        const headMaterial = new THREE.MeshBasicMaterial({color: this.colorAccent});
         const head = new THREE.Mesh(headGeometry, headMaterial);
         head.rotation.x = Math.PI / 4;
         noteGroup.add(head);
 
         // 符幹（縦線）
         const stemGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.67, 8);
-        const stemMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
+        const stemMaterial = new THREE.MeshBasicMaterial({color: this.colorAccent});
         const stem = new THREE.Mesh(stemGeometry, stemMaterial);
         stem.position.y = -0.335;
         stem.position.x = 0.1;
@@ -306,7 +306,7 @@ export class BackgroundFuture extends Background {
             new THREE.Vector3(0.4, -0.27, 0)
         );
         const flagGeometry = new THREE.TubeGeometry(flagCurve, 20, 0.04, 8, false);
-        const flagMaterial = new THREE.MeshBasicMaterial({ color: this.colorAccent });
+        const flagMaterial = new THREE.MeshBasicMaterial({color: this.colorAccent});
         const flag = new THREE.Mesh(flagGeometry, flagMaterial);
         noteGroup.add(flag);
 
@@ -330,6 +330,14 @@ export class BackgroundFuture extends Background {
     }
 
     drawText(text) {
+        // すでに描画中のテキストパーティクルがある場合は削除
+        if (this.textParticleSystem) {
+            this.scene.remove(this.textParticleSystem);
+            this.textParticleSystem.geometry.dispose();
+            this.textParticleSystem.material.dispose();
+            this.textParticleSystem = null;
+        }
+
         const textCanvas = document.createElement('canvas');
         const textContext = textCanvas.getContext('2d');
         textCanvas.width = window.innerWidth;
@@ -347,8 +355,8 @@ export class BackgroundFuture extends Background {
         const imageData = textContext.getImageData(0, 0, textCanvas.width, textCanvas.height);
         const particles = [];
 
-        for (let y = 0; y < textCanvas.height; y += 20) {
-            for (let x = 0; x < textCanvas.width; x += 20) {
+        for (let y = 0; y < textCanvas.height; y += 10) {
+            for (let x = 0; x < textCanvas.width; x += 10) {
                 if (imageData.data[(y * textCanvas.width + x) * 4] > 128) {
                     const particle = new THREE.Vector3(
                         (x - textCanvas.width / 2) / 50,
