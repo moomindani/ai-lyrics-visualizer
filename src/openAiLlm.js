@@ -1,8 +1,8 @@
 import {Llm} from './llm'
 
 export class OpenAiLlm extends Llm {
-    getResponse(prompt) {
-        this.callOpenAIAPI(prompt);
+    async getResponse(prompt) {
+        return await this.callOpenAIAPI(prompt);
     }
 
     async callOpenAIAPI(prompt) {
@@ -28,6 +28,7 @@ export class OpenAiLlm extends Llm {
             }
             const data = await response.json();
             console.log(data);
+            return data.choices[0].message.content;
         } catch (error) {
             console.error('APIリクエストエラー:', error);
         }

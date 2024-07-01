@@ -124,52 +124,25 @@ function loadLLMAnalysisFromLocalStorage(url) {
     }
 }
 
-function getSongInfo(url) {
+async function getSongInfo(url) {
     let songInfo;
     // cache from local file
     if (songListMap.has(url).cachedLlmData) {
         return songListMap.get(url).cachedLlmData;
     }
-    // TODO: tmpTestResの定義からsaveLLMAnalysisToLocalStorageの呼び出しまでは本来は不要
-    // cache from local storage
-    // follwing is the exsample of usage
-    let tmpTestRes =  {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-        <refrain>何十回も</refrain><refrain>何百回も</refrain><refrain>星の降る夜を超えて</refrain>
-        <refrain>何千回も</refrain><refrain>何万回も</refrain><refrain>確かな愛を叫ぶよ</refrain>
-        <refrain>何回でも</refrain><refrain>何回でも</refrain><refrain>想いをこの声に乗せて</refrain>
-        <refrain>何回だって</refrain><refrain>何回だって</refrain><refrain>届くまで叫ぶよ</refrain>
-        These refrained phrases are marked with the <refrain> tags, and they appear multiple times throughout the lyrics.`,
-        melody : `<melody>メロディ</melody>
-        <melody>歌声</melody>
-        <melody>声</melody>
-        <melody>五線譜の魔法</melody>
-        <melody>この歌</melody>
-        <melody>歌</melody>`,
-        future : `<future>ミライ</future>
-        <future>光</future>
-        <future>ミライ</future>
-        <future>光</future>
-        <future>ミライ</future>
-        <future>光</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
-       };
-    saveLLMAnalysisToLocalStorage(url, tmpTestRes);
     
     let localCache = loadLLMAnalysisFromLocalStorage(url);
     if (localCache) {
         return localCache;
     } else {
         // LLM を呼んで testRes を作って保存する
-        let localCache = loadLLMAnalysis()
+        let localCache = await loadLLMAnalysis()
         saveLLMAnalysisToLocalStorage(url, localCache);
         return localCache;
     }
 }
 
-function loadLyricVideo() {
+async function loadLyricVideo() {
     // 背景
     if (background === null) {
         background = createBackground("future");
@@ -179,91 +152,91 @@ function loadLyricVideo() {
         backgroundEl.classList.remove("hidden");
     }
 
-    let llmAnalysis = getSongInfo(current_song_url);
-    if (llmAnalysis) {
-        // フォント
-        // const fontFamily = "'Noto Serif JP', serif";
-        // const fontFamily = "'Noto Sans JP', sans-serif";
-        const fontFamily = "'Murecho', sans-serif";
-        let containerEl = document.querySelector("#container")
-        containerEl.style.fontFamily = fontFamily;
-        let containerVEl = document.querySelector("#container-v");
-        containerVEl.style.fontFamily = fontFamily;
+    await getSongInfo(current_song_url).then((llmAnalysis) => {
+        if (llmAnalysis) {
+            // フォント
+            // const fontFamily = "'Noto Serif JP', serif";
+            // const fontFamily = "'Noto Sans JP', sans-serif";
+            const fontFamily = "'Murecho', sans-serif";
+            let containerEl = document.querySelector("#container")
+            containerEl.style.fontFamily = fontFamily;
+            let containerVEl = document.querySelector("#container-v");
+            containerVEl.style.fontFamily = fontFamily;
 
-        // カラーコード
-        if (llmAnalysis.mainColor) {
-            color_main = llmAnalysis.mainColor;
-        }
-        if (llmAnalysis.baseColor) {
-            color_base = llmAnalysis.baseColor;
-        }
-        if (llmAnalysis.accentColor) {
-            color_accent = llmAnalysis.accentColor;
-        }
-        background.setColors(color_main, color_base, color_accent);
+            // カラーコード
+            if (llmAnalysis.mainColor) {
+                color_main = llmAnalysis.mainColor;
+            }
+            if (llmAnalysis.baseColor) {
+                color_base = llmAnalysis.baseColor;
+            }
+            if (llmAnalysis.accentColor) {
+                color_accent = llmAnalysis.accentColor;
+            }
+            background.setColors(color_main, color_base, color_accent);
 
-        // リフレイン
-        if (llmAnalysis.refrainedPhrase) {
-            let analyzedEl = document.createElement("div");
-            analyzedEl.innerHTML += llmAnalysis.refrainedPhrase;
-            const matches = analyzedEl.querySelectorAll("refrain");
-            const tmp_list = [];
-            matches.forEach((match) => {
-                console.log("match refrain:" + match.textContent);
-                tmp_list.push(match.textContent);
-            });
-            word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
-            console.log("word_list_refrain:" + word_list_refrain);
+            // リフレイン
+            if (llmAnalysis.refrainedPhrase) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.refrainedPhrase;
+                const matches = analyzedEl.querySelectorAll("refrain");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match refrain:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
+                console.log("word_list_refrain:" + word_list_refrain);
+            }
+
+            // メロディ
+            if (llmAnalysis.melody) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.melody;
+                const matches = analyzedEl.querySelectorAll("melody");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match melody:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                word_list_melody = Array.from(new Set(tmp_list)); // remove duplicates
+                console.log("word_list_melody:" + word_list_melody);
+            }
+
+            // 未来
+            if (llmAnalysis.future) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.future;
+                const matches = analyzedEl.querySelectorAll("future");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match future:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
+                console.log("word_list_future:" + word_list_future);
+            }
+
+            // キーフレーズ
+            if (llmAnalysis.keyPhrase) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.keyPhrase;
+                const matches = analyzedEl.querySelectorAll("key");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match key:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                word_list_key = Array.from(new Set(tmp_list)); // remove duplicates
+                console.log("word_list_key:" + word_list_key);
+            }
+
+            // リフレインとキーフレーズだったらキーフレーズを優先
+            word_list_refrain = word_list_refrain.filter(word => !word_list_key.includes(word));
+            // 背景を描画
+            background.draw();
         }
-
-        // メロディ
-        if (llmAnalysis.melody) {
-            let analyzedEl = document.createElement("div");
-            analyzedEl.innerHTML += llmAnalysis.melody;
-            const matches = analyzedEl.querySelectorAll("melody");
-            const tmp_list = [];
-            matches.forEach((match) => {
-                console.log("match melody:" + match.textContent);
-                tmp_list.push(match.textContent);
-            });
-            word_list_melody = Array.from(new Set(tmp_list)); // remove duplicates
-            console.log("word_list_melody:" + word_list_melody);
-        }
-
-        // 未来
-        if (llmAnalysis.future) {
-            let analyzedEl = document.createElement("div");
-            analyzedEl.innerHTML += llmAnalysis.future;
-            const matches = analyzedEl.querySelectorAll("future");
-            const tmp_list = [];
-            matches.forEach((match) => {
-                console.log("match future:" + match.textContent);
-                tmp_list.push(match.textContent);
-            });
-            word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
-            console.log("word_list_future:" + word_list_future);
-        }
-
-        // キーフレーズ
-        if (llmAnalysis.keyPhrase) {
-            let analyzedEl = document.createElement("div");
-            analyzedEl.innerHTML += llmAnalysis.keyPhrase;
-            const matches = analyzedEl.querySelectorAll("key");
-            const tmp_list = [];
-            matches.forEach((match) => {
-                console.log("match key:" + match.textContent);
-                tmp_list.push(match.textContent);
-            });
-            word_list_key = Array.from(new Set(tmp_list)); // remove duplicates
-            console.log("word_list_key:" + word_list_key);
-        }
-
-        // リフレインとキーフレーズだったらキーフレーズを優先
-        word_list_refrain = word_list_refrain.filter(word => !word_list_key.includes(word));
-    }
-
-    // 背景を描画
-    background.draw();
+    });
 
     // 幕を開ける
     const curtainTop = document.querySelector('.curtain-top');
@@ -295,12 +268,18 @@ function selectSong(e) {
     const music_info = songListMap.get(current_song_url)
     if (songListMap.has(current_song_url)) {
         showPlayer();
-        if (enbalLyricVideo.checked) {
-            loadLyricVideo();
-        }
         player.createFromSongUrl(current_song_url, music_info.options).then(() => {
             // 曲の読み込みが完了したら再生を開始
-            player.requestPlay();
+            if (enbalLyricVideo.checked) {
+                loadLyricVideo().then(() => {
+                    player.requestPlay();
+                    if (background !== null) {
+                        background.enableAnimation();
+                    }
+                });
+            } else {
+                player.requestPlay();
+            }
             if (background !== null) {
                 background.enableAnimation();
             }
@@ -329,12 +308,13 @@ searchInput.addEventListener("keypress", (e) => {
         if (url) {
             player.createFromSongUrl(url).then(() => {
                 current_song_url = url;
-                loadLyricVideo();
-                // 曲の読み込みが完了したら再生を開始
-                player.requestPlay();
-                if (background !== null) {
-                    background.enableAnimation();
-                }
+                loadLyricVideo().then(() => {
+                    // 曲の読み込みが完了したら再生を開始
+                    player.requestPlay();
+                    if (background !== null) {
+                        background.enableAnimation();
+                    }
+                });
             });
         }
     }
@@ -393,12 +373,13 @@ searchInputNavi.addEventListener("keypress", (e) => {
         if (url) {
             player.createFromSongUrl(url).then(() => {
                 current_song_url = url;
-                loadLyricVideo();
-                // 曲の読み込みが完了したら再生を開始
-                player.requestPlay();
-                if (background !== null) {
-                    background.enableAnimation();
-                }
+                loadLyricVideo().then(() => {
+                    // 曲の読み込みが完了したら再生を開始
+                    player.requestPlay();
+                    if (background !== null) {
+                        background.enableAnimation();
+                    }
+                });
             });
         }
     }
@@ -675,7 +656,76 @@ function resetChars() {
     keyPhraseEl.appendChild(keyPhrasePEl);
 }
 
-function loadLLMAnalysis() {
+// LLM のレスポンスを変換
+// 以下のような形式に変換する
+// let tmpTestRes =  {
+//     refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
+//     <refrain>何十回も</refrain><refrain>何百回も</refrain><refrain>星の降る夜を超えて</refrain>
+//     <refrain>何千回も</refrain><refrain>何万回も</refrain><refrain>確かな愛を叫ぶよ</refrain>
+//     <refrain>何回でも</refrain><refrain>何回でも</refrain><refrain>想いをこの声に乗せて</refrain>
+//     <refrain>何回だって</refrain><refrain>何回だって</refrain><refrain>届くまで叫ぶよ</refrain>
+//     These refrained phrases are marked with the <refrain> tags, and they appear multiple times throughout the lyrics.`,
+//     melody : `<melody>メロディ</melody>
+//     <melody>歌声</melody>
+//     <melody>声</melody>
+//     <melody>五線譜の魔法</melody>
+//     <melody>この歌</melody>
+//     <melody>歌</melody>`,
+//     future : `<future>ミライ</future>
+//     <future>光</future>
+//     <future>ミライ</future>
+//     <future>光</future>
+//     <future>ミライ</future>
+//     <future>光</future>`,
+//     mainColor: `#00aa88`,
+//     baseColor: `#0066cc`,
+//     accentColor: `#e12885`
+//    };
+function transformLLMResponse(response) {
+    let result = {
+        refrainedPhrase: null,
+        melody: null,
+        future: null,
+        mainColor: '#00aa88',  // デフォルト
+        baseColor: '#0066cc',  // デフォルト
+        accentColor: '#e12885' // デフォルト
+    };
+
+    // 入れ子になったタグを処理する関数
+    function processNestedTags(text, outerTag, innerTag) {
+        const regex = new RegExp(`<${outerTag}>.*?<\/${outerTag}>`, 'g');
+        return text.replace(regex, (match) => {
+            const innerContent = match.replace(new RegExp(`</?${outerTag}>`, 'g'), '');
+            return `<${outerTag}>${innerContent}</${outerTag}>` + 
+                   innerContent.replace(new RegExp(`<${innerTag}>(.*?)<\/${innerTag}>`, 'g'), `<${innerTag}>$1</${innerTag}>`);
+        });
+    }
+
+    // 入れ子になったタグを処理
+    response = processNestedTags(response, 'melody', 'refrain');
+    response = processNestedTags(response, 'refrain', 'melody');
+    response = processNestedTags(response, 'future', 'refrain');
+    response = processNestedTags(response, 'refrain', 'future');
+
+    let refrainMatches = response.match(/<refrain>.*?<\/refrain>/g);
+    if (refrainMatches && refrainMatches.length > 0) {
+        result.refrainedPhrase = refrainMatches.join(' ');
+    }
+
+    let melodyMatches = response.match(/<melody>.*?<\/melody>/g);
+    if (melodyMatches && melodyMatches.length > 0) {
+        result.melody = melodyMatches.join(' ');
+    }
+
+    let futureMatches = response.match(/<future>.*?<\/future>/g);
+    if (futureMatches && futureMatches.length > 0) {
+        result.future = futureMatches.join(' ');
+    }
+
+    return result;
+}
+
+async function loadLLMAnalysis() {
     if (openai_api_key) {
         llm = createLlm("openai");
         llm.setApiKey(openai_api_key)
@@ -689,11 +739,10 @@ function loadLLMAnalysis() {
     "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
     "Please just response <melody> tags of extract result, do not include other info" +
     "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-    const ret = llm.getResponse(prompt);
+    const ret = await llm.getResponse(prompt);
     console.log("llm reply:" + ret);
 
-    // TODO: TempRes 的なのを返す
-    return null;
+    return transformLLMResponse(ret);
 }
 
 String.prototype.replaceAt = function (index, replacement) {
