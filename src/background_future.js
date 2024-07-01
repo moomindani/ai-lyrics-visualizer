@@ -28,6 +28,8 @@ export class BackgroundFuture extends Background {
         this.textParticleLifetime = 5000;
         this.noteCount = 50;
         this.notes = new THREE.Group();
+        this.circleCount = 5;
+        this.circles = new THREE.Group();
 
         this.frame = 0;
         this.startTime = DATETIME_NOT_SET;
@@ -50,6 +52,7 @@ export class BackgroundFuture extends Background {
         this.createBackground();
         this.createParticles();
         this.createLightBeams();
+        this.createCircles()
         this.animate();
     }
 
@@ -329,6 +332,29 @@ export class BackgroundFuture extends Background {
         return noteGroup;
     }
 
+    createCircles() {
+        for (let i = 0; i < this.circleCount; i++) {
+            const circle = this.createCircle();
+            this.circles.add(circle);
+        }
+        this.scene.add(this.circles);
+    }
+
+    createCircle() {
+        const geometry = new THREE.RingGeometry(4, 4.2, 64); // 輪っかの形状
+        const material = new THREE.MeshBasicMaterial({
+            color: 0x00ffff,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.DoubleSide
+        });
+        const circle = new THREE.Mesh(geometry, material);
+        circle.position.set(0, 0, -100);
+
+        return circle;
+    }
+
+
     drawText(text) {
         // すでに描画中のテキストパーティクルがある場合は削除
         if (this.textParticleSystem) {
@@ -400,6 +426,7 @@ export class BackgroundFuture extends Background {
             this.animateLightBeams();
             this.animateFlares();
             this.animateNotes();
+            this.animateCircles();
 
             let elapsedTime = 0;
             if (this.startTime !== DATETIME_NOT_SET) {
@@ -460,12 +487,20 @@ export class BackgroundFuture extends Background {
                 this.lightBeams.add(beam);
             }
 
-            console.log("Beam count:" + this.lightBeams.children.length);
-
             // ビームの不透明度を変化させる
             this.lightBeams.children.forEach((beam, index) => {
                 beam.material.opacity = 0.3 + 0.2 * Math.sin(this.frame * 0.05 + index);
             });
+
+            // 円を追加
+            let circlePlus = 1;
+
+            this.circleCount += circlePlus;
+            for (let i = 0; i < circlePlus; i++) {
+                const circle = this.createCircle();
+                this.circles.add(circle);
+            }
+
             this.renderer.render(this.scene, this.camera);
         }
     }
@@ -551,9 +586,9 @@ export class BackgroundFuture extends Background {
 
             for (let i = 0; i < positions.length; i += 3) {
                 // 位置の更新
-                positions[i] += Math.sin(elapsedTime * 0.001 + i) * 0.01;
-                positions[i + 1] += Math.cos(elapsedTime * 0.002 + i) * 0.01;
-                positions[i + 2] = Math.sin(elapsedTime * 0.001 + i) * 0.1 + 0.1;
+                positions[i] += Math.sin(elapsedTime * 0.001 + i) * 0.02;
+                positions[i + 1] += Math.cos(elapsedTime * 0.002 + i) * 0.02;
+                positions[i + 2] = Math.sin(elapsedTime * 0.001 + i) * 0.1 + 0.3;
             }
             this.textParticleSystem.geometry.attributes.position.needsUpdate = true;
 
@@ -645,6 +680,28 @@ export class BackgroundFuture extends Background {
                     child.material.dispose();
                 }
             }
+        });
+    }
+
+    animateCircles() {
+        const circlesToRemove = [];
+
+        this.circles.children.forEach((circle, index) => {
+            // Z軸方向に移動（奥から手前へ）
+            circle.position.z += 0.2;
+
+            // カメラに近づくにつれて円を大きくし、透明度を変える
+            const distance = this.camera.position.z - circle.position.z;
+            const scaleFactor = 1 + (1 / distance) * 50;
+            circle.scale.set(scaleFactor, scaleFactor, 1);
+            circle.material.opacity = Math.min(0.1 + (1 / distance) * 5, 1);
+        });
+
+        // 削除リストの円を処理
+        circlesToRemove.forEach(circle => {
+            this.circles.remove(circle);
+            circle.geometry.dispose();
+            circle.material.dispose();
         });
     }
 

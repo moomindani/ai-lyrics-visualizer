@@ -591,9 +591,7 @@ player.addListener({
             lastTime >= 0 &&
             // ↑初期化された直後はビート検出しない
             beats.entered.length > 0
-            // ↑二拍ごとにしたければ
-            //   && beats.entered.find((b) => b.position % 2 === 1)
-            // のような条件を足してチェックすればよい
+            && beats.entered.find((b) => b.position % 2 === 1)
         ) {
             // ビート同期のアニメーションを発火させる
             requestAnimationFrame(() => {
