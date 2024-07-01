@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title>ライムトラベラー</title>
+    <title>Rhyme Traveler - ライムトラベラー -</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&display=swap" rel="stylesheet">
@@ -37,8 +37,17 @@
           <option value="">課題曲から選ぶ</option>
         </select>
         <span>/</span>
-        <label for="searchInputNavi"></label><input type="text" id="searchInputNavi" placeholder="曲のURLを入力（ハイスペックマシン向け）">
-        <label for="apiKeyInputNavi"></label><input type="text" id="apiKeyInputNavi" placeholder="Open AIのAPIキーを入力（上級者向け）">
+        <div class="toggle-container">
+          <input type="checkbox" id="advancedSettingToggleNavi" class="toggle-input">
+          <label for="advancedSettingToggleNavi" class="toggle-label">
+            <span class="toggle-button"></span>
+          </label>
+          <span class="toggle-text">高度な設定</span>
+          <div class="advancedSettingNavi">
+            <label for="searchInputNavi"></label><input type="text" id="searchInputNavi" placeholder="楽曲のURLを入力">
+            <label for="apiKeyInputNavi"></label><input type="text" id="apiKeyInputNavi" placeholder="Open AIのAPIキーを入力">
+          </div>
+        </div>
       </div>
     </div>
     <div id="content">
@@ -56,8 +65,17 @@
           <select id="songSelect">
             <option value="">課題曲から選択</option>
           </select>
-          <label for="searchInput"></label><input type="text" id="searchInput" placeholder="曲のURLを入力（ハイスペックマシン向け）">
-          <label for="apiKeyInput"></label><input type="text" id="apiKeyInput" placeholder="Open AIのAPIキーを入力（上級者向け）">
+          <div class="toggle-container">
+            <input type="checkbox" id="advancedSettingToggle" class="toggle-input">
+            <label for="advancedSettingToggle" class="toggle-label">
+              <span class="toggle-button"></span>
+            </label>
+            <span class="toggle-text">高度な設定</span>
+            <div class="advancedSetting">
+              <label for="searchInput"></label><input type="text" id="searchInput" placeholder="楽曲のURLを入力">
+              <label for="apiKeyInput"></label><input type="text" id="apiKeyInput" placeholder="Open AIのAPIキーを入力">
+            </div>
+          </div>
         </div>
       </div>
       <div id="seekbar">

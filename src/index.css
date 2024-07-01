@@ -145,6 +145,24 @@ body, html {
     }
 }
 
+.advancedSetting {
+    display: none;
+}
+
+.advancedSetting.show {
+    display: block;
+}
+
+/* TODO: display:none/block の切り替えでうまく動かないのでいったん opacity で不可視にする */
+.advancedSettingNavi {
+    opacity: 0;
+}
+
+.advancedSettingNavi.show {
+    display: flex;
+    opacity: 1;
+}
+
 #song-select {
     position: fixed;
     top: 0;

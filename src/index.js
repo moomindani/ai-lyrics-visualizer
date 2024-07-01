@@ -95,6 +95,8 @@ const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
 const apiKeyInput = document.getElementById('apiKeyInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
+const advancedSetting = document.getElementById('advancedSettingToggle');
+
 
 function saveLLMAnalysisToLocalStorage(url, analysis) {
     try {
@@ -306,6 +308,11 @@ function selectSong(e) {
     }
 }
 
+advancedSetting.addEventListener('change', function() {
+    console.log("advancedSetting");
+    document.querySelector('.advancedSetting').classList.toggle('show');
+});
+
 // 曲の選択に応じて player.createFromSongUrl を呼び出す
 songSelect.addEventListener("change", (e) => {
     fadeNavigationUI();
@@ -356,6 +363,7 @@ const songSelectNavi = document.getElementById('songSelectNavi');
 const searchInputNavi = document.getElementById('searchInputNavi');
 const apiKeyInputNavi = document.getElementById('apiKeyInputNavi');
 const songSelectUI = document.getElementById('song-select');
+const advancedSettingNavi = document.getElementById('advancedSettingToggleNavi');
 
 function fadeNavigationUI() {
     songSelectUI.style.opacity = 0;
@@ -368,6 +376,11 @@ function fadeNavigationUI() {
 songSelectNavi.addEventListener("change", (e) => {
     fadeNavigationUI();
     selectSong(e);
+});
+
+advancedSettingNavi.addEventListener('change', function() {
+    console.log("advancedSettingNavi");
+    document.querySelector('.advancedSettingNavi').classList.toggle('show');
 });
 
 // URLの入力に応じて player.createFromSongUrl を呼び出す
