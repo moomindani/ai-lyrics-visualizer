@@ -47,11 +47,56 @@ body, html {
     transition: opacity 1s ease-out;
 }
 
-#title h1 {
-    font-size: 10vw;
-    color: #fff;
-    text-shadow: 0 0 5px #39c5bb, 0 0 10px #39c5bb, 0 0 15px #39c5bb, 0 0 20px #39c5bb, 0 0 35px #39c5bb;
+.title-container {
+    text-align: center;
+    position: relative;
+}
+
+.title {
+    font-size: 6rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+
+#title .title {
     animation: flicker 1.5s infinite alternate;
+}
+
+.subtitle {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.5rem;
+    font-variation-settings: 'wght' 900;
+    color: #ffffff;
+    text-shadow: 0 0 5px #ffffff;
+    background-color: rgba(0, 255, 255, 0.3);
+    padding: 0 10px;
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    white-space: nowrap;
+}
+
+.note {
+    position: absolute;
+    font-size: 10rem;
+    color: rgba(0, 255, 255, 0.3);
+    z-index: 0;
+}
+
+.note-1 {
+    top: -30px;
+    left: -20px;
+    transform: rotate(-30deg);
+}
+
+.note-2 {
+    bottom: -30px;
+    right: -20px;
+    transform: rotate(30deg);
 }
 
 #visual {
@@ -115,13 +160,6 @@ body, html {
     z-index: 9998;
     opacity: 1;
     transition: opacity 1s ease-out;
-}
-
-#song-select h2 {
-    font-size: 4vw;
-    margin-bottom: 20px;
-    text-align: center;
-    text-shadow: 0 0 5px #39c5bb;
 }
 
 #song-select p {
