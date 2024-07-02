@@ -448,6 +448,17 @@ body, html {
     width: 350px;
 }
 
+#advancedSettingOk, #advancedSettingOkNavi {
+    margin-right: 3px;
+    padding: 5px 10px;
+    background: #555;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
 #control {
     display: flex;
     justify-content: flex-start;
@@ -531,10 +542,18 @@ body, html {
     }
 }
 
-.toggle-container {
+.navi {
     display: flex;
+    flex-direction: column;
+}
+
+.toggle-container {
     align-items: center;
     margin-left: 10px;
+}
+
+.toggle-container.navi {
+    margin-top: 100px;
 }
 
 .toggle-input {
