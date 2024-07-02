@@ -702,27 +702,27 @@ async function loadLLMAnalysis() {
     };
 
     // OpenAI と WebLLM で prompt の reply を取得する
-    const prompt_refrain = "Analyze this original lyrics, identifying the refrained phrases and their apperrances in the text?" +
+    const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
         "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
         "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
-        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
-        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
     const ret_refrain = await llm.getResponse(prompt_refrain);
     console.log("llm prompt:" + prompt_refrain);
     console.log("llm reply:" + ret_refrain);
     const result_refrain = transformLLMResponse(ret_refrain, result_initial);
 
-    const prompt_melody = "Analyze this original lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
-        "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. " +
-        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const prompt_melody = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
+        "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
     const ret_melody = await llm.getResponse(prompt_melody);
     console.log("llm prompt:" + prompt_melody);
     console.log("llm reply:" + ret_melody);
     const result_melody = transformLLMResponse(ret_melody, result_refrain);
 
-    const prompt_future = "Analyze this original lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
-        "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. " +
-        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const prompt_future = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
+        "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
     const ret_future = await llm.getResponse(prompt_future);
     console.log("llm prompt:" + prompt_future);
     console.log("llm reply:" + ret_future);
