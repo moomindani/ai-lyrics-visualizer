@@ -11,34 +11,55 @@ export class WebLlm extends Llm {
 
     }
 
-    getResponse(prompt) {
-        this.callWebLlmAPI(prompt);
+    async getResponse(prompt) {
+        return await this.callWebLlmAPI(prompt);
     }
 
     setApiKey(key) {
         throw new Error('WebLLM does not require API key');
     }
 
-    async callWebLlmAPI(prompt) {
-        const initProgressCallback = (report) => {
-            console.log("initProgressCallback: " + report.text);
-        };
+    async initializeEngine() {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const initProgressCallback = (report) => {
+                    console.log("initProgressCallback: " + report.text);
+                    if (report.text.includes("Finish loading on WebGPU")) {
+                        console.log("WebGPU loading finished");
+                    }
+                };
 
-        this.engine = await webllm.CreateWebWorkerMLCEngine(
-            new Worker(new URL("./ww.ts", import.meta.url), {type: "module"}),
-            this.model,
-            {initProgressCallback: initProgressCallback},
-        );
+                this.engine = await webllm.CreateWebWorkerMLCEngine(
+                    new Worker(new URL("./ww.ts", import.meta.url), {type: "module"}),
+                    this.model,
+                    {initProgressCallback: initProgressCallback},
+                );
+
+                // エンジンが正しく初期化されたことを確認
+                if (this.engine && this.engine.chat && this.engine.chat.completions) {
+                    resolve(this.engine);
+                } else {
+                    reject(new Error("Engine initialization incomplete"));
+                }
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
+
+    async callWebLlmAPI(prompt) {
+        try {
+            if (!this.engine || !this.engine.chat || !this.engine.chat.completions) {
+                await this.initializeEngine();
+            }
+        } catch (error) {
+            console.error("Error during WebGPU loading:", error);
+            throw error;
+        }
 
         let n = 1;
         const request = {
             messages: [
-                // {
-                //   role: "system",
-                //   content:
-                //     "You are a helpful, respectful and honest assistant who are good at analyzing Japanese lyrics. " +
-                //     "Make sure that you reply with marking lyrics with XML.",
-                // },
                 {role: "user", content: prompt},
             ],
             n: n,
@@ -46,16 +67,20 @@ export class WebLlm extends Llm {
             max_tokens: 2048,
         };
 
-        const reply0 = await this.engine.chat.completions.create(request);
-        console.log(reply0);
+        try {
+            console.log("WebLLM request: " + prompt);
+            const reply0 = await this.engine.chat.completions.create(request);
+            console.log("WebLLM response: " + reply0);
 
-        let replyAll = ''
-        for (let i = 0; i < n; i++) {
-            replyAll += reply0.choices[0].message.content + '\n';
+            let replyAll = ''
+            for (let i = 0; i < n; i++) {
+                replyAll += reply0.choices[0].message.content + '\n';
+            }
+            console.log("getReply reply0=" + replyAll);
+            return replyAll;
+        } catch (error) {
+            console.error("Error during API call:", error);
+            throw error;
         }
-        console.log("getReply reply0=" + replyAll);
-        setLabel("generate-label", replyAll);
-        console.log(reply0.usage);
-        return replyAll;
     }
 }

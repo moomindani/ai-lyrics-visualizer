@@ -18,6 +18,7 @@ export class OpenAiLlm extends Llm {
             ]
         });
         try {
+            console.log("OpenAI request: " + prompt);
             const response = await fetch(url, {
                 method: 'POST',
                 headers: headers,
