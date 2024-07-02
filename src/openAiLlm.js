@@ -27,7 +27,7 @@ export class OpenAiLlm extends Llm {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            console.log(data);
+            console.log("OpenAI response: " + data);
             return data.choices[0].message.content;
         } catch (error) {
             console.error('APIリクエストエラー:', error);

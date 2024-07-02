@@ -57,7 +57,7 @@ window.addEventListener('load', () => {
 
 const player_ui = document.getElementById('player');
 let lastTouchTime = 0;
-const inactivityThreshold = 3000; 
+const inactivityThreshold = 3000;
 
 function minimizePlayer() {
     player_ui.classList.add('minimized');
@@ -96,6 +96,7 @@ const searchInput = document.getElementById('searchInput');
 const apiKeyInput = document.getElementById('apiKeyInput');
 const enbalLyricVideo = document.getElementById('aiToggle');
 const advancedSetting = document.getElementById('advancedSettingToggle');
+const advancedSettingOk = document.getElementById('advancedSettingOk');
 
 
 function saveLLMAnalysisToLocalStorage(url, analysis) {
@@ -103,7 +104,7 @@ function saveLLMAnalysisToLocalStorage(url, analysis) {
         const serializedAnalysis = JSON.stringify(analysis);
         localStorage.setItem(url, serializedAnalysis);
         console.log("LLM analysis data saved to local storage");
-    }catch(e) {
+    } catch (e) {
         console.error('Failed to save LLM analysis data to local storage', e);
     }
 }
@@ -111,14 +112,14 @@ function saveLLMAnalysisToLocalStorage(url, analysis) {
 function loadLLMAnalysisFromLocalStorage(url) {
     try {
         const serializedAnalysis = localStorage.getItem(url);
-        if(serializedAnalysis === null) {
+        if (serializedAnalysis === null) {
             console.log("No LLM analysis data in local storage");
             return null;
         }
         const cachedLlmData = JSON.parse(serializedAnalysis);
         console.log("LLM analysis data loaded from local storage");
         return cachedLlmData;
-    }catch(e) {
+    } catch (e) {
         console.error('Failed to load LLM analysis data from local storage', e);
         return null;
     }
@@ -130,7 +131,7 @@ async function getSongInfo(url) {
     if (songListMap.has(url).cachedLlmData) {
         return songListMap.get(url).cachedLlmData;
     }
-    
+
     let localCache = loadLLMAnalysisFromLocalStorage(url);
     if (localCache) {
         return localCache;
@@ -185,7 +186,8 @@ async function loadLyricVideo() {
                     console.log("match refrain:" + match.textContent);
                     tmp_list.push(match.textContent);
                 });
-                word_list_refrain = Array.from(new Set(tmp_list)); // remove duplicates
+                const filtered_list = tmp_list.filter(item => item !== '');
+                word_list_refrain = Array.from(new Set(filtered_list)); // remove duplicates
                 console.log("word_list_refrain:" + word_list_refrain);
             }
 
@@ -199,7 +201,8 @@ async function loadLyricVideo() {
                     console.log("match melody:" + match.textContent);
                     tmp_list.push(match.textContent);
                 });
-                word_list_melody = Array.from(new Set(tmp_list)); // remove duplicates
+                const filtered_list = tmp_list.filter(item => item !== '');
+                word_list_melody = Array.from(new Set(filtered_list)); // remove duplicates
                 console.log("word_list_melody:" + word_list_melody);
             }
 
@@ -213,7 +216,8 @@ async function loadLyricVideo() {
                     console.log("match future:" + match.textContent);
                     tmp_list.push(match.textContent);
                 });
-                word_list_future = Array.from(new Set(tmp_list)); // remove duplicates
+                const filtered_list = tmp_list.filter(item => item !== '');
+                word_list_future = Array.from(new Set(filtered_list)); // remove duplicates
                 console.log("word_list_future:" + word_list_future);
             }
 
@@ -287,7 +291,7 @@ function selectSong(e) {
     }
 }
 
-advancedSetting.addEventListener('change', function() {
+advancedSetting.addEventListener('change', function () {
     console.log("advancedSetting");
     document.querySelector('.advancedSetting').classList.toggle('show');
 });
@@ -298,44 +302,26 @@ songSelect.addEventListener("change", (e) => {
     selectSong(e);
 });
 
-// URLの入力に応じて player.createFromSongUrl を呼び出す
-searchInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && searchInput.value) {
-        fadeNavigationUI();
-        // clear songSelect select box
-        songSelect.selectedIndex = 0;
-        const url = searchInput.value;
-        if (url) {
-            player.createFromSongUrl(url).then(() => {
-                current_song_url = url;
-                loadLyricVideo().then(() => {
-                    // 曲の読み込みが完了したら再生を開始
-                    player.requestPlay();
-                    if (background !== null) {
-                        background.enableAnimation();
-                    }
-                });
-            });
-        }
-    }
-});
+// 入力された Song URL と Open AI API キー（取扱注意）を格納する
+advancedSettingOk.addEventListener("click", (e) => {
+    fadeNavigationUI();
 
-apiKeyInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && apiKeyInput.value) {
-        fadeNavigationUI();
-        const key = apiKeyInput.value;
-        if (key) {
-            openai_api_key = key;
-        }
+    songSelect.selectedIndex = 0;
+    const url = searchInput.value;
+    if (url) {
+        player.createFromSongUrl(url).then(() => {
+            current_song_url = url;
+            loadLyricVideo().then(() => {
+                // 曲の読み込みが完了したら再生を開始
+                player.requestPlay();
+                if (background !== null) {
+                    background.enableAnimation();
+                }
+            });
+        });
     }
-});
-apiKeyInput.addEventListener('blur', () => {
     if (apiKeyInput.value) {
-        fadeNavigationUI();
-        const key = apiKeyInput.value;
-        if (key) {
-            openai_api_key = key;
-        }
+        openai_api_key = apiKeyInput.value;
     }
 });
 
@@ -344,6 +330,7 @@ const searchInputNavi = document.getElementById('searchInputNavi');
 const apiKeyInputNavi = document.getElementById('apiKeyInputNavi');
 const songSelectUI = document.getElementById('song-select');
 const advancedSettingNavi = document.getElementById('advancedSettingToggleNavi');
+const advancedSettingOkNavi = document.getElementById('advancedSettingOkNavi');
 
 function fadeNavigationUI() {
     songSelectUI.style.opacity = 0;
@@ -358,50 +345,31 @@ songSelectNavi.addEventListener("change", (e) => {
     selectSong(e);
 });
 
-advancedSettingNavi.addEventListener('change', function() {
+advancedSettingNavi.addEventListener('change', function () {
     console.log("advancedSettingNavi");
     document.querySelector('.advancedSettingNavi').classList.toggle('show');
 });
 
-// URLの入力に応じて player.createFromSongUrl を呼び出す
-searchInputNavi.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && searchInputNavi.value) {
-        fadeNavigationUI();
-        // clear songSelect select box and show default
-        songSelect.selectedIndex = 0;
-        const url = searchInputNavi.value;
-        if (url) {
-            player.createFromSongUrl(url).then(() => {
-                current_song_url = url;
-                loadLyricVideo().then(() => {
-                    // 曲の読み込みが完了したら再生を開始
-                    player.requestPlay();
-                    if (background !== null) {
-                        background.enableAnimation();
-                    }
-                });
-            });
-        }
-    }
-});
+// 入力された Song URL と Open AI API キー（取扱注意）を格納する
+advancedSettingOkNavi.addEventListener("click", (e) => {
+    fadeNavigationUI();
 
-// 入力された Open AI API キーを格納する（取扱注意）
-apiKeyInputNavi.addEventListener("keypress", (e) => {
-    if (e.key === "Enter" && apiKeyInputNavi.value) {
-        fadeNavigationUI();
-        const key = apiKeyInputNavi.value;
-        if (key) {
-            openai_api_key = key;
-        }
+    songSelect.selectedIndex = 0;
+    const url = searchInputNavi.value;
+    if (url) {
+        player.createFromSongUrl(url).then(() => {
+            current_song_url = url;
+            loadLyricVideo().then(() => {
+                // 曲の読み込みが完了したら再生を開始
+                player.requestPlay();
+                if (background !== null) {
+                    background.enableAnimation();
+                }
+            });
+        });
     }
-});
-apiKeyInputNavi.addEventListener('blur', () => {
     if (apiKeyInputNavi.value) {
-        fadeNavigationUI();
-        const key = apiKeyInputNavi.value;
-        if (key) {
-            openai_api_key = key;
-        }
+        openai_api_key = apiKeyInputNavi.value;
     }
 });
 
@@ -567,12 +535,12 @@ player.addListener({
         console.log("Current section: " + currentSection + " chorus=" + isChorus);
         if (background !== null) {
             background.setChorus(isChorus);
-            if(isChorus) {
+            if (isChorus) {
                 background.setPreChorus(false);
             }
 
             // サビの終了
-            if(lastIsChorus && !isChorus) {
+            if (lastIsChorus && !isChorus) {
                 console.log("Chorus end")
                 background.postChorusAnimation();
             }
@@ -608,7 +576,7 @@ player.addListener({
                 segmentLaterCount++;
             }
         }
-        if(segments[segmentLaterCount-1].chorus) {
+        if (segments[segmentLaterCount - 1].chorus) {
             console.log("!!!Chorus coming soon!!!")
             if (background !== null) {
                 background.preChorusAnimation();
@@ -681,23 +649,14 @@ function resetChars() {
 //     baseColor: `#0066cc`,
 //     accentColor: `#e12885`
 //    };
-function transformLLMResponse(response) {
-    let result = {
-        refrainedPhrase: null,
-        melody: null,
-        future: null,
-        mainColor: '#00aa88',  // デフォルト
-        baseColor: '#0066cc',  // デフォルト
-        accentColor: '#e12885' // デフォルト
-    };
-
+function transformLLMResponse(response, result) {
     // 入れ子になったタグを処理する関数
     function processNestedTags(text, outerTag, innerTag) {
         const regex = new RegExp(`<${outerTag}>.*?<\/${outerTag}>`, 'g');
         return text.replace(regex, (match) => {
             const innerContent = match.replace(new RegExp(`</?${outerTag}>`, 'g'), '');
-            return `<${outerTag}>${innerContent}</${outerTag}>` + 
-                   innerContent.replace(new RegExp(`<${innerTag}>(.*?)<\/${innerTag}>`, 'g'), `<${innerTag}>$1</${innerTag}>`);
+            return `<${outerTag}>${innerContent}</${outerTag}>` +
+                innerContent.replace(new RegExp(`<${innerTag}>(.*?)<\/${innerTag}>`, 'g'), `<${innerTag}>$1</${innerTag}>`);
         });
     }
 
@@ -709,17 +668,17 @@ function transformLLMResponse(response) {
 
     let refrainMatches = response.match(/<refrain>.*?<\/refrain>/g);
     if (refrainMatches && refrainMatches.length > 0) {
-        result.refrainedPhrase = refrainMatches.join(' ');
+        result.refrainedPhrase += ' ' + refrainMatches.join(' ');
     }
 
     let melodyMatches = response.match(/<melody>.*?<\/melody>/g);
     if (melodyMatches && melodyMatches.length > 0) {
-        result.melody = melodyMatches.join(' ');
+        result.melody += ' ' + melodyMatches.join(' ');
     }
 
     let futureMatches = response.match(/<future>.*?<\/future>/g);
     if (futureMatches && futureMatches.length > 0) {
-        result.future = futureMatches.join(' ');
+        result.future += ' ' + futureMatches.join(' ');
     }
 
     return result;
@@ -732,17 +691,42 @@ async function loadLLMAnalysis() {
     } else if (current_song_url) {
         llm = createLlm("webllm");
     }
-    // TODO: OpenAI と WebLLM で prompt の reply を得る
-    const prompt = "Analyze this original, identifying the refrained phrases and their apperrances in the text?" +
-    "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
-    "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
-    "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
-    "Please just response <melody> tags of extract result, do not include other info" +
-    "<lyrics>" + player.data.lyricsBody.text + "</lyrics>"
-    const ret = await llm.getResponse(prompt);
-    console.log("llm reply:" + ret);
 
-    return transformLLMResponse(ret);
+    let result_initial = {
+        refrainedPhrase: '',
+        melody: '',
+        future: '',
+        mainColor: '#00aa88',  // デフォルト
+        baseColor: '#0066cc',  // デフォルト
+        accentColor: '#e12885' // デフォルト
+    };
+
+    // OpenAI と WebLLM で prompt の reply を取得する
+    const prompt_refrain = "Analyze this original lyrics, identifying the refrained phrases and their apperrances in the text?" +
+        "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
+        "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
+        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". " +
+        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const ret_refrain = await llm.getResponse(prompt_refrain);
+    console.log("llm prompt:" + prompt_refrain);
+    console.log("llm reply:" + ret_refrain);
+    const result_refrain = transformLLMResponse(ret_refrain, result_initial);
+
+    const prompt_melody = "Analyze this original lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
+        "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. " +
+        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const ret_melody = await llm.getResponse(prompt_melody);
+    console.log("llm prompt:" + prompt_melody);
+    console.log("llm reply:" + ret_melody);
+    const result_melody = transformLLMResponse(ret_melody, result_refrain);
+
+    const prompt_future = "Analyze this original lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
+        "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. " +
+        "The original lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>"
+    const ret_future = await llm.getResponse(prompt_future);
+    console.log("llm prompt:" + prompt_future);
+    console.log("llm reply:" + ret_future);
+    return transformLLMResponse(ret_future, result_melody);
 }
 
 String.prototype.replaceAt = function (index, replacement) {
@@ -799,8 +783,7 @@ function newChar(current) {
                 keyPhraseEl.classList.remove("hidden");
                 keyPhrasePEl.textContent = element;
                 keyPhraseEl.appendChild(keyPhrasePEl);
-            }
-            else if (phrase_before.endsWith(element) || current.parent.parent.lastChar === current) {
+            } else if (phrase_before.endsWith(element) || current.parent.parent.lastChar === current) {
                 console.log("key phrase end:" + element);
                 const keyPhrasePEl = document.createElement("p");
                 keyPhrasePEl.style.animation = "fadeout 0.5s 1s ease-in forwards";
