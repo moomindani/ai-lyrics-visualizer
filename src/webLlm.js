@@ -70,13 +70,11 @@ export class WebLlm extends Llm {
         try {
             console.log("WebLLM request: " + prompt);
             const reply0 = await this.engine.chat.completions.create(request);
-            console.log("WebLLM response: " + reply0);
-
             let replyAll = ''
             for (let i = 0; i < n; i++) {
                 replyAll += reply0.choices[0].message.content + '\n';
             }
-            console.log("getReply reply0=" + replyAll);
+            console.log("WebLLM response:" + replyAll);
             return replyAll;
         } catch (error) {
             console.error("Error during API call:", error);

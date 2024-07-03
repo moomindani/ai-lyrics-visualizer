@@ -525,7 +525,7 @@ body, html {
 
 #key-phrase p {
     font-variation-settings: 'wght' 900;
-    font-size: 12vw;
+    font-size: 6vw;
     line-height: 1;
     color: #fff;
     text-align: center;
@@ -538,7 +538,7 @@ body, html {
 
 @media (max-aspect-ratio: 1/1) {
     #key-phrase p {
-        font-size: 12vh;
+        font-size: 6vh;
     }
 }
 

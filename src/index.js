@@ -156,9 +156,20 @@ async function loadLyricVideo() {
     await getSongInfo(current_song_url).then((llmAnalysis) => {
         if (llmAnalysis) {
             // フォント
-            // const fontFamily = "'Noto Serif JP', serif";
-            // const fontFamily = "'Noto Sans JP', sans-serif";
-            const fontFamily = "'Murecho', sans-serif";
+            let fontFamily = "'Noto Sans JP', sans-serif";
+            if (llmAnalysis.font) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.font;
+                const matches = analyzedEl.querySelectorAll("font");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match font:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                const filtered_list = tmp_list.filter(item => item !== '');
+                console.log("font:" + filtered_list[0]);
+                fontFamily = filtered_list[0];
+            }
             let containerEl = document.querySelector("#container")
             containerEl.style.fontFamily = fontFamily;
             let containerVEl = document.querySelector("#container-v");
@@ -166,13 +177,43 @@ async function loadLyricVideo() {
 
             // カラーコード
             if (llmAnalysis.mainColor) {
-                color_main = llmAnalysis.mainColor;
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.mainColor;
+                const matches = analyzedEl.querySelectorAll("mainColor");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match mainColor:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                const filtered_list = tmp_list.filter(item => item !== '');
+                console.log("mainColor:" + filtered_list[0]);
+                color_main = filtered_list[0];
             }
             if (llmAnalysis.baseColor) {
-                color_base = llmAnalysis.baseColor;
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.baseColor;
+                const matches = analyzedEl.querySelectorAll("baseColor");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match baseColor:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                const filtered_list = tmp_list.filter(item => item !== '');
+                console.log("baseColor:" + filtered_list[0]);
+                color_base = filtered_list[0];
             }
             if (llmAnalysis.accentColor) {
-                color_accent = llmAnalysis.accentColor;
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.accentColor;
+                const matches = analyzedEl.querySelectorAll("accentColor");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match accentColor:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                const filtered_list = tmp_list.filter(item => item !== '');
+                console.log("accentColor:" + filtered_list[0]);
+                color_accent = filtered_list[0];
             }
             background.setColors(color_main, color_base, color_accent);
 
@@ -681,6 +722,31 @@ function transformLLMResponse(response, result) {
         result.future += ' ' + futureMatches.join(' ');
     }
 
+    let fontMatches = response.match(/<font>.*?<\/font>/g);
+    if (fontMatches && fontMatches.length > 0) {
+        result.font = fontMatches[0]; // ひとつだけの想定
+    }
+
+    let mainColorMatches = response.match(/<mainColor>.*?<\/mainColor>/g);
+    if (mainColorMatches && mainColorMatches.length > 0) {
+        result.mainColor = mainColorMatches[0]; // ひとつだけの想定
+    }
+
+    let baseColorMatches = response.match(/<baseColor>.*?<\/baseColor>/g);
+    if (baseColorMatches && baseColorMatches.length > 0) {
+        result.baseColor = baseColorMatches[0]; // ひとつだけの想定
+    }
+
+    let accentColorMatches = response.match(/<accentColor>.*?<\/accentColor>/g);
+    if (accentColorMatches && accentColorMatches.length > 0) {
+        result.accentColor = accentColorMatches[0]; // ひとつだけの想定
+    }
+
+    let keyPhraseMatches = response.match(/<key>.*?<\/key>/g);
+    if (keyPhraseMatches && keyPhraseMatches.length > 0) {
+        result.keyPhrase += ' ' + keyPhraseMatches.join(' ');
+    }
+
     return result;
 }
 
@@ -694,14 +760,18 @@ async function loadLLMAnalysis() {
 
     let result_initial = {
         refrainedPhrase: '',
+        keyPhrase: '',
         melody: '',
         future: '',
+        font: "'Noto Sans JP', sans-serif",   // デフォルト
         mainColor: '#00aa88',  // デフォルト
         baseColor: '#0066cc',  // デフォルト
         accentColor: '#e12885' // デフォルト
     };
 
     // OpenAI と WebLLM で prompt の reply を取得する
+
+    // リフレイン
     const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
         "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
@@ -712,6 +782,7 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_refrain);
     const result_refrain = transformLLMResponse(ret_refrain, result_initial);
 
+    // メロディ
     const prompt_melody = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
         "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
@@ -720,13 +791,51 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_melody);
     const result_melody = transformLLMResponse(ret_melody, result_refrain);
 
+    // ミライ
     const prompt_future = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
         "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
     const ret_future = await llm.getResponse(prompt_future);
     console.log("llm prompt:" + prompt_future);
     console.log("llm reply:" + ret_future);
-    return transformLLMResponse(ret_future, result_melody);
+    const result_future = transformLLMResponse(ret_future, result_melody);
+
+    // フォント
+    const prompt_font = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the best font that fits the context of the lyrics?" +
+        "For standard, active, energetic, positive lyrics, 'Noto Sans JP' will be the best." +
+        "For pop, cute, charming lyrics, 'Murecho' will be the best." +
+        "For negative, sad, dark lyrics, 'Noto Serif JP' will be the best." +
+        "Return one of following string with including font tag, <font>'Noto Sans JP', sans-serif</font>, <font>'Noto Serif JP', serif</font>, or <font>'Murecho', sans-serif</font>"
+    const ret_font = await llm.getResponse(prompt_font);
+    console.log("llm prompt:" + prompt_font);
+    console.log("llm reply:" + ret_font);
+    const result_font = transformLLMResponse(ret_font, result_future);
+
+    // カラーコード
+    const prompt_color = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
+        "Return three color codes; main color, base color, and accent color with relevant tags." +
+        "For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
+        "For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
+        "For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>."
+    const ret_color = await llm.getResponse(prompt_color);
+    console.log("llm prompt:" + prompt_color);
+    console.log("llm reply:" + ret_color);
+    const result_color = transformLLMResponse(ret_color, result_font);
+
+    // キーフレーズ
+    const prompt_key = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+        "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
+        "Key phrase represents the most important message of the lyrics. I expect only one or two key phrases per lyrics." +
+        "Return key phrases with the tag \"key\". e.g. <key>SUPERHERO</key>." +
+        "Please make sure that you do not choose refrain phrases defined here:" + ret_refrain
+    const ret_key = await llm.getResponse(prompt_key);
+    console.log("llm prompt:" + prompt_key);
+    console.log("llm reply:" + ret_key);
+    const result_final = transformLLMResponse(ret_key, result_color);
+
+    return result_final;
 }
 
 String.prototype.replaceAt = function (index, replacement) {
