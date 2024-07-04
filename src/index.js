@@ -882,15 +882,11 @@ function newChar(current) {
                 console.log("key phrase start:" + element);
 
                 let phraseEl = document.querySelector("#container p");
-                phraseEl.classList.add("keyPhrase");
                 phraseEl.style.textShadow = "2px 2px 4px " + color_accent;
                 phraseEl.style.fontSize = "6vw";
 
             } else if (phrase_before.endsWith(element)) {
                 console.log("key phrase end:" + element);
-
-                let phraseEl = document.querySelector("#container p");
-                phraseEl.classList.remove("keyPhrase");
             }
         }
     )
@@ -984,6 +980,11 @@ function newChar(current) {
 
         // 少し待ってフェードアウト開始
         phraseEl.style.animation = "fadeout 2s 1s ease-in forwards";
+        const containerVEl = document.querySelector("#container-v");
+        const pElements = containerVEl.getElementsByTagName('p');
+        Array.from(pElements).forEach((element, index) => {
+            element.style.animation = "fadeout 2s 1s ease-in forwards";
+        });
     }
 }
 
