@@ -441,6 +441,7 @@ jumpBtn.addEventListener("click", (e) => {
     e.preventDefault()
     if (player) {
         player.requestMediaSeek(player.video.firstPhrase.startTime);
+        resetChars();
     }
 });
 pauseBtn.addEventListener("click", (e) => {
@@ -661,8 +662,8 @@ function resetChars() {
     while (keyPhraseEl.firstChild) {
         keyPhraseEl.removeChild(keyPhraseEl.firstChild);
     }
-    let keyPhrasePEl = document.createElement("p");
-    keyPhraseEl.appendChild(keyPhrasePEl);
+    // let keyPhrasePEl = document.createElement("p");
+    // keyPhraseEl.appendChild(keyPhrasePEl);
 }
 
 // LLM のレスポンスを変換
@@ -774,7 +775,8 @@ async function loadLLMAnalysis() {
     // リフレイン
     const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
-        "Refrained phrases mean similar phrases included in each line. Make sure that the phrases are included in the original lyrics." +
+        "Refrained phrases mean similar phrases included in one line. Make sure that the phrases are included in the original lyrics." +
+        "Don't mark refrain when there is only one occurrance in the line."
         "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
         "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
     const ret_refrain = await llm.getResponse(prompt_refrain);
@@ -892,9 +894,9 @@ function newChar(current) {
                 keyPhraseEl.classList.remove("hidden");
                 keyPhrasePEl.textContent = element;
                 keyPhraseEl.appendChild(keyPhrasePEl);
-            } else if (phrase_before.endsWith(element) || current.parent.parent.lastChar === current) {
+            } else if (phrase_before.endsWith(element)) {
                 console.log("key phrase end:" + element);
-                const keyPhrasePEl = document.createElement("p");
+                const keyPhrasePEl = document.querySelector("#key-phrase p");
                 keyPhrasePEl.style.animation = "fadeout 0.5s 1s ease-in forwards";
             }
         }

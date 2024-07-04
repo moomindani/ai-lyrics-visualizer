@@ -6,18 +6,30 @@ export class Background {
         this.isAnimating = true;
         this.isChorus = false;
         this.isPreChorus = false;
-        this.colorMain = null;
-        this.colorBase = null;
-        this.colorAccent = null;
+        this.colorMain = "#00aa88";
+        this.colorBase = "#0066cc";
+        this.colorAccent = "#e12885";
+    }
+
+    isValidColorCode(colorCode) {
+        // 正規表現を使用してカラーコードの形式をチェック
+        const colorCodeRegex = /^#[0-9A-Fa-f]{6}$/;
+        return colorCodeRegex.test(colorCode);
     }
 
     setColors(colorMain, colorBase, colorAccent) {
-        this.colorMain = colorMain;
-        this.colorBase = colorBase;
-        this.colorAccent = colorAccent;
-        console.log("Configured main color: " + colorMain);
-        console.log("Configured base color: " + colorBase);
-        console.log("Configured accent color: " + colorAccent);
+        if (colorMain && this.isValidColorCode(colorMain)) {
+            this.colorMain = colorMain;
+            console.log("Configured main color: " + colorMain);
+        }
+        if (colorBase && this.isValidColorCode(colorBase)) {
+            this.colorBase = colorBase;
+            console.log("Configured base color: " + colorBase);
+        }
+        if (colorAccent && this.isValidColorCode(colorAccent)) {
+            this.colorAccent = colorAccent;
+            console.log("Configured accent color: " + colorAccent);
+        }
     }
 
     draw() {
@@ -33,11 +45,11 @@ export class Background {
         this.isAnimating = false;
     }
 
-    setChorus(isChorus){
+    setChorus(isChorus) {
         this.isChorus = isChorus;
     }
 
-    setPreChorus(isPreChorus){
+    setPreChorus(isPreChorus) {
         this.isPreChorus = isPreChorus;
     }
 
