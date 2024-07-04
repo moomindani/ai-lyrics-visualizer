@@ -655,15 +655,6 @@ function resetChars() {
     // refrain related
     refrain_status = 0;
     refrainedPhrase = "";
-
-    // key phrase related
-    let keyPhraseEl = document.querySelector("#key-phrase");
-    keyPhraseEl.classList.add("hidden");
-    while (keyPhraseEl.firstChild) {
-        keyPhraseEl.removeChild(keyPhraseEl.firstChild);
-    }
-    // let keyPhrasePEl = document.createElement("p");
-    // keyPhraseEl.appendChild(keyPhrasePEl);
 }
 
 // LLM のレスポンスを変換
@@ -889,15 +880,17 @@ function newChar(current) {
     word_list_key.forEach((element) => {
             if (phrase_after.startsWith(element)) {
                 console.log("key phrase start:" + element);
-                const keyPhraseEl = document.querySelector("#key-phrase");
-                const keyPhrasePEl = document.createElement("p");
-                keyPhraseEl.classList.remove("hidden");
-                keyPhrasePEl.textContent = element;
-                keyPhraseEl.appendChild(keyPhrasePEl);
+
+                let phraseEl = document.querySelector("#container p");
+                phraseEl.classList.add("keyPhrase");
+                phraseEl.style.textShadow = "2px 2px 4px " + color_accent;
+                phraseEl.style.fontSize = "6vw";
+
             } else if (phrase_before.endsWith(element)) {
                 console.log("key phrase end:" + element);
-                const keyPhrasePEl = document.querySelector("#key-phrase p");
-                keyPhrasePEl.style.animation = "fadeout 0.5s 1s ease-in forwards";
+
+                let phraseEl = document.querySelector("#container p");
+                phraseEl.classList.remove("keyPhrase");
             }
         }
     )

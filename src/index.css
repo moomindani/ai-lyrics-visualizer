@@ -300,22 +300,18 @@ body, html {
 @keyframes emphasize {
     0% {
         font-variation-settings: 'wght' 600;
-        font-size: 3vw;
     }
     60% {
         font-variation-settings: 'wght' 200;
-        font-size: 3vw;
     }
     100% {
         font-variation-settings: 'wght' 100;
-        font-size: 3vw;
     }
 }
 
 #container p strong {
     position: relative;
     animation: emphasize 1500ms forwards;
-    font-size: 3vw;
     font-variation-settings: 'wght' 100;
 }
 
@@ -507,39 +503,6 @@ body, html {
     height: 100%;
     display: flex;
     overflow: hidden;
-}
-
-#key-phrase {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    background: #000;
-    z-index: 30;
-}
-
-#key-phrase p {
-    font-variation-settings: 'wght' 900;
-    font-size: 6vw;
-    line-height: 1;
-    color: #fff;
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-@media (max-aspect-ratio: 1/1) {
-    #key-phrase p {
-        font-size: 6vh;
-    }
 }
 
 .navi {
