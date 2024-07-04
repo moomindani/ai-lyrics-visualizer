@@ -767,7 +767,7 @@ async function loadLLMAnalysis() {
     const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
         "Refrained phrases mean similar phrases included in one line. Make sure that the phrases are included in the original lyrics." +
-        "Don't mark refrain when there is only one occurrance in the line."
+        // "Don't mark refrain when there is only one occurrance in the line."
         "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
         "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
     const ret_refrain = await llm.getResponse(prompt_refrain);

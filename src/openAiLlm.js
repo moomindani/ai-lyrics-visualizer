@@ -15,7 +15,8 @@ export class OpenAiLlm extends Llm {
             model: 'gpt-4o',
             messages: [
                 {role: 'user', content: prompt}
-            ]
+            ],
+            temperature: 0.2
         });
         try {
             console.log("OpenAI request: " + prompt);

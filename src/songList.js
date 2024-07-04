@@ -12,41 +12,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-
-        <refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain> (appears three times)
-        <refrain>ミライ</refrain><refrain>ミライ</refrain><refrain>ミライ</refrain> (appears three times)
-        Note that the refrained phrases are the repeated phrases that are not part of the main lyrics. In this case, the refrained phrases are the repeated instances of "セカイ" and "ミライ".`,
-        melody : `Here is the extracted result in <melody> tags:
-        <melody>音</melody>
-        <melody>メロディ</melody>
-        <melody>声</melody>
-        <melody>鼓動</melody>
-        <melody>音</melody>
-        <melody>ノート</melody>
-        <melody>音</melody>
-        <melody>音</melody>
-        <melody>セカイ</melody>
-        <melody>音</melody>
-        <melody>鼓動</melody>
-        <melody>音</melody>
-        <melody>セカイ</melody>
-        <melody>音</melody>
-        <melody>セカイ</melody>
-        <melody>音</melody>
-        `,
-        future : `<future>ミライ</future>
-        <future>ミライ</future>
-        <future>ミライ</future>
-        <future>セカイ</future>
-        <future>セカイ</future>
-        <future>セカイ</future>
-        <future>セカイ</future>
-        <future>セカイ</future>
-        <future>セカイ</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
+        refrainedPhrase : ` <refrain>未来</refrain> <refrain>未来</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>ミライ</refrain> <refrain>ミライ</refrain> <refrain>ミライ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>セカイ</refrain> <refrain>ミライ</refrain> <refrain>ミライ</refrain> <refrain>ミライ</refrain>`,
+        melody : ` <melody>音</melody> <melody>響く</melody> <melody>音</melody> <melody>音</melody> <melody>音</melody> <melody>響き</melody> <melody>鳴らしたい</melody> <melody>音</melody> <melody>音</melody> <melody>音</melody>`,
+        future : ` <future>未来</future> <future>未来</future> <future>未来</future> <future>未来</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future> <future>未来</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future>`,
+        keyPhrase: ` <key>初の音が奏でる世界</key> <key>全ては君次第</key>`,
+        font: `<font>'Noto Sans JP', sans-serif</font>`,
+        mainColor: `#ff5733`,
+        baseColor: `#1e3d59`,
+        accentColor: `#f1c40f`
       },
     },
     {
@@ -62,27 +35,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-        <refrain>何十回も</refrain><refrain>何百回も</refrain><refrain>星の降る夜を超えて</refrain>
-        <refrain>何千回も</refrain><refrain>何万回も</refrain><refrain>確かな愛を叫ぶよ</refrain>
-        <refrain>何回でも</refrain><refrain>何回でも</refrain><refrain>想いをこの声に乗せて</refrain>
-        <refrain>何回だって</refrain><refrain>何回だって</refrain><refrain>届くまで叫ぶよ</refrain>
-        These refrained phrases are marked with the <refrain> tags, and they appear multiple times throughout the lyrics.`,
-        melody : `<melody>メロディ</melody>
-        <melody>歌声</melody>
-        <melody>声</melody>
-        <melody>五線譜の魔法</melody>
-        <melody>この歌</melody>
-        <melody>歌</melody>`,
-        future : `<future>ミライ</future>
-        <future>光</future>
-        <future>ミライ</future>
-        <future>光</future>
-        <future>ミライ</future>
-        <future>光</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
+        refrainedPhrase : `<refrain>何十回も</refrain> <refrain>何百回も</refrain> <refrain>何千回も</refrain> <refrain>何万回も</refrain> <refrain>何回でも</refrain> <refrain>何回でも</refrain> <refrain>何回だって</refrain> <refrain>何回だって</refrain> <refrain>何回でも</refrain> <refrain>何回でも</refrain>`,
+        melody : ` <melody>響</melody> <melody>歌声</melody> <melody>メロディ</melody> <melody>叫</melody> <melody>声</melody> <melody>叫</melody> <melody>歌</melody> <melody>声</melody> <melody>響</melody> <melody>歌声</melody> <melody>メロディ</melody> <melody>叫</melody> <melody>声</melody> <melody>歌</melody>`,
+        future : `<future>ミライ</future> <future>文化</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future> <future>文化</future>`,
+        keyPhrase: `<key>終わらない文化になるから</key> <key>新しいミライが広がっていく</key>`,
+        font: `<font>'Noto Sans JP', sans-serif</font>`,
+        mainColor: `#FFD700`,
+        baseColor: `#1E90FF`,
+        accentColor: `#FF69B4`
        },
     },
     {
@@ -98,35 +58,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-
-        <refrain>さぁ行こう</refrain><refrain>最高の『未体験』が待っている</refrain><refrain>さぁ行こう</refrain><refrain>最高の『期待感』が胸を打つ</refrain>
-        <refrain>憧れの場所</refrain><refrain>そんなに遠くないね</refrain><refrain>憧れの場所</refrain><refrain>確かに近づいて</refrain>
-        <refrain>Day by Day</refrain><refrain>一歩ずつでいい</refrain><refrain>Day by Day</refrain><refrain>一歩ずつ踏み締めてきた</refrain>
-        <refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>
-        Note that some of the refrained phrases may have slight variations in wording, but I've tried to identify the most common and repeated phrases that can be considered refrains.`,
-        melody : `Here are the extracted <melody> tags:
-        <melody>メロディ</melody>
-        <melody>声</melody>
-        <melody>リズム</melody>
-        <melody>リリック</melody>
-        <melody>歌声</melody>
-        <melody>交響曲</melody>
-        <melody>音色</melody>
-        <melody>描きたい</melody>
-        <melody>五線譜</melody>
-        <melody>旋律</melody>`,
-        future : `<future>未体験</future>
-        <future>未来</future>
-        <future>期待感</future>
-        <future>未</future>
-        <future>芽吹いて</future>
-        <future>光</future>
-        <future>未</future>
-        <future>未来</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
+        refrainedPhrase : `<refrain>Day by Day</refrain> <refrain>1・2・3</refrain> <refrain>ずっと</refrain> <refrain>Day by Day</refrain>`,
+        melody : `<melody>melody</melody> <melody>リリック</melody> <melody>歌声</melody> <melody>Music</melody> <melody>Diva</melody> <melody>交響曲</melody> <melody>音色</melody> <melody>Music</melody> <melody>Music</melody> <melody>Diva</melody> <melody>Singing</melody> <melody>交響曲</melody> <melody>音</melody> <melody>響かせる旋律</melody>`,
+        future : `<future>未来</future>`,
+        keyPhrase: `<key>未来創造賛歌</key> <key>交響曲</key>`,
+        font: `<font>'Noto Sans JP', sans-serif</font>`,
+        mainColor: `#FF6347`,
+        baseColor: `#4682B4`,
+        accentColor: `#FFD700`
       }
     },
     {
@@ -142,49 +81,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-        <refrain>I can be a “SUPERHERO”</refrain>
-        <refrain>どんな時も君のそばにいる</refrain>
-        <refrain>“SUPERHERO”</refrain>
-        <refrain>どこにいたって飛んで行くよ</refrain>
-        <refrain>君には涙なんて似合わないさ</refrain>
-        <refrain>You’ll be alright</refrain>
-        <refrain>Yes!! I’m your “SUPERHERO”</refrain>
-        <refrain>Gimme gimme gimme gimme</refrain>
-        <refrain>ひとりじゃない You are not alone yeah</refrain>
-        <refrain>君の笑顔だけで強くなれる</refrain>
-        <refrain>You’ll be alright</refrain>
-        <refrain>Call me baby call me baby</refrain>
-        <refrain>Wanna be wanna be wanna be “SUPERHERO”</refrain>
-        <refrain>Gonna be gonna be gonna be “SUPERHERO”</refrain>
-        <refrain>Trust me trust me</refrain>
-        <refrain>Right もし君に</refrain>
-        <refrain>遠くから Say my name</refrain>
-        <refrain>聞こえるよ Call me babe</refrain>
-        <refrain>心にかかった雲を払って Fly</refrain>
-        <refrain>飛び立つ七色の Beautiful sky</refrain>
-        <refrain>Trust me trust me</refrain>
-        Note that some of these refrained phrases may appear multiple times in the lyrics, but I have only listed each one once in the above list.`,
-        melody : `Here are the extracted <melody> tags:
-        <melody>歌</melody>
-        <melody>ダンス</melody>
-        <melody>La la la la la</melody>
-        <melody>Say my name</melody>
-        <melody>Call me babe</melody>
-        <melody>声</melody>
-        <melody>メロディ</melody>`,
-        future : `<future>ミライ</future>
-        <future>光</future>
-        <future>未来</future>
-        <future>未来</future>
-        <future>明日</future>
-        <future>Beautiful sky</future>
-        <future>未来</future>
-        <future>未来</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`,
-        keyPhrase : `<key>“SUPERHERO”</key>`
+        refrainedPhrase : `<refrain>Gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>Gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>Wanna be</refrain> <refrain>wanna be</refrain> <refrain>wanna be</refrain> <refrain>Gonna be</refrain> <refrain>gonna be</refrain> <refrain>gonna be</refrain> <refrain>Gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>really</refrain> <refrain>Gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain> <refrain>gimme</refrain>`,
+        melody : `<melody>歌</melody> <melody>歌</melody> <melody>雑音</melody>`,
+        future : `<future>未来</future> <future>未来</future> <future>脅威</future> <future>明日</future> <future>未来</future> <future>脅威</future> <future>明日</future>`,
+        keyPhrase : `<key>君を守りたい</key> <key>君の未来信じたい</key>`,
+        font: `<font>'Noto Sans JP', sans-serif</font>`,
+        mainColor: `#007BFF`,
+        baseColor: `#6C757D`,
+        accentColor: `#FFC107`,
       }
     },
     {
@@ -200,35 +104,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-        <refrain>ここで叫んだ機械の音</refrain> (appears 3 times)
-        <refrain>繰り返したメロディ</refrain> (appears 2 times)
-        <refrain>トランジション</refrain> (appears 2 times)
-        <refrain>脈を打つわ！</refrain> (appears 2 times)
-        <refrain>この手が差し伸べた</refrain> (appears 2 times)
-        <refrain>あなたに</refrain> (appears 2 times)
-        <refrain>夢を見よう</refrain> (appears 3 times)
-        <refrain>初音ミクとアナタで</refrain> (appears 3 times)
-        Note that some of these phrases may appear multiple times in the lyrics, but I've only listed each one once in the above output.`,
-        melody : `Here are the extracted <melody> tags:
-        <melody>メロディ</melody>
-        <melody>声</melody>
-        <melody>メロディ</melody>
-        <melody>トランジション</melody>
-        <melody>メロディ</melody>
-        <melody>声</melody>
-        <melody>メロディ</melody>
-        <melody>トランジション</melody>
-        <melody>メロディ</melody>`,
-        future : `<future>ミライ</future>
-        <future>光</future>
-        <future>未来</future>
-        <future>光</future>
-        <future>未来</future>
-        <future>未来</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
+        refrainedPhrase : `<refrain>機械の音</refrain> <refrain>機械の音</refrain> <refrain>機械の音</refrain> <refrain>機械の音</refrain>`,
+        melody : `<melody>初めて歌うメロディ</melody> <melody>歌うメロディ</melody> <melody>声</melody> <melody>叫んだ機械の音</melody> <melody>メロディ</melody> <melody>叫んだ機械の音</melody> <melody>声</melody> <melody>歌</melody> <melody>叫んだ機械の音</melody> <melody>メロディ</melody> <melody>叫んだ機械の音</melody> <melody>声</melody>`,
+        future : `<future>ファイル</future> <future>未来</future>`,
+        keyPhrase : `<key>夢を見よう 初音ミクとアナタで</key>`,
+        font: `<font>'Murecho', sans-serif</font>`,
+        mainColor: `#87CEEB`,
+        baseColor: `#2F4F4F`,
+        accentColor: `#FFD700`
       }
     },
     {
@@ -244,19 +127,14 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : `<refrain>傷つけあって</refrain><refrain>痛みを知って</refrain><refrain>アナタで嫉妬したいよ</refrain><refrain>それでも抱きしめたいよ</refrain><refrain>アタシはまだ知らないの</refrain><refrain>アナタの温もりも</refrain><refrain>かりそめの心が</refrain><refrain>朽ち果てる前に</refrain><refrain>アナタで嫉妬してみたいの</refrain><refrain>もう掻き消えやしない</refrain><refrain>傷跡のような証で</refrain><refrain>アタシはまだちょっとアナタを愛していたい</refrain>`,
-        melody : `Here are the extracted <melody> tags:
-        <melody>声</melody>
-        <melody>メロディ</melody>
-        <melody>心</melody>
-        <melody>温もり</melody>
-        <melody>感情</melody>
-        <melody>歌</melody>`,
-        future : `<future>ミライ</future>
-        <future>光</future>`,
-        mainColor: `#00aa88`,
-        baseColor: `#0066cc`,
-        accentColor: `#e12885`
+        refrainedPhrase : `<refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain> <refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain> <refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain> <refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain>`,
+        melody : `<melody>この声</melody>`,
+        future : ``,
+        keyPhrase : `<key>アタシはまだ知らないの</key> <key>アタシはまだちょっとアナタを愛していたい</key>`,
+        font: `<font>Noto Serif JP', serif</font>`,
+        mainColor: `#4B0082`,
+        baseColor: `#2F4F4F`,
+        accentColor: `#FF4500`
       }
     },
   ];
