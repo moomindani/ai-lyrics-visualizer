@@ -21,6 +21,7 @@ const paintedSeekbar = seekbar.querySelector("div");
 
 let newPhrase = false;
 let lastTime = -1;
+let lastPhrase = null;
 let lastCharIndexInPhrase = -1;
 let segments = [];
 let currentSegment = -1;
@@ -842,9 +843,10 @@ function newChar(current) {
     console.log("phrase:" + current.parent.parent.text);
 
     // フレーズ内の文字が進んでない場合、新しい文字と認識しない（先頭文字が稀にダブる問題の対策）
-    if (lastCharIndexInPhrase === current.parent.parent.findIndex(current)) {
+    if (lastPhrase === current.parent.parent && lastCharIndexInPhrase >= current.parent.parent.findIndex(current)) {
         return;
     } else {
+        lastPhrase = current.parent.parent;
         lastCharIndexInPhrase = current.parent.parent.findIndex(current);
     }
     console.log("char index in phrase:" + lastCharIndexInPhrase);

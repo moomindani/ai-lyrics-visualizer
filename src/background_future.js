@@ -438,8 +438,8 @@ export class BackgroundFuture extends Background {
 
         const textCanvas = document.createElement('canvas');
         const textContext = textCanvas.getContext('2d');
-        textCanvas.width = window.innerWidth;
-        textCanvas.height = window.innerHeight;
+        textCanvas.width = window.innerWidth * 2;   // モバイルを考慮してかなり大きめに定義
+        textCanvas.height = window.innerHeight * 2;
 
         textContext.fillStyle = 'black';
         textContext.fillRect(0, 0, textCanvas.width, textCanvas.height);
