@@ -28,7 +28,7 @@ let lastIsChorus = false;
 
 let current_song_url = null;
 
-let refrain_status = 0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
+let refrain_status = 0;  // 0: non-refrain, 1+: refrain
 let refrainedPhrase = '';
 let word_list_refrain = [];
 let word_list_melody = [];
