@@ -37,6 +37,11 @@ export class Background {
         throw new Error('draw method must be implemented by child classes');
     }
 
+    clear() {
+        // This method should be overridden by child classes
+        throw new Error('clear method must be implemented by child classes');
+    }
+
     enableAnimation() {
         this.isAnimating = true;
     }

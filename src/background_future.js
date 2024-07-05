@@ -3,6 +3,13 @@ import * as THREE from 'three';
 
 const DATETIME_NOT_SET = -1;
 
+function convertColorCode(hexColor) {
+    // '#'で始まる場合は取り除く
+    const cleanHex = hexColor.startsWith('#') ? hexColor.slice(1) : hexColor;
+    // '0x'を先頭に追加して返す
+    return '0x' + cleanHex;
+}
+
 // BackgroundFuture class
 export class BackgroundFuture extends Background {
 
@@ -20,16 +27,17 @@ export class BackgroundFuture extends Background {
         this.staticBackgroundContext;
 
         this.particles;
-        this.lightBeams = new THREE.Group();
-        this.flares = new THREE.Group();
+        this.lightBeams;
+        this.flares = new THREE.Group()
         this.particleCount = 1000;
         this.beamCount = 20;
         this.maxFlares = 50;
+        this.textParticleSystem;
         this.textParticleLifetime = 5000;
         this.noteCount = 50;
         this.notes = new THREE.Group();
         this.circleCount = 5;
-        this.circles = new THREE.Group();
+        this.circles;
 
         this.frame = 0;
         this.startTime = DATETIME_NOT_SET;
@@ -54,6 +62,15 @@ export class BackgroundFuture extends Background {
         this.createLightBeams();
         this.createCircles()
         this.animate();
+    }
+
+    clear() {
+        this.clearParticles();
+        this.clearLightBeams();
+        this.clearFlares();
+        this.clearNotes();
+        this.clearText();
+        this.clearCircles();
     }
 
     createBackground() {
@@ -178,12 +195,21 @@ export class BackgroundFuture extends Background {
         this.scene.add(this.particles);
     }
 
+    clearParticles() {
+        if (this.particles) {
+            this.scene.remove(this.particles);
+            this.particles.geometry.dispose();
+            this.particles.material.dispose();
+            this.particles = null;
+        }
+    }
+
     createLightBeams() {
+        this.lightBeams = new THREE.Group()
         for (let i = 0; i < this.beamCount; i++) {
             const beam = this.createLightBeam();
             this.lightBeams.add(beam);
         }
-
         this.scene.add(this.lightBeams);
     }
 
@@ -209,6 +235,17 @@ export class BackgroundFuture extends Background {
         beam.userData.lifetime = 100;
 
         return beam;
+    }
+
+    clearLightBeams() {
+        if (this.lightBeams) {
+            this.scene.remove(this.lightBeams);
+            this.lightBeams.children = this.lightBeams.children.filter((beam) => {
+                beam.geometry.dispose();
+                beam.material.dispose();
+            });
+            this.lightBeams = null;
+        }
     }
 
     createFlares() {
@@ -275,6 +312,20 @@ export class BackgroundFuture extends Background {
         return flare;
     }
 
+    clearFlares() {
+        if (this.flares) {
+            this.scene.remove(this.flares);
+            this.flares.children = this.flares.children.filter((flare) => {
+                flare.material.dispose();
+            });
+
+            if (this.flares.children.length === 0) {
+                this.flares.clear();
+            }
+            this.flares = new THREE.Group();
+        }
+    }
+
     createNotes() {
         for (let i = 0; i < this.noteCount; i++) {
             const note = this.createNote();
@@ -332,7 +383,15 @@ export class BackgroundFuture extends Background {
         return noteGroup;
     }
 
+    clearNotes() {
+        if (this.notes) {
+            this.scene.remove(this.notes);
+            this.notes = new THREE.Group();
+        }
+    }
+
     createCircles() {
+        this.circles = new THREE.Group();
         for (let i = 0; i < this.circleCount; i++) {
             const circle = this.createCircle();
             this.circles.add(circle);
@@ -354,15 +413,29 @@ export class BackgroundFuture extends Background {
         return circle;
     }
 
+    clearCircles() {
+        if (this.circles) {
+            this.scene.remove(this.circles);
+            this.circles.children.forEach((circle, index) => {
+                circle.geometry.dispose();
+                circle.material.dispose();
+            });
+            this.circles = null;
+        }
+    }
 
-    drawText(text) {
-        // すでに描画中のテキストパーティクルがある場合は削除
+    clearText() {
         if (this.textParticleSystem) {
             this.scene.remove(this.textParticleSystem);
             this.textParticleSystem.geometry.dispose();
             this.textParticleSystem.material.dispose();
             this.textParticleSystem = null;
         }
+    }
+
+    drawText(text) {
+        // すでに描画中のテキストパーティクルがある場合は削除
+        this.clearText();
 
         const textCanvas = document.createElement('canvas');
         const textContext = textCanvas.getContext('2d');
@@ -379,7 +452,7 @@ export class BackgroundFuture extends Background {
         textContext.fillText(text, textCanvas.width / 2, textCanvas.height / 2);
 
         const imageData = textContext.getImageData(0, 0, textCanvas.width, textCanvas.height);
-        const particles = [];
+        const textParticles = [];
 
         for (let y = 0; y < textCanvas.height; y += 10) {
             for (let x = 0; x < textCanvas.width; x += 10) {
@@ -389,16 +462,16 @@ export class BackgroundFuture extends Background {
                         (textCanvas.height / 2 - y) / 50,
                         0
                     );
-                    particles.push(particle.x, particle.y, particle.z);
+                    textParticles.push(particle.x, particle.y, particle.z);
                 }
             }
         }
 
         const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute('position', new THREE.Float32BufferAttribute(particles, 3));
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(textParticles, 3));
 
         const material = new THREE.PointsMaterial({
-            color: 0x00ffff,
+            color: convertColorCode(this.colorAccent),
             size: 0.1,
             transparent: true,
             opacity: 0.7,
@@ -474,31 +547,37 @@ export class BackgroundFuture extends Background {
     beatAnimation() {
         console.log('Animating with beats');
         if (this.isAnimating) {
-            // ビームを追加
-            let beamPlus = 2;
+            // ビームのビートアニメーション
+            if (this.lightBeams) {
+                // ビームを追加
+                let beamPlus = 2;
 
-            // サビならものすごく追加
-            if (this.isChorus) {
-                beamPlus = 100;
+                // サビならものすごく追加
+                if (this.isChorus) {
+                    beamPlus = 100;
+                }
+                this.beamCount += beamPlus;
+                for (let i = 0; i < beamPlus; i++) {
+                    const beam = this.createLightBeam();
+                    this.lightBeams.add(beam);
+                }
+
+                // ビームの不透明度を変化させる
+                this.lightBeams.children.forEach((beam, index) => {
+                    beam.material.opacity = 0.3 + 0.2 * Math.sin(this.frame * 0.05 + index);
+                });
             }
-            this.beamCount += beamPlus;
-            for (let i = 0; i < beamPlus; i++) {
-                const beam = this.createLightBeam();
-                this.lightBeams.add(beam);
-            }
 
-            // ビームの不透明度を変化させる
-            this.lightBeams.children.forEach((beam, index) => {
-                beam.material.opacity = 0.3 + 0.2 * Math.sin(this.frame * 0.05 + index);
-            });
+            // 円のビートアニメーション
+            if (this.circles) {
+                // 円を追加
+                let circlePlus = 1;
 
-            // 円を追加
-            let circlePlus = 1;
-
-            this.circleCount += circlePlus;
-            for (let i = 0; i < circlePlus; i++) {
-                const circle = this.createCircle();
-                this.circles.add(circle);
+                this.circleCount += circlePlus;
+                for (let i = 0; i < circlePlus; i++) {
+                    const circle = this.createCircle();
+                    this.circles.add(circle);
+                }
             }
 
             this.renderer.render(this.scene, this.camera);
@@ -516,36 +595,37 @@ export class BackgroundFuture extends Background {
     }
 
     postChorusAnimation() {
-        console.log('Animating after chorus');
         this.startTime = DATETIME_NOT_SET;
         this.removeAllFlares();
     }
 
     animateLightBeams() {
-        // 削除する光線を格納する配列
-        const beamsToRemove = [];
+        if (this.lightBeams) {
+            // 削除する光線を格納する配列
+            const beamsToRemove = [];
 
-        this.lightBeams.children.forEach((beam, index) => {
-            // ビームの移動（パーティクルと同じ方向）
-            beam.position.z += 0.3;
+            this.lightBeams.children.forEach((beam, index) => {
+                // ビームの移動（パーティクルと同じ方向）
+                beam.position.z += 0.3;
 
-            // 画面外に出たビームを削除
-            if (beam.position.z > this.CAMERA_POSITION_Z) {
-                beamsToRemove.push(beam);
-            }
-
-            if (beam.userData.lifetime !== undefined) {
-                beam.userData.lifetime -= 1;
-                if (beam.userData.lifetime <= 0) {
+                // 画面外に出たビームを削除
+                if (beam.position.z > this.CAMERA_POSITION_Z) {
                     beamsToRemove.push(beam);
                 }
-            }
-        });
 
-        // マークされた光線を削除
-        beamsToRemove.forEach(beam => {
-            this.removeLightBeam(beam);
-        });
+                if (beam.userData.lifetime !== undefined) {
+                    beam.userData.lifetime -= 1;
+                    if (beam.userData.lifetime <= 0) {
+                        beamsToRemove.push(beam);
+                    }
+                }
+            });
+
+            // マークされた光線を削除
+            beamsToRemove.forEach(beam => {
+                this.removeLightBeam(beam);
+            });
+        }
     }
 
     // 特定の光線を削除するメソッド
@@ -557,26 +637,28 @@ export class BackgroundFuture extends Background {
     }
 
     animateFlares() {
-        // フレアのアニメーション
-        this.flares.children.forEach((flare, index) => {
-            if (flare.userData.state === 'fadeIn') {
-                flare.material.uniforms.opacity.value += flare.userData.fadeInSpeed;
-                if (flare.material.uniforms.opacity.value >= flare.userData.maxOpacity) {
-                    flare.userData.state = 'fadeOut';
-                }
-            } else { // fadeOut
-                flare.material.uniforms.opacity.value -= flare.userData.fadeOutSpeed;
-                if (flare.material.uniforms.opacity.value <= 0) {
-                    this.flares.remove(flare);
+        if (this.flares) {
+            // フレアのアニメーション
+            this.flares.children.forEach((flare, index) => {
+                if (flare.userData.state === 'fadeIn') {
+                    flare.material.uniforms.opacity.value += flare.userData.fadeInSpeed;
+                    if (flare.material.uniforms.opacity.value >= flare.userData.maxOpacity) {
+                        flare.userData.state = 'fadeOut';
+                    }
+                } else { // fadeOut
+                    flare.material.uniforms.opacity.value -= flare.userData.fadeOutSpeed;
+                    if (flare.material.uniforms.opacity.value <= 0) {
+                        this.flares.remove(flare);
 
-                    // サビ中でなければ再利用
-                    if (!this.isChorus) {
-                        const newFlare = this.createFlare(flare.material.uniforms.map.value);
-                        this.flares.add(newFlare);
+                        // サビ中でなければ再利用
+                        if (!this.isChorus) {
+                            const newFlare = this.createFlare(flare.material.uniforms.map.value);
+                            this.flares.add(newFlare);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     animateText(elapsedTime) {
@@ -636,36 +718,38 @@ export class BackgroundFuture extends Background {
     }
 
     animateNotes() {
-        const notesToRemove = [];
+        if (this.notes) {
+            const notesToRemove = [];
 
-        this.notes.children.forEach((note, index) => {
-            // Z軸方向に移動（奥から手前へ）
-            note.position.z += 0.3;
+            this.notes.children.forEach((note, index) => {
+                // Z軸方向に移動（奥から手前へ）
+                note.position.z += 0.3;
 
-            // 画面手前に出た音符を削除リストに追加
-            if (note.position.z > 50) {
-                notesToRemove.push(note);
-            } else {
-                // 自然な揺れの効果
-                note.rotation.x += Math.sin(this.frame * 0.02 + index) * 0.005;
-                note.rotation.y += Math.cos(this.frame * 0.015 + index) * 0.005;
-                note.rotation.z += Math.sin(this.frame * 0.01 + index) * 0.005;
+                // 画面手前に出た音符を削除リストに追加
+                if (note.position.z > this.CAMERA_POSITION_Z) {
+                    notesToRemove.push(note);
+                } else {
+                    // 自然な揺れの効果
+                    note.rotation.x += Math.sin(this.frame * 0.02 + index) * 0.005;
+                    note.rotation.y += Math.cos(this.frame * 0.015 + index) * 0.005;
+                    note.rotation.z += Math.sin(this.frame * 0.01 + index) * 0.005;
 
-                // スケールをゆっくり変化させる
-                const scaleChange = Math.sin(this.frame * 0.01 + index) * 0.001;
-                note.scale.addScalar(scaleChange);
+                    // スケールをゆっくり変化させる
+                    const scaleChange = Math.sin(this.frame * 0.01 + index) * 0.001;
+                    note.scale.addScalar(scaleChange);
 
-                // 近づくにつれて大きくする
-                const scale = 0.5 + (note.position.z + 50) / 60; // 0.5 から 1.5 の範囲で変化
-                note.scale.setScalar(scale);
-            }
-        });
+                    // 近づくにつれて大きくする
+                    const scale = 0.5 + (note.position.z + 50) / 60; // 0.5 から 1.5 の範囲で変化
+                    note.scale.setScalar(scale);
+                }
+            });
 
-        // 削除リストの音符を処理
-        notesToRemove.forEach(note => {
-            this.notes.remove(note);
-            this.disposeNote(note);
-        });
+            // 削除リストの音符を処理
+            notesToRemove.forEach(note => {
+                this.notes.remove(note);
+                this.disposeNote(note);
+            });
+        }
     }
 
     disposeNote(note) {
@@ -684,25 +768,32 @@ export class BackgroundFuture extends Background {
     }
 
     animateCircles() {
-        const circlesToRemove = [];
+        if (this.circles) {
+            const circlesToRemove = [];
 
-        this.circles.children.forEach((circle, index) => {
-            // Z軸方向に移動（奥から手前へ）
-            circle.position.z += 0.2;
+            this.circles.children.forEach((circle, index) => {
+                // Z軸方向に移動（奥から手前へ）
+                circle.position.z += 0.2;
 
-            // カメラに近づくにつれて円を大きくし、透明度を変える
-            const distance = this.camera.position.z - circle.position.z;
-            const scaleFactor = 1 + (1 / distance) * 50;
-            circle.scale.set(scaleFactor, scaleFactor, 1);
-            circle.material.opacity = Math.min(0.1 + (1 / distance) * 5, 1);
-        });
+                // 画面手前に出た音符を削除リストに追加
+                if (circle.position.z > this.CAMERA_POSITION_Z) {
+                    circlesToRemove.push(circle);
+                } else {
+                    // カメラに近づくにつれて円を大きくし、透明度を変える
+                    const distance = this.camera.position.z - circle.position.z;
+                    const scaleFactor = 1 + (1 / distance) * 50;
+                    circle.scale.set(scaleFactor, scaleFactor, 1);
+                    circle.material.opacity = Math.min(0.1 + (1 / distance) * 5, 1);
+                }
+            });
 
-        // 削除リストの円を処理
-        circlesToRemove.forEach(circle => {
-            this.circles.remove(circle);
-            circle.geometry.dispose();
-            circle.material.dispose();
-        });
+            // 削除リストの円を処理
+            circlesToRemove.forEach(circle => {
+                this.circles.remove(circle);
+                circle.geometry.dispose();
+                circle.material.dispose();
+            });
+        }
     }
 
     onWindowResize() {

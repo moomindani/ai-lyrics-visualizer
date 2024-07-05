@@ -26,7 +26,6 @@ let segments = [];
 let currentSegment = -1;
 let lastIsChorus = false;
 
-let max_vocal = 0, min_vocal = 100000000;
 let current_song_url = null;
 
 let refrain_status = 0;  // 0: non-refrain, 1: left-refrain, 2: right-refrain, 3: center-refrain
@@ -76,6 +75,13 @@ function checkInactivity() {
 function handleInteraction() {
     showPlayer();
     lastTouchTime = Date.now();
+}
+
+function clear() {
+    resetChars();
+    if (background !== null) {
+        background.clear();
+    }
 }
 
 document.addEventListener('mouseenter', handleInteraction);
@@ -315,25 +321,18 @@ function selectSong(e) {
     const music_info = songListMap.get(current_song_url)
     if (songListMap.has(current_song_url)) {
         showPlayer();
+        clear();
         player.createFromSongUrl(current_song_url, music_info.options).then(() => {
             // 曲の読み込みが完了したら再生を開始
             if (enbalLyricVideo.checked) {
                 loadLyricVideo().then(() => {
                     player.requestPlay();
                     if (background !== null) {
-                        // background.clear();
                         background.enableAnimation();
                     }
                 });
             } else {
                 player.requestPlay();
-                if (background !== null) {
-                    // background.clear();
-                    background.enableAnimation();
-                }
-            }
-            if (background !== null) {
-                background.enableAnimation();
             }
         });
     }
@@ -357,13 +356,13 @@ advancedSettingOk.addEventListener("click", (e) => {
     songSelect.selectedIndex = 0;
     const url = searchInput.value;
     if (url) {
+        clear();
         player.createFromSongUrl(url).then(() => {
             current_song_url = url;
             loadLyricVideo().then(() => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 if (background !== null) {
-                    // background.clear();
                     background.enableAnimation();
                 }
             });
@@ -406,13 +405,13 @@ advancedSettingOkNavi.addEventListener("click", (e) => {
     songSelect.selectedIndex = 0;
     const url = searchInputNavi.value;
     if (url) {
+        clear();
         player.createFromSongUrl(url).then(() => {
             current_song_url = url;
             loadLyricVideo().then(() => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 if (background !== null) {
-                    // background.clear();
                     background.enableAnimation();
                 }
             });
@@ -487,7 +486,6 @@ seekbar.addEventListener("click", (e) => {
 player.addListener({
     /* APIの準備ができたら呼ばれる */
     onAppReady(app) {
-        console.log("onAppReady")
         if (!app.managed) {
             document.querySelector("#control").style.display = "flex";
         }
@@ -497,13 +495,11 @@ player.addListener({
 
     /* 楽曲が変わったら呼ばれる */
     onAppMediaChange() {
-        console.log("onAppMediaChange")
         resetChars();
     },
 
     /* 楽曲情報が取れたら呼ばれる */
     onVideoReady(video) {
-        console.log("onVideoReady")
         // 楽曲情報を表示
         document.querySelector("#artist span").textContent = player.data.song.artist.name;
         document.querySelector("#song span").textContent = player.data.song.name;
@@ -514,7 +510,6 @@ player.addListener({
 
     /* 再生コントロールができるようになったら呼ばれる */
     onTimerReady() {
-        console.log("onTimerReady");
         playBtn.disabled = false;
         jumpBtn.disabled = false;
         pauseBtn.disabled = false;
@@ -548,7 +543,6 @@ player.addListener({
 
     /* 再生位置の情報が更新されたら呼ばれる */
     onTimeUpdate(position) {
-        //console.log("onTimeUpdate: " + position)
         // シークバーの表示を更新
         paintedSeekbar.style.width = `${
             parseInt((position * 1000) / player.video.duration) / 10
@@ -628,7 +622,6 @@ player.addListener({
             }
         }
         if (segments[segmentLaterCount - 1].chorus) {
-            console.log("!!!Chorus coming soon!!!")
             if (background !== null) {
                 background.preChorusAnimation();
                 background.setPreChorus(true);
@@ -646,7 +639,7 @@ player.addListener({
 
 
 function resetChars() {
-    console.log("resetChars")
+    console.log("resetChars");
     lastTime = -1;
 
     // html related
@@ -666,31 +659,6 @@ function resetChars() {
     refrainedPhrase = "";
 }
 
-// LLM のレスポンスを変換
-// 以下のような形式に変換する
-// let tmpTestRes =  {
-//     refrainedPhrase : `After analyzing the lyrics, I found the following refrained phrases:
-//     <refrain>何十回も</refrain><refrain>何百回も</refrain><refrain>星の降る夜を超えて</refrain>
-//     <refrain>何千回も</refrain><refrain>何万回も</refrain><refrain>確かな愛を叫ぶよ</refrain>
-//     <refrain>何回でも</refrain><refrain>何回でも</refrain><refrain>想いをこの声に乗せて</refrain>
-//     <refrain>何回だって</refrain><refrain>何回だって</refrain><refrain>届くまで叫ぶよ</refrain>
-//     These refrained phrases are marked with the <refrain> tags, and they appear multiple times throughout the lyrics.`,
-//     melody : `<melody>メロディ</melody>
-//     <melody>歌声</melody>
-//     <melody>声</melody>
-//     <melody>五線譜の魔法</melody>
-//     <melody>この歌</melody>
-//     <melody>歌</melody>`,
-//     future : `<future>ミライ</future>
-//     <future>光</future>
-//     <future>ミライ</future>
-//     <future>光</future>
-//     <future>ミライ</future>
-//     <future>光</future>`,
-//     mainColor: `#00aa88`,
-//     baseColor: `#0066cc`,
-//     accentColor: `#e12885`
-//    };
 function transformLLMResponse(response, result) {
     // 入れ子になったタグを処理する関数
     function processNestedTags(text, outerTag, innerTag) {
@@ -862,22 +830,12 @@ function newChar(current) {
 
     // 新しいフレーズの開始
     if (!newPhrase && current.parent.parent.firstChar === current) {
-        newPhrase = true;
         console.log("!!!new phrase!!!");
-
-        resetChars()
+        newPhrase = true;
+        resetChars();
     } else {
         newPhrase = false;
     }
-
-    if (max_vocal < player.getVocalAmplitude(current.startTime)) {
-        max_vocal = player.getVocalAmplitude(current.startTime);
-    }
-    if (min_vocal > player.getVocalAmplitude(current.startTime)) {
-        min_vocal = player.getVocalAmplitude(current.startTime);
-    }
-    console.log("player.getValenceArousal:" + player.getValenceArousal(current.startTime).a + "," + player.getValenceArousal(current.startTime).v);
-    console.log("player.getVocalAmplitude:" + player.getVocalAmplitude(current.startTime) + "(max:" + max_vocal + ",min:" + min_vocal + ")");
 
     let char_index = current.parent.parent.findIndex(current);
     let phrase = current.parent.parent.text;
@@ -907,7 +865,6 @@ function newChar(current) {
             }
             if (phrase_before.endsWith(element)) {
                 refrainedPhrase += element;
-                let currentRefrainEl = document.querySelector("container-v refrain" + refrain_status + 1);
                 console.log("refrain word end:" + element)
                 console.log("updated refrainedPhrase:" + refrainedPhrase);
                 console.log("updated refrain_status:" + refrain_status);
@@ -934,7 +891,6 @@ function newChar(current) {
         currentEl.textContent = current.text;
         phraseEl.appendChild(currentEl);
         phraseEl.classList.remove("hidden")
-        console.log("innerHTML:" + phraseEl.innerHTML);
     }
 
     word_list_melody.forEach((element) => {
@@ -975,7 +931,6 @@ function newChar(current) {
 
     // Word の最後の文字か否か
     if (current.parent.lastChar === current) {
-        console.log("lastChar in the word");
         // 英語の場合スペーサーを入れる
         if (isASCII(current.text) && current.parent.next.pos !== "S") {
             let spacerEl = document.createElement("div");
@@ -1008,11 +963,9 @@ function isASCII(char) {
 function update_refrain(element) {
     // リフレイン開始時に画面上の文字を初期化
     if (refrain_status === 0) {
-        console.log("refrain phrase start");
         resetChars();
     }
     refrain_status++;
-    console.log("refrain " + refrain_status + " start: " + element);
     let id = "refrain" + refrain_status;
 
     let newRefrainEl = document.createElement("p");
