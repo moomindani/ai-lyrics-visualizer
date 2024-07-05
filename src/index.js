@@ -56,21 +56,27 @@ window.addEventListener('load', () => {
 });
 
 const player_ui = document.getElementById('player');
-let lastTouchTime = 0;
-const inactivityThreshold = 3000;
+let lastTouchTime = Date.now();
+const inactivityThreshold = 2500;
 
 function minimizePlayer() {
     player_ui.classList.add('minimized');
 }
 
-function showPlayer() {
-    player_ui.classList.remove('minimized');
-}
-
 function checkInactivity() {
-    if (Date.now() - lastTouchTime > inactivityThreshold) {
+    console.log("checkInactivity: " + (Date.now()));
+    console.log("lastTouchTime: " + lastTouchTime);
+    console.log("diff: " + (Date.now() - lastTouchTime));
+    console.log("inactivityThreshold: " + inactivityThreshold)
+    if ((Date.now() - lastTouchTime) > inactivityThreshold) {
         minimizePlayer();
     }
+}
+
+setInterval(checkInactivity, 1000);
+
+function showPlayer() {
+    player_ui.classList.remove('minimized');
 }
 
 function handleInteraction() {
@@ -78,25 +84,15 @@ function handleInteraction() {
     lastTouchTime = Date.now();
 }
 
+player_ui.addEventListener('mouseenter', handleInteraction);
+player_ui.addEventListener('touchstart', handleInteraction);
+
 function clear() {
     resetChars();
     if (background !== null) {
         background.clear();
     }
 }
-
-document.addEventListener('mouseenter', handleInteraction);
-document.addEventListener('touchstart', handleInteraction);
-
-player_ui.addEventListener('mouseleave', () => {
-    lastTouchTime = Date.now();
-});
-
-player_ui.addEventListener('touchstart', (e) => {
-    handleInteraction();
-});
-
-setInterval(checkInactivity, 1000);
 
 const songSelect = document.getElementById('songSelect');
 const searchInput = document.getElementById('searchInput');
@@ -336,7 +332,7 @@ function selectSong(e) {
     current_song_url = e.target.value;
     const music_info = songListMap.get(current_song_url)
     if (songListMap.has(current_song_url)) {
-        showPlayer();
+        // showPlayer();
         clear();
         player.createFromSongUrl(current_song_url, music_info.options).then(() => {
             // 曲の読み込みが完了したら再生を開始
@@ -506,7 +502,7 @@ player.addListener({
             document.querySelector("#control").style.display = "flex";
         }
         lastTime = -1;
-        showPlayer();
+        // showPlayer();
     },
 
     /* 楽曲が変わったら呼ばれる */

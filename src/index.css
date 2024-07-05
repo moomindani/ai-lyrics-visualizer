@@ -417,28 +417,11 @@ body, html {
     background: linear-gradient(45deg, #222, #444);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 100;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.9s ease;
 }
 
 #player.minimized {
     opacity: 0.2;
-}
-
-#player.minimized:hover,
-#player.minimized:focus {
-    opacity: 1;
-}
-
-#player.minimized #meta,
-#player.minimized #control {
-    display: none;
-}
-
-#player.minimized:hover #meta,
-#player.minimized:hover #control,
-#player.minimized:focus #meta,
-#player.minimized:focus #control {
-    display: flex;
 }
 
 #meta {
@@ -619,19 +602,4 @@ body, html {
     color: #fff;
     margin-left: 10px;
     font-size: 14px;
-}
-
-@media (max-width: 768px) {
-    #player.minimized {
-        opacity: 0.2;
-    }
-
-    #player.minimized.touched {
-        opacity: 1;
-    }
-
-    #player.minimized.touched #meta,
-    #player.minimized.touched #control {
-        display: flex;
-    }
 }
