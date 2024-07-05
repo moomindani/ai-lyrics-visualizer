@@ -176,13 +176,24 @@ async function loadLyricVideo() {
                     tmp_list.push(match.textContent);
                 });
                 const filtered_list = tmp_list.filter(item => item !== '');
-                console.log("font:" + filtered_list[0]);
-                fontFamily = filtered_list[0];
+                console.log("font:" + formatFontString(filtered_list[0]));
+                fontFamily = formatFontString(filtered_list[0]);
             }
-            let containerEl = document.querySelector("#container")
-            containerEl.style.fontFamily = fontFamily;
-            let containerVEl = document.querySelector("#container-v");
-            containerVEl.style.fontFamily = fontFamily;
+            console.log("contentEl fontFamily value:", fontFamily);
+            let contentEl = document.querySelector("#content");
+            contentEl.style.setProperty('font-family', fontFamily);
+            console.log("contentEl Applied font-family:", contentEl.style.fontFamily);
+            console.log("contentEl Computed font-family:", window.getComputedStyle(contentEl).fontFamily);
+
+            let contentVEl = document.querySelector("#content-v");
+            contentVEl.style.fontFamily = fontFamily;
+            console.log("contentVEl Applied font-family:", contentVEl.style.fontFamily);
+            console.log("contentVEl Computed font-family:", window.getComputedStyle(contentVEl).fontFamily);
+
+            setTimeout(() => {
+                console.log("contentEl Delayed check - Applied font-family:", contentEl.style.fontFamily);
+                console.log("contentEl Delayed check - Computed font-family:", window.getComputedStyle(contentEl).fontFamily);
+            }, 100);
 
             // カラーコード
             if (llmAnalysis.mainColor) {
@@ -988,6 +999,35 @@ function isASCII(char) {
 
     // Check if the character code falls within the ASCII range (0-127)
     return (charCode >= 0 && charCode <= 127);
+}
+
+function formatFontString(fontString) {
+  // トリムして余分な空白を削除
+  let formatted = fontString.trim();
+
+  // フォント名とフォールバックを分割
+  let parts = formatted.split(',').map(part => part.trim());
+
+  // 各部分を処理
+  parts = parts.map(part => {
+    // シングルクォートの数を数える
+    const quoteCount = (part.match(/'/g) || []).length;
+
+    // シングルクォートが1つだけの場合、それを削除
+    if (quoteCount === 1) {
+      part = part.replace(/'/g, '');
+    }
+
+    // シングルクォートで囲まれていない場合、かつジェネリックフォントファミリーでない場合、囲む
+    if (quoteCount !== 2 && !['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'].includes(part.toLowerCase())) {
+      return `'${part.replace(/'/g, '')}'`;
+    }
+
+    return part;
+  });
+
+  // 処理した部分を結合
+  return parts.join(', ');
 }
 
 function update_refrain(element) {

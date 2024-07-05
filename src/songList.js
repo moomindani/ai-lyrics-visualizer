@@ -131,7 +131,7 @@ const songList = [
         melody : `<melody>この声</melody>`,
         future : ``,
         keyPhrase : `<key>アタシはまだ知らないの</key> <key>アタシはまだちょっとアナタを愛していたい</key>`,
-        font: `<font>Noto Serif JP', serif</font>`,
+        font: `<font>'Noto Serif JP', serif</font>`,
         mainColor: `<mainColor>#4B0082</mainColor>`,
         baseColor: `<baseColor>#2F4F4F</baseColor>`,
         accentColor: `<accentColor>#FF4500</accentColor>`
