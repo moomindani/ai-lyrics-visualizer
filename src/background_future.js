@@ -30,7 +30,7 @@ export class BackgroundFuture extends Background {
         this.lightBeams;
         this.flares = new THREE.Group()
         this.particleCount = 1000;
-        this.beamCount = 20;
+        this.beamCount = 2;
         this.maxFlares = 50;
         this.textParticleSystem;
         this.textParticleLifetime = 5000;
