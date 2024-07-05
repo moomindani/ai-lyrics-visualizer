@@ -581,7 +581,7 @@ player.addListener({
         }
         let currentSection = segments[currentSegment - 1].section;
         let isChorus = segments[currentSegment - 1].chorus;
-        console.log("Current section: " + currentSection + " chorus=" + isChorus);
+        // console.log("Current section: " + currentSection + " chorus=" + isChorus);
         if (background !== null) {
             background.setChorus(isChorus);
             if (isChorus) {
@@ -643,7 +643,6 @@ player.addListener({
 
 
 function resetChars() {
-    console.log("resetChars");
     lastTime = -1;
 
     // html related
@@ -870,10 +869,15 @@ function newChar(current) {
     word_list_key.forEach((element) => {
             if (phrase_after.startsWith(element)) {
                 console.log("key phrase start:" + element);
-
                 let phraseEl = document.querySelector("#container p");
-                phraseEl.style.textShadow = "2px 2px 4px " + color_accent;
+
                 phraseEl.style.fontSize = "6vw";
+                phraseEl.style.animation = "fadeIn 4s ease-out forwards, expand 4s ease-out";
+
+                let accentLineEl = document.createElement("div");
+                accentLineEl.classList.add("accent-line");
+                accentLineEl.style.backgroundColor = color_accent;
+                phraseEl.appendChild(accentLineEl);
 
             } else if (phrase_before.endsWith(element)) {
                 console.log("key phrase end:" + element);
@@ -911,6 +915,7 @@ function newChar(current) {
     let phraseEl = document.querySelector("#container p");
     let currentEl = document.createElement("strong");
     if (refrain_status === 0) {
+        console.log("phrase += " + current.text)
         currentEl.textContent = current.text;
         phraseEl.appendChild(currentEl);
         phraseEl.classList.remove("hidden")

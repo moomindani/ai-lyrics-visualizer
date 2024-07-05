@@ -120,7 +120,6 @@ export class BackgroundFuture extends Background {
     }
 
     updateBackground(time, elapsedTime) {
-        console.log("updateBackground(" + time + ", " + elapsedTime + ")");
         const width = this.backgroundCanvas.width;
         const height = this.backgroundCanvas.height;
         const centerX = width / 2;
@@ -545,7 +544,6 @@ export class BackgroundFuture extends Background {
     }
 
     beatAnimation() {
-        console.log('Animating with beats');
         if (this.isAnimating) {
             // ビームのビートアニメーション
             if (this.lightBeams) {
@@ -585,7 +583,6 @@ export class BackgroundFuture extends Background {
     }
 
     preChorusAnimation() {
-        console.log('Animating before chorus');
         if (this.startTime === DATETIME_NOT_SET) {
             this.startTime = Date.now();
         }

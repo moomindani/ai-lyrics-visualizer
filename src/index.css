@@ -157,7 +157,7 @@ body, html {
 }
 
 .advancedSetting.show {
-    display: block;
+    display: flex;
 }
 
 /* TODO: display:none/block の切り替えでうまく動かないのでいったん opacity で不可視にする */
@@ -251,7 +251,6 @@ body, html {
     height: 100%;
 }
 
-
 #container {
     width: 100%;
     height: 100vh;
@@ -271,6 +270,32 @@ body, html {
     padding: 2px;
     text-align: left;
     user-select: none;
+}
+
+.accent-line {
+    width: 0;
+    height: 6px;
+    animation: lineExpand 2s ease-out 2s forwards;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes expand {
+    0% { letter-spacing: -0.5em; filter: blur(12px); }
+    100% { letter-spacing: 0.1em; filter: blur(0); }
+}
+
+@keyframes ripple {
+    0% { width: 0; height: 0; opacity: 0.5; }
+    100% { width: 500px; height: 500px; opacity: 0; }
+}
+
+@keyframes lineExpand {
+    0% { width: 0; }
+    100% { width: 100%; }
 }
 
 @keyframes fadein-left {
@@ -543,11 +568,11 @@ body, html {
 }
 
 .toggle-container {
-    align-items: center;
     margin-left: 10px;
 }
 
 .toggle-container.navi {
+    align-items: center;
     margin-top: 100px;
 }
 
