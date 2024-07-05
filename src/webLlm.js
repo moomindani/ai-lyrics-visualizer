@@ -24,6 +24,11 @@ export class WebLlm extends Llm {
             try {
                 const initProgressCallback = (report) => {
                     console.log("initProgressCallback: " + report.text);
+                    const progressEl = document.querySelector('#progress');
+                    progressEl.classList.remove("hidden")
+                    const pEl = document.querySelector('#progress p');
+                    pEl.textContent = "Initializing WebLLM ... " + report.text;
+
                     if (report.text.includes("Finish loading on WebGPU")) {
                         console.log("WebGPU loading finished");
                     }

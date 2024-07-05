@@ -18,6 +18,13 @@ body, html {
     transform: translateY(0);
 }
 
+.curtain-top p {
+    color: #39c5bb;
+    justify-content: center;
+    align-items: flex-end;
+    bottom: 0;
+}
+
 .curtain-bottom {
     bottom: 0;
     transform: translateY(0);
@@ -503,6 +510,31 @@ body, html {
     height: 100%;
     display: flex;
     overflow: hidden;
+}
+
+#progress {
+    margin-top: 200px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #000;
+    z-index: 1000;
+}
+
+#progress p {
+    color: #39c5bb;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .navi {

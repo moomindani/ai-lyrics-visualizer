@@ -296,6 +296,10 @@ async function loadLyricVideo() {
     const curtainBottom = document.querySelector('.curtain-bottom');
     curtainTop.classList.add('open-top');
     curtainBottom.classList.add('open-bottom');
+
+    // プログレスを非表示
+    const progressEl = document.querySelector('#progress');
+    progressEl.classList.add("hidden")
 }
 
 function clearLyricVideo() {
@@ -659,6 +663,13 @@ function resetChars() {
     refrainedPhrase = "";
 }
 
+function reportLLMProgress(percent) {
+    const progressEl = document.querySelector('#progress');
+    progressEl.classList.remove("hidden")
+    const pEl = document.querySelector('#progress p');
+    pEl.textContent = "Analyzing lyrics ... " + percent;
+}
+
 function transformLLMResponse(response, result) {
     // 入れ子になったタグを処理する関数
     function processNestedTags(text, outerTag, innerTag) {
@@ -739,7 +750,7 @@ async function loadLLMAnalysis() {
     };
 
     // OpenAI と WebLLM で prompt の reply を取得する
-
+    reportLLMProgress("0%");
     // リフレイン
     const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
@@ -752,6 +763,8 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_refrain);
     const result_refrain = transformLLMResponse(ret_refrain, result_initial);
 
+    reportLLMProgress("17%");
+
     // メロディ
     const prompt_melody = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
@@ -761,6 +774,8 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_melody);
     const result_melody = transformLLMResponse(ret_melody, result_refrain);
 
+    reportLLMProgress("33%");
+
     // ミライ
     const prompt_future = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
@@ -769,6 +784,8 @@ async function loadLLMAnalysis() {
     console.log("llm prompt:" + prompt_future);
     console.log("llm reply:" + ret_future);
     const result_future = transformLLMResponse(ret_future, result_melody);
+
+    reportLLMProgress("50%");
 
     // フォント
     const prompt_font = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
@@ -782,6 +799,8 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_font);
     const result_font = transformLLMResponse(ret_font, result_future);
 
+    reportLLMProgress("66%");
+
     // カラーコード
     const prompt_color = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
@@ -794,6 +813,8 @@ async function loadLLMAnalysis() {
     console.log("llm reply:" + ret_color);
     const result_color = transformLLMResponse(ret_color, result_font);
 
+    reportLLMProgress("83%");
+
     // キーフレーズ
     const prompt_key = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
         "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
@@ -804,6 +825,8 @@ async function loadLLMAnalysis() {
     console.log("llm prompt:" + prompt_key);
     console.log("llm reply:" + ret_key);
     const result_final = transformLLMResponse(ret_key, result_color);
+
+    reportLLMProgress("100%");
 
     return result_final;
 }
