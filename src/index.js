@@ -128,12 +128,14 @@ function loadLLMAnalysisFromLocalStorage(url) {
 async function getSongInfo(url) {
     let songInfo;
     // cache from local file
-    if (songListMap.has(url).cachedLlmData) {
+    if (songListMap.has(url)) {
+        console.log("Cached data found in pre-defined song list.")
         return songListMap.get(url).cachedLlmData;
     }
 
     let localCache = loadLLMAnalysisFromLocalStorage(url);
     if (localCache) {
+        console.log("Cached data found in browser local storage.")
         return localCache;
     } else {
         // LLM を呼んで testRes を作って保存する
@@ -319,11 +321,16 @@ function selectSong(e) {
                 loadLyricVideo().then(() => {
                     player.requestPlay();
                     if (background !== null) {
+                        // background.clear();
                         background.enableAnimation();
                     }
                 });
             } else {
                 player.requestPlay();
+                if (background !== null) {
+                    // background.clear();
+                    background.enableAnimation();
+                }
             }
             if (background !== null) {
                 background.enableAnimation();
@@ -356,6 +363,7 @@ advancedSettingOk.addEventListener("click", (e) => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 if (background !== null) {
+                    // background.clear();
                     background.enableAnimation();
                 }
             });
@@ -404,6 +412,7 @@ advancedSettingOkNavi.addEventListener("click", (e) => {
                 // 曲の読み込みが完了したら再生を開始
                 player.requestPlay();
                 if (background !== null) {
+                    // background.clear();
                     background.enableAnimation();
                 }
             });

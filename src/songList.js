@@ -17,9 +17,9 @@ const songList = [
         future : ` <future>未来</future> <future>未来</future> <future>未来</future> <future>未来</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future> <future>未来</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future>`,
         keyPhrase: ` <key>初の音が奏でる世界</key> <key>全ては君次第</key>`,
         font: `<font>'Noto Sans JP', sans-serif</font>`,
-        mainColor: `#ff5733`,
-        baseColor: `#1e3d59`,
-        accentColor: `#f1c40f`
+        mainColor: `<mainColor>#ff5733</mainColor>`,
+        baseColor: `<baseColor>#1e3d59</baseColor>`,
+        accentColor: `<accentColor>#f1c40f</accentColor>`
       },
     },
     {
@@ -40,9 +40,9 @@ const songList = [
         future : `<future>ミライ</future> <future>文化</future> <future>ミライ</future> <future>ミライ</future> <future>ミライ</future> <future>文化</future>`,
         keyPhrase: `<key>終わらない文化になるから</key> <key>新しいミライが広がっていく</key>`,
         font: `<font>'Noto Sans JP', sans-serif</font>`,
-        mainColor: `#FFD700`,
-        baseColor: `#1E90FF`,
-        accentColor: `#FF69B4`
+        mainColor: `<mainColor>#FFD700</mainColor>`,
+        baseColor: `<baseColor>#1E90FF</baseColor>`,
+        accentColor: `<accentColor>#FF69B4</accentColor>`
        },
     },
     {
@@ -63,9 +63,9 @@ const songList = [
         future : `<future>未来</future>`,
         keyPhrase: `<key>未来創造賛歌</key> <key>交響曲</key>`,
         font: `<font>'Noto Sans JP', sans-serif</font>`,
-        mainColor: `#FF6347`,
-        baseColor: `#4682B4`,
-        accentColor: `#FFD700`
+        mainColor: `<mainColor>#FF6347</mainColor>`,
+        baseColor: `<baseColor>#4682B4</baseColor>`,
+        accentColor: `<accentColor>#FFD700</accentColor>`
       }
     },
     {
@@ -86,9 +86,9 @@ const songList = [
         future : `<future>未来</future> <future>未来</future> <future>脅威</future> <future>明日</future> <future>未来</future> <future>脅威</future> <future>明日</future>`,
         keyPhrase : `<key>君を守りたい</key> <key>君の未来信じたい</key>`,
         font: `<font>'Noto Sans JP', sans-serif</font>`,
-        mainColor: `#007BFF`,
-        baseColor: `#6C757D`,
-        accentColor: `#FFC107`,
+        mainColor: `<mainColor>#007BFF</mainColor>`,
+        baseColor: `<baseColor>#6C757D</baseColor>`,
+        accentColor: `<accentColor>#FFC107</accentColor>`,
       }
     },
     {
@@ -109,9 +109,9 @@ const songList = [
         future : `<future>ファイル</future> <future>未来</future>`,
         keyPhrase : `<key>夢を見よう 初音ミクとアナタで</key>`,
         font: `<font>'Murecho', sans-serif</font>`,
-        mainColor: `#87CEEB`,
-        baseColor: `#2F4F4F`,
-        accentColor: `#FFD700`
+        mainColor: `<mainColor>#87CEEB</mainColor>`,
+        baseColor: `<baseColor>#2F4F4F</baseColor>`,
+        accentColor: `<accentColor>#FFD700</accentColor>`
       }
     },
     {
@@ -132,9 +132,9 @@ const songList = [
         future : ``,
         keyPhrase : `<key>アタシはまだ知らないの</key> <key>アタシはまだちょっとアナタを愛していたい</key>`,
         font: `<font>Noto Serif JP', serif</font>`,
-        mainColor: `#4B0082`,
-        baseColor: `#2F4F4F`,
-        accentColor: `#FF4500`
+        mainColor: `<mainColor>#4B0082</mainColor>`,
+        baseColor: `<baseColor>#2F4F4F</baseColor>`,
+        accentColor: `<accentColor>#FF4500</accentColor>`
       }
     },
   ];
