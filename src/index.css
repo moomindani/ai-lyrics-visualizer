@@ -56,9 +56,12 @@ body, html {
 }
 
 .title-container {
-    margin-top: 200px;
     text-align: center;
     position: relative;
+}
+
+#title-container-song-select {
+    margin-top: 200px;
 }
 
 .title {
