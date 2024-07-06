@@ -1086,3 +1086,72 @@ function getRefrainPosition(id) {
     const index = id % positions.length;
     return positions[index];
 }
+
+const style = document.createElement('style');
+style.textContent = `
+  #rotation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .rotation-message {
+    text-align: center;
+    color: white;
+    font-size: 24px;
+  }
+
+  .rotate-icon {
+    display: inline-block;
+    width: 48px;
+    height: 48px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>');
+    animation: rotate 2s infinite linear;
+  }
+
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+`;
+document.head.appendChild(style);
+
+function checkOrientation() {
+  const overlay = document.getElementById('rotation-overlay');
+  if (window.orientation === undefined) {
+    // デバイスが回転をサポートしていない場合
+    if (window.innerWidth < window.innerHeight) {
+      overlay.classList.remove('hidden');
+    } else {
+      overlay.classList.add('hidden');
+    }
+  } else {
+    // デバイスが回転をサポートしている場合
+    if (window.orientation === 0 || window.orientation === 180) {
+      overlay.classList.remove('hidden');
+    } else {
+      overlay.classList.add('hidden');
+    }
+  }
+}
+
+// 初期チェックと画面サイズ変更時のチェック
+window.addEventListener('load', checkOrientation);
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+
+// ユーザーがオーバーレイをタップして閉じられるようにする
+document.getElementById('rotation-overlay').addEventListener('click', function() {
+  this.classList.add('hidden');
+});
