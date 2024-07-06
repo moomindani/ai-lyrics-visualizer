@@ -216,6 +216,11 @@ body, html {
     margin: 0 20px;
 }
 
+#songSelect option, #songSelectNavi option {
+    background-color: #ffffff;
+    color: #000000;
+}
+
 #song-select span {
     font-size: 1.5vw;
     margin: 0 20px;
