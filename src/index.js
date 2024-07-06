@@ -64,10 +64,6 @@ function minimizePlayer() {
 }
 
 function checkInactivity() {
-    console.log("checkInactivity: " + (Date.now()));
-    console.log("lastTouchTime: " + lastTouchTime);
-    console.log("diff: " + (Date.now() - lastTouchTime));
-    console.log("inactivityThreshold: " + inactivityThreshold)
     if ((Date.now() - lastTouchTime) > inactivityThreshold) {
         minimizePlayer();
     }
@@ -77,15 +73,22 @@ setInterval(checkInactivity, 1000);
 
 function showPlayer() {
     player_ui.classList.remove('minimized');
+    lastTouchTime = Infinity;
 }
 
 function handleInteraction() {
     showPlayer();
+}
+
+function leaveInteraction() {
     lastTouchTime = Date.now();
 }
 
 player_ui.addEventListener('mouseenter', handleInteraction);
 player_ui.addEventListener('touchstart', handleInteraction);
+
+player_ui.addEventListener('mouseleave', leaveInteraction);
+player_ui.addEventListener('touchend', leaveInteraction);
 
 function clear() {
     resetChars();
