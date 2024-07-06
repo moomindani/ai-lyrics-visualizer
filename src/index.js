@@ -39,6 +39,7 @@ let word_list_key = [];
 let color_main = null;
 let color_base = null;
 let color_accent = null;
+let color_effect = null;
 
 let llm = null;
 let openai_api_key = null;
