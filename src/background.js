@@ -9,6 +9,7 @@ export class Background {
         this.colorMain = "#00aa88";
         this.colorBase = "#0066cc";
         this.colorAccent = "#e12885";
+        this.colorEffect = "#00ffff";
     }
 
     isValidColorCode(colorCode) {
@@ -17,7 +18,7 @@ export class Background {
         return colorCodeRegex.test(colorCode);
     }
 
-    setColors(colorMain, colorBase, colorAccent) {
+    setColors(colorMain, colorBase, colorAccent, colorEffect) {
         if (colorMain && this.isValidColorCode(colorMain)) {
             this.colorMain = colorMain;
             console.log("Configured main color: " + colorMain);
@@ -29,6 +30,10 @@ export class Background {
         if (colorAccent && this.isValidColorCode(colorAccent)) {
             this.colorAccent = colorAccent;
             console.log("Configured accent color: " + colorAccent);
+        }
+        if (this.colorEffect && this.isValidColorCode(colorEffect)) {
+            this.colorEffect = colorEffect;
+            console.log("Configured effect color: " + colorEffect);
         }
     }
 

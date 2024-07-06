@@ -19,7 +19,8 @@ const songList = [
         font: `<font>'Noto Sans JP', sans-serif</font>`,
         mainColor: `<mainColor>#ff5733</mainColor>`,
         baseColor: `<baseColor>#1e3d59</baseColor>`,
-        accentColor: `<accentColor>#f1c40f</accentColor>`
+        accentColor: `<accentColor>#f1c40f</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
       },
     },
     {
@@ -42,8 +43,9 @@ const songList = [
         font: `<font>'Noto Sans JP', sans-serif</font>`,
         mainColor: `<mainColor>#FFD700</mainColor>`,
         baseColor: `<baseColor>#1E90FF</baseColor>`,
-        accentColor: `<accentColor>#FF69B4</accentColor>`
-       },
+        accentColor: `<accentColor>#FF69B4</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
+      },
     },
     {
       title: "未来交響曲 / ヤマギシコージ",
@@ -65,7 +67,8 @@ const songList = [
         font: `<font>'Noto Sans JP', sans-serif</font>`,
         mainColor: `<mainColor>#FF6347</mainColor>`,
         baseColor: `<baseColor>#4682B4</baseColor>`,
-        accentColor: `<accentColor>#FFD700</accentColor>`
+        accentColor: `<accentColor>#FFD700</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
       }
     },
     {
@@ -89,6 +92,7 @@ const songList = [
         mainColor: `<mainColor>#007BFF</mainColor>`,
         baseColor: `<baseColor>#6C757D</baseColor>`,
         accentColor: `<accentColor>#FFC107</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
       }
     },
     {
@@ -111,7 +115,8 @@ const songList = [
         font: `<font>'Murecho', sans-serif</font>`,
         mainColor: `<mainColor>#87CEEB</mainColor>`,
         baseColor: `<baseColor>#2F4F4F</baseColor>`,
-        accentColor: `<accentColor>#FFD700</accentColor>`
+        accentColor: `<accentColor>#FFD700</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
       }
     },
     {
@@ -134,7 +139,8 @@ const songList = [
         font: `<font>'Noto Serif JP', serif</font>`,
         mainColor: `<mainColor>#4B0082</mainColor>`,
         baseColor: `<baseColor>#2F4F4F</baseColor>`,
-        accentColor: `<accentColor>#FF4500</accentColor>`
+        accentColor: `<accentColor>#FF4500</accentColor>`,
+        effectColor: `<effectColor>#00ffff</effectColor>`,
       }
     },
   ];

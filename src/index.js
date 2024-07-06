@@ -234,7 +234,20 @@ async function loadLyricVideo() {
                 console.log("accentColor:" + filtered_list[0]);
                 color_accent = filtered_list[0];
             }
-            background.setColors(color_main, color_base, color_accent);
+            if (llmAnalysis.effectColor) {
+                let analyzedEl = document.createElement("div");
+                analyzedEl.innerHTML += llmAnalysis.effectColor;
+                const matches = analyzedEl.querySelectorAll("effectColor");
+                const tmp_list = [];
+                matches.forEach((match) => {
+                    console.log("match effectColor:" + match.textContent);
+                    tmp_list.push(match.textContent);
+                });
+                const filtered_list = tmp_list.filter(item => item !== '');
+                console.log("effectColor:" + filtered_list[0]);
+                color_effect = filtered_list[0];
+            }
+            background.setColors(color_main, color_base, color_accent, color_effect);
 
             // リフレイン
             if (llmAnalysis.refrainedPhrase) {
@@ -732,6 +745,11 @@ function transformLLMResponse(response, result) {
         result.accentColor = accentColorMatches[0]; // ひとつだけの想定
     }
 
+    let effectColorMatches = response.match(/<effectColor>.*?<\/effectColor>/g);
+    if (effectColorMatches && effectColorMatches.length > 0) {
+        result.effectColor = effectColorMatches[0]; // ひとつだけの想定
+    }
+
     let keyPhraseMatches = response.match(/<key>.*?<\/key>/g);
     if (keyPhraseMatches && keyPhraseMatches.length > 0) {
         result.keyPhrase += ' ' + keyPhraseMatches.join(' ');
@@ -756,7 +774,8 @@ async function loadLLMAnalysis() {
         font: "'Noto Sans JP', sans-serif",   // デフォルト
         mainColor: '#00aa88',  // デフォルト
         baseColor: '#0066cc',  // デフォルト
-        accentColor: '#e12885' // デフォルト
+        accentColor: '#e12885', // デフォルト
+        effectColor: '#ffcc00', // デフォルト
     };
 
     // OpenAI と WebLLM で prompt の reply を取得する
@@ -817,7 +836,8 @@ async function loadLLMAnalysis() {
         "Return three color codes; main color, base color, and accent color with relevant tags." +
         "For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
         "For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
-        "For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>."
+        "For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>." +
+        "For effect color, use the tag \"effectColor\" e.g. <effectColor>#ffcc00</effectColor>."
     const ret_color = await llm.getResponse(prompt_color);
     console.log("llm prompt:" + prompt_color);
     console.log("llm reply:" + ret_color);
