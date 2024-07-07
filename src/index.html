@@ -33,6 +33,16 @@
         </div>
     </div>
 
+    <div id="infoModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Rhyme Traveler について</h2>
+          <p>「Rhyme Traveler」は<a href="https://developer.textalive.jp/events/magicalmirai2024/" target="_blank" rel="noopener noreferrer">初音ミク「マジカルミライ 2024」 プログラミング・コンテスト</a>の応募作品です。</p>
+          <p>歌詞の意味を解析し、その内容に合わせたリリックビデオを生成します。</p>
+          <p><a href="https://textalive.jp/" target="_blank" rel="noopener noreferrer">TextAlive</a>のApp APIを使用しています。</p>
+      </div> 
+    </div>
+
     <!-- プレイヤーの「高度な設定」モーダル -->
     <div id="playerModal" class="modal">
       <div class="modal-content">
@@ -78,16 +88,21 @@
       </div>
       <p>聴きたい曲を選んでください</p>
       <div class="navi">
-        <select id="songSelectNavi">
-          <option value="">課題曲から選ぶ</option>
-        </select>
+        <div class="select-help-container">
+          <select id="songSelectNavi">
+            <option value="">課題曲から選ぶ</option>
+          </select>
+          <button id="infoHelpBtn" class="help-btn">i</button>
+        </div>
         <div class="toggle-container navi">
           <input type="checkbox" id="advancedSettingToggleNavi" class="toggle-input">
           <label for="advancedSettingToggleNavi" class="toggle-label">
             <span class="toggle-button"></span>
           </label>
-          <span class="toggle-text">高度な設定</span>
-          <button id="topHelpBtn" class="help-btn">?</button>
+          <div class="advancedSettingText">
+            <span class="toggle-text">高度な設定</span>
+            <button id="topHelpBtn" class="help-btn">?</button>
+          </div>
           <div class="advancedSettingNavi">
             <input type="text" id="searchInputNavi" placeholder="楽曲のURLを入力">
             <input type="text" id="apiKeyInputNavi" placeholder="Open AIのAPIキーを入力">

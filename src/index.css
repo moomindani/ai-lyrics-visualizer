@@ -419,22 +419,6 @@ body, html {
     padding: 2px;
 }
 
-/* #player {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 10px;
-    background: linear-gradient(45deg, #222, #444);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    z-index: 100;
-    transition: opacity 0.9s ease;
-    max-width: 100vw;
-    overflow-x: auto;
-} */
-
 #player {
     display: flex;
     flex-direction: column;
@@ -667,6 +651,7 @@ body, html {
     color: #fff;
     margin-left: 10px;
     font-size: 14px;
+    padding-right: 10px;
 }
 
 .modal {
@@ -755,6 +740,7 @@ body, html {
 @media (max-width: 768px) {
     .title {
         font-size: 4rem;
+        padding-top: 30px;
     }
 
     .subtitle {
@@ -764,22 +750,22 @@ body, html {
 
     /* コンテナを少し上に移動 */
     #container {
-        padding-bottom: 30px;
+        padding-bottom: 20px;
     }
 
     #song-select {
-    padding: 10px;
+        padding: 10px;
     }
 
     #song-select p {
-    font-size: 1.5vw;
-    margin-bottom: 20px;
+        font-size: 1.5vw;
+        margin-bottom: 20px;
     }
 
     #songSelectNavi {
-    width: 80%;
-    max-width: 300px;
-    font-size: 14px;
+        width: 80%;
+        max-width: 300px;
+        font-size: 14px;
     }
 
     #player.minimized {

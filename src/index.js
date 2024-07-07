@@ -1178,3 +1178,4 @@ function setupModal(btnId, modalId) {
 
 setupModal("topHelpBtn", "topModal");
 setupModal("playerHelpBtn", "playerModal");
+setupModal("infoHelpBtn", "infoModal");
