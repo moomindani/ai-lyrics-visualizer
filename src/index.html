@@ -13,6 +13,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
+    <div id="topModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>高度な設定</h2>
+          <p>本アプリは<a href="https://developer.textalive.jp/?_gl=1*1xr03fi*_ga*MTI2NjcwMTg3MS4xNzE4NzczODM3*_ga_T4MNR7TWV6*MTcyMDMyNjMwOC4xMC4wLjE3MjAzMjYzMDguMC4wLjA." target="_blank" rel="noopener noreferrer">TextAlive App API</a>とAI(大規模言語モデル)の力を借りて、歌詞の意味を汲み取ってリリックビデオを動的に生成します。</p>
+          <p>課題曲だけでなく、<a href="https://songle.jp/" target="_blank" rel="noopener noreferrer">Songle</a>に音楽地図、<a href="https://developer.textalive.jp/?_gl=1*1xr03fi*_ga*MTI2NjcwMTg3MS4xNzE4NzczODM3*_ga_T4MNR7TWV6*MTcyMDMyNjMwOC4xMC4wLjE3MjAzMjYzMDguMC4wLjA." target="_blank" rel="noopener noreferrer">TextAlive App API</a>に歌詞情報が登録された任意の曲に対応できます。</p>
+          <ul>
+            <li><strong>楽曲のURL入力:</strong> 好きな楽曲のURLを直接入力できます。</li>
+          </ul>
+          <p>歌詞の解析に用いるAIとして、デフォルトではブラウザ上でWASMベースで動作する<a hrf="https://webllm.mlc.ai/" target="_blank" rel="noopener noreferrer">WebLLM</a>と<a href="https://llama.meta.com/llama3/" target="_blank" rel="noopener noreferrer">Llama 3</a>を使用します。(快適な動作にはGPUが必要)</p>
+          <p>代わりに、お手持ちの<a href="https://openai.com/index/openai-api/" target="_blank" rel="noopener noreferrer">Open AI</a>のAPIキーを入力することで、Open AIを使用することもできます。</p>
+          <ul>
+            <li><strong>Open AIのAPIキー入力:</strong> Open AI APIキー。空白の場合WebLLMを使用します。</li>
+          </ul>
+          <p>注意: APIキーは慎重に扱ってください。公開の場では入力しないようご注意ください。</p>
+          <p>Open AIによる推論の通信はブラウザとOpen AIの間で完結し、キーがそれ以外のサーバへ送信されることはありません。</p>
+          <p>＊ 課題曲については事前に解析したデータを使用するため、GPUやOpen AIのキーがない環境でも再生できます。</p>
+        </div>
+    </div>
+
+    <!-- プレイヤーの「高度な設定」モーダル -->
+    <div id="playerModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>高度な設定</h2>
+          <p>本アプリは<a href="https://developer.textalive.jp/?_gl=1*1xr03fi*_ga*MTI2NjcwMTg3MS4xNzE4NzczODM3*_ga_T4MNR7TWV6*MTcyMDMyNjMwOC4xMC4wLjE3MjAzMjYzMDguMC4wLjA." target="_blank" rel="noopener noreferrer">TextAlive App API</a>とAI(大規模言語モデル)の力を借りて、歌詞の意味を汲み取ってリリックビデオを動的に生成します。</p>
+          <p>課題曲だけでなく、<a href="https://songle.jp/" target="_blank" rel="noopener noreferrer">Songle</a>に音楽地図、<a href="https://developer.textalive.jp/?_gl=1*1xr03fi*_ga*MTI2NjcwMTg3MS4xNzE4NzczODM3*_ga_T4MNR7TWV6*MTcyMDMyNjMwOC4xMC4wLjE3MjAzMjYzMDguMC4wLjA." target="_blank" rel="noopener noreferrer">TextAlive App API</a>に歌詞情報が登録された任意の曲に対応できます。</p>
+          <ul>
+            <li><strong>楽曲のURL入力:</strong> 好きな楽曲のURLを直接入力できます。</li>
+          </ul>
+          <p>歌詞の解析に用いるAIとして、デフォルトではブラウザ上でWASMベースで動作する<a hrf="https://webllm.mlc.ai/" target="_blank" rel="noopener noreferrer">WebLLM</a>と<a href="https://llama.meta.com/llama3/" target="_blank" rel="noopener noreferrer">Llama 3</a>を使用します。(快適な動作にはGPUが必要)</p>
+          <p>代わりに、お手持ちの<a href="https://openai.com/index/openai-api/" target="_blank" rel="noopener noreferrer">Open AI</a>のAPIキーを入力することで、Open AIを使用することもできます。</p>
+          <ul>
+            <li><strong>Open AIのAPIキー入力:</strong> Open AI APIキー。空白の場合WebLLMを使用します。</li>
+          </ul>
+          <p>注意: APIキーは慎重に扱ってください。公開の場では入力しないようご注意ください。</p>
+          <p>Open AIによる推論の通信はブラウザとOpen AIの間で完結し、キーがそれ以外のサーバへ送信されることはありません。</p>
+          <p>＊ 課題曲については事前に解析したデータを使用するため、GPUやOpen AIのキーがない環境でも再生できます。</p>
+      </div>
+    </div>
     <div id="rotation-overlay" class="hidden">
       <div class="rotation-message">
         <i class="rotate-icon"></i>
@@ -47,6 +87,7 @@
             <span class="toggle-button"></span>
           </label>
           <span class="toggle-text">高度な設定</span>
+          <button id="topHelpBtn" class="help-btn">?</button>
           <div class="advancedSettingNavi">
             <input type="text" id="searchInputNavi" placeholder="楽曲のURLを入力">
             <input type="text" id="apiKeyInputNavi" placeholder="Open AIのAPIキーを入力">
@@ -74,6 +115,7 @@
               <span class="toggle-button"></span>
             </label>
             <span class="toggle-text">高度な設定</span>
+            <button id="playerHelpBtn" class="help-btn">?</button>
             <div class="advancedSetting">
               <input type="text" id="searchInput" placeholder="楽曲のURLを入力">
               <input type="text" id="apiKeyInput" placeholder="Open AIのAPIキーを入力">

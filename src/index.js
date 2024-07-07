@@ -1155,3 +1155,26 @@ window.addEventListener('orientationchange', checkOrientation);
 document.getElementById('rotation-overlay').addEventListener('click', function() {
   this.classList.add('hidden');
 });
+
+function setupModal(btnId, modalId) {
+    const modal = document.getElementById(modalId);
+    const btn = document.getElementById(btnId);
+    const span = modal.getElementsByClassName("close")[0];
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+}
+
+setupModal("topHelpBtn", "topModal");
+setupModal("playerHelpBtn", "playerModal");
