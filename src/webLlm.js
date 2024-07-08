@@ -12,7 +12,11 @@ export class WebLlm extends Llm {
     }
 
     async getResponse(prompt) {
-        return await this.callWebLlmAPI(prompt);
+        try {
+            return await this.callWebLlmAPI(prompt);
+        } catch (error) {
+            throw error;
+        }
     }
 
     setApiKey(key) {
@@ -27,7 +31,7 @@ export class WebLlm extends Llm {
                     const progressEl = document.querySelector('#progress');
                     progressEl.classList.remove("hidden")
                     const pEl = document.querySelector('#progress p');
-                    pEl.textContent = "Initializing WebLLM ... " + report.text;
+                    pEl.textContent = "WebLLMを初期化しています... " + report.text;
 
                     if (report.text.includes("Finish loading on WebGPU")) {
                         console.log("WebGPU loading finished");

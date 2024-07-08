@@ -697,7 +697,7 @@ function reportLLMProgress(percent) {
     const progressEl = document.querySelector('#progress');
     progressEl.classList.remove("hidden")
     const pEl = document.querySelector('#progress p');
-    pEl.textContent = "Analyzing lyrics ... " + percent;
+    pEl.textContent = "歌詞を分析しています... " + percent;
 }
 
 function transformLLMResponse(response, result) {
@@ -785,91 +785,97 @@ async function loadLLMAnalysis() {
         effectColor: '#ffcc00', // デフォルト
     };
 
-    const lyrics = player.video.phrases;
-    // OpenAI と WebLLM で prompt の reply を取得する
-    reportLLMProgress("0%");
-    // リフレイン
-    const prompt_refrain = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "Lyrics are separated by commas, each part called a phrase. " +
-        "Refrains are similar repetitions within a single phrase. " +
-        "Refrains are defined only when multiple repetitions occur in one phrase, not for single occurrences." +
-        "Analyze this lyrics, identifying the refrains and their apperrances in the text, and return the refrains with refrain tag?" +
-        "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
-        "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
-    const ret_refrain = await llm.getResponse(prompt_refrain);
-    console.log("llm prompt:" + prompt_refrain);
-    console.log("llm reply:" + ret_refrain);
-    const result_refrain = transformLLMResponse(ret_refrain, result_initial);
+    try {
+        const lyrics = player.video.phrases;
+        // OpenAI と WebLLM で prompt の reply を取得する
+        reportLLMProgress("0%");
+        // リフレイン
+        const prompt_refrain = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "Lyrics are separated by commas, each part called a phrase. " +
+            "Refrains are similar repetitions within a single phrase. " +
+            "Refrains are defined only when multiple repetitions occur in one phrase, not for single occurrences." +
+            "Analyze this lyrics, identifying the refrains and their apperrances in the text, and return the refrains with refrain tag?" +
+            "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
+            "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
+        const ret_refrain = await llm.getResponse(prompt_refrain);
+        console.log("llm prompt:" + prompt_refrain);
+        console.log("llm reply:" + ret_refrain);
+        const result_refrain = transformLLMResponse(ret_refrain, result_initial);
 
-    reportLLMProgress("17%");
+        reportLLMProgress("17%");
 
-    // メロディ
-    const prompt_melody = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
-        "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
-    const ret_melody = await llm.getResponse(prompt_melody);
-    console.log("llm prompt:" + prompt_melody);
-    console.log("llm reply:" + ret_melody);
-    const result_melody = transformLLMResponse(ret_melody, result_refrain);
+        // メロディ
+        const prompt_melody = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
+            "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
+        const ret_melody = await llm.getResponse(prompt_melody);
+        console.log("llm prompt:" + prompt_melody);
+        console.log("llm reply:" + ret_melody);
+        const result_melody = transformLLMResponse(ret_melody, result_refrain);
 
-    reportLLMProgress("33%");
+        reportLLMProgress("33%");
 
-    // ミライ
-    const prompt_future = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
-        "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
-    const ret_future = await llm.getResponse(prompt_future);
-    console.log("llm prompt:" + prompt_future);
-    console.log("llm reply:" + ret_future);
-    const result_future = transformLLMResponse(ret_future, result_melody);
+        // ミライ
+        const prompt_future = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
+            "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
+        const ret_future = await llm.getResponse(prompt_future);
+        console.log("llm prompt:" + prompt_future);
+        console.log("llm reply:" + ret_future);
+        const result_future = transformLLMResponse(ret_future, result_melody);
 
-    reportLLMProgress("50%");
+        reportLLMProgress("50%");
 
-    // フォント
-    const prompt_font = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "Analyze this lyrics, identifying the best font that fits the context of the lyrics?" +
-        "For standard, active, energetic, positive lyrics, 'Noto Sans JP' will be the best." +
-        "For pop, cute, charming lyrics, 'Murecho' will be the best." +
-        "For negative, sad, dark lyrics, 'Noto Serif JP' will be the best." +
-        "Return one of following string with including font tag, <font>'Noto Sans JP', sans-serif</font>, <font>'Noto Serif JP', serif</font>, or <font>'Murecho', sans-serif</font>"
-    const ret_font = await llm.getResponse(prompt_font);
-    console.log("llm prompt:" + prompt_font);
-    console.log("llm reply:" + ret_font);
-    const result_font = transformLLMResponse(ret_font, result_future);
+        // フォント
+        const prompt_font = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "Analyze this lyrics, identifying the best font that fits the context of the lyrics?" +
+            "For standard, active, energetic, positive lyrics, 'Noto Sans JP' will be the best." +
+            "For pop, cute, charming lyrics, 'Murecho' will be the best." +
+            "For negative, sad, dark lyrics, 'Noto Serif JP' will be the best." +
+            "Return one of following string with including font tag, <font>'Noto Sans JP', sans-serif</font>, <font>'Noto Serif JP', serif</font>, or <font>'Murecho', sans-serif</font>"
+        const ret_font = await llm.getResponse(prompt_font);
+        console.log("llm prompt:" + prompt_font);
+        console.log("llm reply:" + ret_font);
+        const result_font = transformLLMResponse(ret_font, result_future);
 
-    reportLLMProgress("66%");
+        reportLLMProgress("66%");
 
-    // カラーコード
-    const prompt_color = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "I am working on visualizing this lyrics as a video." +
-        "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
-        "Return four color codes; main color, base color, accent color, effect color with relevant tags." +
-        "Main color is used as a background color. For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
-        "Base color is also used as a background color. For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
-        "Accent colors are bold, high-contrast hues used sparingly for emphasis, standing out prominently against base/main colors. For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>." +
-        "Effect colors, used for frequent effects, are noticeable but more subdued than accent colors when overlaid on base/main colors. For effect color, use the tag \"effectColor\" e.g. <effectColor>#ffcc00</effectColor>."
-    const ret_color = await llm.getResponse(prompt_color);
-    console.log("llm prompt:" + prompt_color);
-    console.log("llm reply:" + ret_color);
-    const result_color = transformLLMResponse(ret_color, result_font);
+        // カラーコード
+        const prompt_color = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "I am working on visualizing this lyrics as a video." +
+            "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
+            "Return four color codes; main color, base color, accent color, effect color with relevant tags." +
+            "Main color is used as a background color. For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
+            "Base color is also used as a background color. For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
+            "Accent colors are bold, high-contrast hues used sparingly for emphasis, standing out prominently against base/main colors. For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>." +
+            "Effect colors, used for frequent effects, are noticeable but more subdued than accent colors when overlaid on base/main colors. For effect color, use the tag \"effectColor\" e.g. <effectColor>#ffcc00</effectColor>."
+        const ret_color = await llm.getResponse(prompt_color);
+        console.log("llm prompt:" + prompt_color);
+        console.log("llm reply:" + ret_color);
+        const result_color = transformLLMResponse(ret_color, result_font);
 
-    reportLLMProgress("83%");
+        reportLLMProgress("83%");
 
-    // キーフレーズ
-    const prompt_key = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-        "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
-        "Key phrases are the most important messages representing the main theme of the lyrics." +
-        "They typically appear 1-3 times within the song and encapsulate its core meaning or message." +
-        "Return key phrases with the tag \"key\". e.g. <key>SUPERHERO</key>." +
-        "Please make sure that you do not choose refrain phrases defined here:" + ret_refrain
-    const ret_key = await llm.getResponse(prompt_key);
-    console.log("llm prompt:" + prompt_key);
-    console.log("llm reply:" + ret_key);
-    const result_final = transformLLMResponse(ret_key, result_color);
+        // キーフレーズ
+        const prompt_key = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+            "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
+            "Key phrases are the most important messages representing the main theme of the lyrics." +
+            "They typically appear 1-3 times within the song and encapsulate its core meaning or message." +
+            "Return key phrases with the tag \"key\". e.g. <key>SUPERHERO</key>." +
+            "Please make sure that you do not choose refrain phrases defined here:" + ret_refrain
+        const ret_key = await llm.getResponse(prompt_key);
+        console.log("llm prompt:" + prompt_key);
+        console.log("llm reply:" + ret_key);
+        const result_final = transformLLMResponse(ret_key, result_color);
 
-    reportLLMProgress("100%");
+        reportLLMProgress("100%");
+        return result_final;
 
-    return result_final;
+    } catch (error) {
+        console.error("Failed to run LLM analysis:", error);
+        reportLLMProgress(error.toString() );
+        throw error
+    }
 }
 
 String.prototype.replaceAt = function (index, replacement) {
@@ -1184,7 +1190,7 @@ function setupModal(btnId, modalId) {
     }
 
     window.onclick = function (event) {
-        if (event.target == modal) {
+        if (event.target === modal) {
             modal.style.display = "none";
         }
     }
