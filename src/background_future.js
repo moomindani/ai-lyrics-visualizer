@@ -477,7 +477,7 @@ export class BackgroundFuture extends Background {
             size: 0.1,
             transparent: true,
             opacity: 0.7,
-            blending: THREE.AdditiveBlending
+            blending: THREE.NormalBlending
         });
 
 
