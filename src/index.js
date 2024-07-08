@@ -785,13 +785,15 @@ async function loadLLMAnalysis() {
         effectColor: '#ffcc00', // デフォルト
     };
 
+    const lyrics = player.video.phrases;
     // OpenAI と WebLLM で prompt の reply を取得する
     reportLLMProgress("0%");
     // リフレイン
-    const prompt_refrain = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
-        "Analyze this lyrics, identifying the refrained phrases and their apperrances in the text?" +
-        "Refrained phrases mean similar phrases included in one line. Make sure that the phrases are included in the original lyrics." +
-        // "Don't mark refrain when there is only one occurrance in the line."
+    const prompt_refrain = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+        "Lyrics are separated by commas, each part called a phrase. " +
+        "Refrains are similar repetitions within a single phrase. " +
+        "Refrains are defined only when multiple repetitions occur in one phrase, not for single occurrences." +
+        "Analyze this lyrics, identifying the refrains and their apperrances in the text, and return the refrains with refrain tag?" +
         "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
         "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
     const ret_refrain = await llm.getResponse(prompt_refrain);
@@ -802,7 +804,7 @@ async function loadLLMAnalysis() {
     reportLLMProgress("17%");
 
     // メロディ
-    const prompt_melody = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+    const prompt_melody = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
         "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
     const ret_melody = await llm.getResponse(prompt_melody);
@@ -813,7 +815,7 @@ async function loadLLMAnalysis() {
     reportLLMProgress("33%");
 
     // ミライ
-    const prompt_future = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+    const prompt_future = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
         "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
         "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
     const ret_future = await llm.getResponse(prompt_future);
@@ -824,7 +826,7 @@ async function loadLLMAnalysis() {
     reportLLMProgress("50%");
 
     // フォント
-    const prompt_font = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+    const prompt_font = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
         "Analyze this lyrics, identifying the best font that fits the context of the lyrics?" +
         "For standard, active, energetic, positive lyrics, 'Noto Sans JP' will be the best." +
         "For pop, cute, charming lyrics, 'Murecho' will be the best." +
@@ -838,13 +840,14 @@ async function loadLLMAnalysis() {
     reportLLMProgress("66%");
 
     // カラーコード
-    const prompt_color = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+    const prompt_color = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
+        "I am working on visualizing this lyrics as a video." +
         "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
-        "Return three color codes; main color, base color, and accent color with relevant tags." +
-        "For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
-        "For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
-        "For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>." +
-        "For effect color, use the tag \"effectColor\" e.g. <effectColor>#ffcc00</effectColor>."
+        "Return four color codes; main color, base color, accent color, effect color with relevant tags." +
+        "Main color is used as a background color. For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
+        "Base color is also used as a background color. For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
+        "Accent colors are bold, high-contrast hues used sparingly for emphasis, standing out prominently against base/main colors. For accent color, use the tag \"accentColor\" e.g. <accentColor>#e12885</accentColor>." +
+        "Effect colors, used for frequent effects, are noticeable but more subdued than accent colors when overlaid on base/main colors. For effect color, use the tag \"effectColor\" e.g. <effectColor>#ffcc00</effectColor>."
     const ret_color = await llm.getResponse(prompt_color);
     console.log("llm prompt:" + prompt_color);
     console.log("llm reply:" + ret_color);
@@ -853,9 +856,10 @@ async function loadLLMAnalysis() {
     reportLLMProgress("83%");
 
     // キーフレーズ
-    const prompt_key = "Read this lyrics: <lyrics>" + player.data.lyricsBody.text + "</lyrics>" +
+    const prompt_key = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
         "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
-        "Key phrase represents the most important message of the lyrics. I expect only one or two key phrases per lyrics." +
+        "Key phrases are the most important messages representing the main theme of the lyrics." +
+        "They typically appear 1-3 times within the song and encapsulate its core meaning or message." +
         "Return key phrases with the tag \"key\". e.g. <key>SUPERHERO</key>." +
         "Please make sure that you do not choose refrain phrases defined here:" + ret_refrain
     const ret_key = await llm.getResponse(prompt_key);
@@ -911,8 +915,8 @@ function newChar(current) {
                     console.log("key phrase start:" + element);
                     let phraseEl = document.querySelector("#container p");
 
-                    phraseEl.style.fontSize = "6vw";
-                    phraseEl.style.animation = "fadeIn 4s ease-out forwards, expand 4s ease-out";
+                    phraseEl.style.fontSize = "5vw";
+                    phraseEl.style.animation = "fadeIn 3s ease-out forwards, expand 3s ease-out";
 
                     let accentLineEl = document.createElement("div");
                     accentLineEl.classList.add("accent-line");

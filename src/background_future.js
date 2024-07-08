@@ -3,11 +3,14 @@ import * as THREE from 'three';
 
 const DATETIME_NOT_SET = -1;
 
-function convertColorCode(hexColor) {
-    // '#'で始まる場合は取り除く
-    const cleanHex = hexColor.startsWith('#') ? hexColor.slice(1) : hexColor;
-    // '0x'を先頭に追加して返す
-    return '0x' + cleanHex;
+function hexStringToNumber(hexString) {
+    // '#' が先頭にある場合は取り除く
+    if (hexString.startsWith('#')) {
+        hexString = hexString.slice(1);
+    }
+
+    // 16進数文字列を10進数の数値に変換
+    return parseInt(hexString, 16);
 }
 
 // BackgroundFuture class
@@ -215,7 +218,7 @@ export class BackgroundFuture extends Background {
     createLightBeam() {
         const geometry = new THREE.CylinderGeometry(0.1, 0.1, 200, 32);
         const material = new THREE.MeshBasicMaterial({
-            color: convertColorCode(this.colorEffect),
+            color: hexStringToNumber(this.colorEffect),
             transparent: true,
             opacity: 0.3
         });
@@ -401,7 +404,7 @@ export class BackgroundFuture extends Background {
     createCircle() {
         const geometry = new THREE.RingGeometry(4, 4.2, 64); // 輪っかの形状
         const material = new THREE.MeshBasicMaterial({
-            color: convertColorCode(this.colorEffect),
+            color: hexStringToNumber(this.colorEffect),
             transparent: true,
             opacity: 0.3,
             side: THREE.DoubleSide
@@ -470,7 +473,7 @@ export class BackgroundFuture extends Background {
         geometry.setAttribute('position', new THREE.Float32BufferAttribute(textParticles, 3));
 
         const material = new THREE.PointsMaterial({
-            color: convertColorCode(this.colorAccent),
+            color: hexStringToNumber(this.colorAccent),
             size: 0.1,
             transparent: true,
             opacity: 0.7,
