@@ -334,6 +334,9 @@ function clearLyricVideo() {
     word_list_key = [];
     const backgroundEl = document.querySelector("#background");
     backgroundEl.classList.add("hidden");
+    if (background !== null) {
+        background.clear();
+    }
 }
 
 enbalLyricVideo.addEventListener("change", (e) => {
@@ -902,38 +905,40 @@ function newChar(current) {
     console.log("phrase_before:" + phrase_before);
     console.log("phrase_after:" + phrase_after);
 
-    word_list_key.forEach((element) => {
-            if (phrase_after.startsWith(element)) {
-                console.log("key phrase start:" + element);
-                let phraseEl = document.querySelector("#container p");
+    if (enbalLyricVideo.checked) {
+        word_list_key.forEach((element) => {
+                if (phrase_after.startsWith(element)) {
+                    console.log("key phrase start:" + element);
+                    let phraseEl = document.querySelector("#container p");
 
-                phraseEl.style.fontSize = "6vw";
-                phraseEl.style.animation = "fadeIn 4s ease-out forwards, expand 4s ease-out";
+                    phraseEl.style.fontSize = "6vw";
+                    phraseEl.style.animation = "fadeIn 4s ease-out forwards, expand 4s ease-out";
 
-                let accentLineEl = document.createElement("div");
-                accentLineEl.classList.add("accent-line");
-                accentLineEl.style.backgroundColor = color_accent;
-                phraseEl.appendChild(accentLineEl);
+                    let accentLineEl = document.createElement("div");
+                    accentLineEl.classList.add("accent-line");
+                    accentLineEl.style.backgroundColor = color_accent;
+                    phraseEl.appendChild(accentLineEl);
 
-            } else if (phrase_before.endsWith(element)) {
-                console.log("key phrase end:" + element);
+                } else if (phrase_before.endsWith(element)) {
+                    console.log("key phrase end:" + element);
+                }
             }
-        }
-    )
+        )
 
-    word_list_refrain.forEach((element) => {
-            if (phrase_after.startsWith(element)) {
-                console.log("refrain word start:" + element)
-                update_refrain(element);
+        word_list_refrain.forEach((element) => {
+                if (phrase_after.startsWith(element)) {
+                    console.log("refrain word start:" + element)
+                    update_refrain(element);
+                }
+                if (phrase_before.endsWith(element)) {
+                    refrainedPhrase += element;
+                    console.log("refrain word end:" + element)
+                    console.log("updated refrainedPhrase:" + refrainedPhrase);
+                    console.log("updated refrain_status:" + refrain_status);
+                }
             }
-            if (phrase_before.endsWith(element)) {
-                refrainedPhrase += element;
-                console.log("refrain word end:" + element)
-                console.log("updated refrainedPhrase:" + refrainedPhrase);
-                console.log("updated refrain_status:" + refrain_status);
-            }
-        }
-    )
+        )
+    }
 
     if (refrainedPhrase !== '') {
         phrase = phrase.replace(refrainedPhrase, "");
@@ -957,41 +962,43 @@ function newChar(current) {
         phraseEl.classList.remove("hidden")
     }
 
-    word_list_melody.forEach((element) => {
-            if (phrase_after.startsWith(element)) {
-                console.log("melody start:" + element);
-                let melodyEl = document.createElement("div");
-                melodyEl.classList.add("melody");
-                melodyEl.style.border = '3px solid ' + color_accent;
-                currentEl.appendChild(melodyEl);
-                console.log("currentEl.innerHTML:" + currentEl.innerHTML);
+    if (enbalLyricVideo.checked) {
+        word_list_melody.forEach((element) => {
+                if (phrase_after.startsWith(element)) {
+                    console.log("melody start:" + element);
+                    let melodyEl = document.createElement("div");
+                    melodyEl.classList.add("melody");
+                    melodyEl.style.border = '3px solid ' + color_accent;
+                    currentEl.appendChild(melodyEl);
+                    console.log("currentEl.innerHTML:" + currentEl.innerHTML);
 
-                if (background !== null) {
-                    background.drawNotes();
+                    if (background !== null) {
+                        background.drawNotes();
+                    }
+                } else if (phrase_before.endsWith(element)) {
+                    console.log("melody end:" + element);
                 }
-            } else if (phrase_before.endsWith(element)) {
-                console.log("melody end:" + element);
             }
-        }
-    )
+        )
 
-    word_list_future.forEach((element) => {
-            if (phrase_after.startsWith(element)) {
-                console.log("future start:" + element);
-                let futureEl = document.createElement("div");
-                futureEl.classList.add("future");
-                futureEl.style.border = '3px solid ' + color_main;
-                currentEl.appendChild(futureEl);
-                console.log("currentEl.innerHTML:" + currentEl.innerHTML);
+        word_list_future.forEach((element) => {
+                if (phrase_after.startsWith(element)) {
+                    console.log("future start:" + element);
+                    let futureEl = document.createElement("div");
+                    futureEl.classList.add("future");
+                    futureEl.style.border = '3px solid ' + color_main;
+                    currentEl.appendChild(futureEl);
+                    console.log("currentEl.innerHTML:" + currentEl.innerHTML);
 
-                if (background !== null) {
-                    background.drawText(element);
+                    if (background !== null) {
+                        background.drawText(element);
+                    }
+                } else if (phrase_before.endsWith(element)) {
+                    console.log("future end:" + element);
                 }
-            } else if (phrase_before.endsWith(element)) {
-                console.log("future end:" + element);
             }
-        }
-    )
+        )
+    }
 
     // Word の最後の文字か否か
     if (current.parent.lastChar === current) {
@@ -1025,32 +1032,32 @@ function isASCII(char) {
 }
 
 function formatFontString(fontString) {
-  // トリムして余分な空白を削除
-  let formatted = fontString.trim();
+    // トリムして余分な空白を削除
+    let formatted = fontString.trim();
 
-  // フォント名とフォールバックを分割
-  let parts = formatted.split(',').map(part => part.trim());
+    // フォント名とフォールバックを分割
+    let parts = formatted.split(',').map(part => part.trim());
 
-  // 各部分を処理
-  parts = parts.map(part => {
-    // シングルクォートの数を数える
-    const quoteCount = (part.match(/'/g) || []).length;
+    // 各部分を処理
+    parts = parts.map(part => {
+        // シングルクォートの数を数える
+        const quoteCount = (part.match(/'/g) || []).length;
 
-    // シングルクォートが1つだけの場合、それを削除
-    if (quoteCount === 1) {
-      part = part.replace(/'/g, '');
-    }
+        // シングルクォートが1つだけの場合、それを削除
+        if (quoteCount === 1) {
+            part = part.replace(/'/g, '');
+        }
 
-    // シングルクォートで囲まれていない場合、かつジェネリックフォントファミリーでない場合、囲む
-    if (quoteCount !== 2 && !['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'].includes(part.toLowerCase())) {
-      return `'${part.replace(/'/g, '')}'`;
-    }
+        // シングルクォートで囲まれていない場合、かつジェネリックフォントファミリーでない場合、囲む
+        if (quoteCount !== 2 && !['serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'].includes(part.toLowerCase())) {
+            return `'${part.replace(/'/g, '')}'`;
+        }
 
-    return part;
-  });
+        return part;
+    });
 
-  // 処理した部分を結合
-  return parts.join(', ');
+    // 処理した部分を結合
+    return parts.join(', ');
 }
 
 function update_refrain(element) {
@@ -1131,22 +1138,22 @@ style.textContent = `
 document.head.appendChild(style);
 
 function checkOrientation() {
-  const overlay = document.getElementById('rotation-overlay');
-  if (window.orientation === undefined) {
-    // デバイスが回転をサポートしていない場合
-    if (window.innerWidth < window.innerHeight) {
-      overlay.classList.remove('hidden');
+    const overlay = document.getElementById('rotation-overlay');
+    if (window.orientation === undefined) {
+        // デバイスが回転をサポートしていない場合
+        if (window.innerWidth < window.innerHeight) {
+            overlay.classList.remove('hidden');
+        } else {
+            overlay.classList.add('hidden');
+        }
     } else {
-      overlay.classList.add('hidden');
+        // デバイスが回転をサポートしている場合
+        if (window.orientation === 0 || window.orientation === 180) {
+            overlay.classList.remove('hidden');
+        } else {
+            overlay.classList.add('hidden');
+        }
     }
-  } else {
-    // デバイスが回転をサポートしている場合
-    if (window.orientation === 0 || window.orientation === 180) {
-      overlay.classList.remove('hidden');
-    } else {
-      overlay.classList.add('hidden');
-    }
-  }
 }
 
 // 初期チェックと画面サイズ変更時のチェック
@@ -1155,8 +1162,8 @@ window.addEventListener('resize', checkOrientation);
 window.addEventListener('orientationchange', checkOrientation);
 
 // ユーザーがオーバーレイをタップして閉じられるようにする
-document.getElementById('rotation-overlay').addEventListener('click', function() {
-  this.classList.add('hidden');
+document.getElementById('rotation-overlay').addEventListener('click', function () {
+    this.classList.add('hidden');
 });
 
 function setupModal(btnId, modalId) {
@@ -1164,15 +1171,15 @@ function setupModal(btnId, modalId) {
     const btn = document.getElementById(btnId);
     const span = modal.getElementsByClassName("close")[0];
 
-    btn.onclick = function() {
+    btn.onclick = function () {
         modal.style.display = "block";
     }
 
-    span.onclick = function() {
+    span.onclick = function () {
         modal.style.display = "none";
     }
 
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
