@@ -14,20 +14,20 @@ Rhyme Traveler - ライムトラベラー - は 歌詞の意味を解析し、�
 ## ムービー
 
 ### アプリ全体解説
-[![Rhyme Traveler デモ動画](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/552af9ce-de19-4015-ad39-889cdc784670)](https://www.youtube.com/watch?v=TWCus0RPqCg)
+[![Rhyme Traveler デモ動画](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/3072e4ab-2bec-4b21-86ec-6acf0e2d1b5c)](https://www.youtube.com/watch?v=TWCus0RPqCg)
 
 ### 曲ごとのデモ
-[![SUPERHERO / めろくる](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/d10e6139-6e84-4cca-970d-45a7d08bffb8)](https://youtu.be/NShtx2EVWXY)
+[![SUPERHERO / めろくる](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/2b08835b-b4b1-471b-b371-b04eb8ae48c1)](https://youtu.be/NShtx2EVWXY)
 
-[![いつか君と話したミライは / タケノコ少年](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/5b5e58a3-f874-48d5-8186-8205f2571919)](https://youtu.be/e8ouklabzi4)
+[![いつか君と話したミライは / タケノコ少年](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/3bf6edce-8098-467b-8b03-4540e07288bc)](https://youtu.be/e8ouklabzi4)
 
-[![フューチャーノーツ / shikisai](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/c82bdb7d-896c-4daf-a38b-9ae4db64e82c)](https://youtu.be/jt5sF6OrpHw)
+[![フューチャーノーツ / shikisai](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/4c82bf1f-2408-4b0b-9e8f-7ceff732d22a)](https://youtu.be/jt5sF6OrpHw)
 
-[![未来交響曲 / ヤマギシコージ](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/62ddea16-0712-429a-a9fa-907ed4d0a9d6)](https://youtu.be/GBtLBDJzKJ0)
+[![未来交響曲 / ヤマギシコージ](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/7dc829cf-6fa1-4723-88d0-2a32f164fdd1)](https://youtu.be/GBtLBDJzKJ0)
 
-[![リアリティ / 歩く人 & sober bear](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/6d670f25-440d-444b-97d1-0766ff826082)](https://youtu.be/S3167LtmMCc')
+[![リアリティ / 歩く人 & sober bear](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/c9b452ad-5624-4a5b-9010-67e84578ae66)](https://youtu.be/S3167LtmMCc')
 
-[![The Marks / 2ouDNS](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/79bfb19f-565b-451d-b090-7f173b4017b4)](https://youtu.be/ekbZgp2JrAs)
+[![The Marks / 2ouDNS](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/5c519661-c5d5-4125-9005-e756c7ecb277)](https://youtu.be/ekbZgp2JrAs)
 
 ## ポイント
 
