@@ -14,7 +14,7 @@ Rhyme Traveler - ライムトラベラー - は 歌詞の意味を解析し、�
 ## ムービー
 
 ### アプリ全体解説
-[![Rhyme Traveler デモ動画](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/3072e4ab-2bec-4b21-86ec-6acf0e2d1b5c)](https://www.youtube.com/watch?v=TWCus0RPqCg)
+[![Rhyme Traveler デモ動画](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/10a99469-d193-4395-9282-98e9f2d8d836)](https://www.youtube.com/watch?v=TWCus0RPqCg)
 
 ### 曲ごとのデモ
 [![SUPERHERO / めろくる](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/2b08835b-b4b1-471b-b371-b04eb8ae48c1)](https://youtu.be/NShtx2EVWXY)
