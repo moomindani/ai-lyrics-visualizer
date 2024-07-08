@@ -13,6 +13,8 @@ Rhyme Traveler - ライムトラベラー - は 歌詞の意味を解析し、�
 
 ## ムービー
 
+サムネイル画像をクリックするとYouTube動画にジャンプします。
+
 ### アプリ全体解説
 [![Rhyme Traveler デモ動画](https://github.com/moomindani/ai-lyrics-visualizer/assets/1304020/10a99469-d193-4395-9282-98e9f2d8d836)](https://www.youtube.com/watch?v=TWCus0RPqCg)
 
