@@ -452,7 +452,6 @@ advancedSettingOkNavi.addEventListener("click", (e) => {
 });
 
 // プルダウンの選択肢を動的に作成
-// iterate song list map
 songListMap.forEach((song, key) => {
     const option = document.createElement("option");
     option.value = key;
@@ -578,18 +577,22 @@ player.addListener({
         }%`;
 
         const positionVisual = document.getElementById("position");
-        // 再生時間を表示
-        // transform millisecond to minutes : time
+        // 再生時間を表示 (ミリ秒を秒に変換)
         positionVisual.textContent = `${Math.floor(position / 60000)}:${
             ("0" + Math.floor((position % 60000) / 1000)).slice(-2)
         }`;
 
-        // finish if there is no chars
+        // 新しい文字が発話されていない場合は終了
         if (!player.video.firstChar) {
             return;
         }
 
-        // reset visuals if rewind happens
+        // 時間が進んでいない場合は終了
+        if (lastTime === position) {
+            return;
+        }
+
+        // Rewind 時には画面を初期化
         if (lastTime > position + 1000) {
             resetChars();
         }
