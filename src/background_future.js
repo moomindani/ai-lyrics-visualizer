@@ -215,7 +215,7 @@ export class BackgroundFuture extends Background {
     createLightBeam() {
         const geometry = new THREE.CylinderGeometry(0.1, 0.1, 200, 32);
         const material = new THREE.MeshBasicMaterial({
-            color: 0x00ffff,
+            color: convertColorCode(this.colorEffect),
             transparent: true,
             opacity: 0.3
         });
@@ -401,7 +401,7 @@ export class BackgroundFuture extends Background {
     createCircle() {
         const geometry = new THREE.RingGeometry(4, 4.2, 64); // 輪っかの形状
         const material = new THREE.MeshBasicMaterial({
-            color: 0x00ffff,
+            color: convertColorCode(this.colorEffect),
             transparent: true,
             opacity: 0.3,
             side: THREE.DoubleSide

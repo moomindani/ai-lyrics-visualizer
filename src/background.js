@@ -21,19 +21,19 @@ export class Background {
     setColors(colorMain, colorBase, colorAccent, colorEffect) {
         if (colorMain && this.isValidColorCode(colorMain)) {
             this.colorMain = colorMain;
-            console.log("Configured main color: " + colorMain);
+            console.log("Configured main color: " + this.colorMain);
         }
         if (colorBase && this.isValidColorCode(colorBase)) {
             this.colorBase = colorBase;
-            console.log("Configured base color: " + colorBase);
+            console.log("Configured base color: " + this.colorBase);
         }
         if (colorAccent && this.isValidColorCode(colorAccent)) {
             this.colorAccent = colorAccent;
-            console.log("Configured accent color: " + colorAccent);
+            console.log("Configured accent color: " + this.colorAccent);
         }
-        if (this.colorEffect && this.isValidColorCode(colorEffect)) {
+        if (colorEffect && this.isValidColorCode(colorEffect)) {
             this.colorEffect = colorEffect;
-            console.log("Configured effect color: " + colorEffect);
+            console.log("Configured effect color: " + this.colorEffect);
         }
     }
 

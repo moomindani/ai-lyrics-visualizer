@@ -44,7 +44,7 @@ const songList = [
         mainColor: `<mainColor>#FFD700</mainColor>`,
         baseColor: `<baseColor>#1E90FF</baseColor>`,
         accentColor: `<accentColor>#FF69B4</accentColor>`,
-        effectColor: `<effectColor>#00ffff</effectColor>`,
+        effectColor: `<effectColor>#DCD0FF</effectColor>`,
       },
     },
     {
