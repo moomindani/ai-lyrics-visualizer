@@ -925,7 +925,7 @@ function newChar(current) {
                 if (phrase_after.startsWith(element)) {
                     console.log("key phrase start:" + element);
                     let phraseEl = document.querySelector("#container p");
-
+                    phraseEl.innerHTML = ""
                     phraseEl.style.fontSize = "5vw";
                     phraseEl.style.animation = "fadeIn 3s ease-out forwards, expand 3s ease-out";
 
