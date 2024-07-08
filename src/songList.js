@@ -108,7 +108,7 @@ const songList = [
         },
       },
       cachedLlmData: {
-        refrainedPhrase : ` <refrain>機械の音</refrain> <refrain>メロディトランジション</refrain> <refrain>機械の音</refrain> <refrain>機械の音</refrain> <refrain>メロディトランジション</refrain> <refrain>機械の音</refrain>`,
+        refrainedPhrase : ` <refrain>機械の音</refrain> <refrain>機械の音</refrain> <refrain>機械の音</refrain> <refrain>機械の音</refrain>`,
         melody : ` <melody>初めて歌</melody> <melody>メロディ</melody> <melody>歌</melody> <melody>メロディ</melody> <melody>声</melody> <melody>叫</melody> <melody>音</melody> <melody>メロディ</melody> <melody>叫</melody> <melody>音</melody> <melody>声</melody> <melody>歌</melody> <melody>叫</melody> <melody>音</melody> <melody>メロディ</melody> <melody>叫</melody> <melody>音</melody> <melody>声</melody>`,
         future : ` <future>未知</future> <future>未知</future> <future>未来</future>`,
         keyPhrase : `<key>初めて歌うメロディ</key> <key>夢を見よう初音ミクとアナタで</key> <key>二人で歩こう</key> <key>未知の未来</key>`,
@@ -135,7 +135,7 @@ const songList = [
         refrainedPhrase : ` <refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain> <refrain>傷つけあって</refrain> <refrain>痛みを知って</refrain>`,
         melody : `<melody>この声</melody>`,
         future : ``,
-        keyPhrase : ` <key>アナタで嫉妬したいの</key> <key>アナタで嫉妬したいよ</key> <key>アナタで嫉妬してみたいの</key> <key>アタシはまだちょっとアナタを愛していたい</key> <key>アナタで嫉妬したいの</key> <key>アナタで嫉妬したいよ</key> <key>アナタで嫉妬してみたいの</key> <key>アタシはまだちょっとアナタを愛していたい</key>`,
+        keyPhrase : ` <key>アナタで嫉妬したいの</key> <key>アナタで嫉妬したいよ</key> <key>アナタで嫉妬してみたいの</key> <key>アナタを愛していたい</key> <key>アナタで嫉妬したいの</key> <key>アナタで嫉妬したいよ</key> <key>アナタで嫉妬してみたいの</key> <key>アナタを愛していたい</key>`,
         font: `<font>'Noto Serif JP', serif</font>`,
         mainColor: `<mainColor>#1a1a40</mainColor>`,
         baseColor: `<baseColor>#2e2e38</baseColor>`,
