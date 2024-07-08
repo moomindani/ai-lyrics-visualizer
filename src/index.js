@@ -794,7 +794,7 @@ async function loadLLMAnalysis() {
             "Lyrics are separated by commas, each part called a phrase. " +
             "Refrains are similar repetitions within a single phrase. " +
             "Refrains are defined only when multiple repetitions occur in one phrase, not for single occurrences." +
-            "Analyze this lyrics, identifying the refrains and their apperrances in the text, and return the refrains with refrain tag?" +
+            "Analyze this lyrics, identifying the refrains and their apperrances in the text, and return the words with refrain tag?" +
             "For example, the line \"何十回も何百回も星の降る夜を超えて\" needs to be converted to \"<refrain>何十回も</refrain><refrain>何百回も</refrain>星の降る夜を超えて\". " +
             "For another example, the line \"セカイセカイセカイ\" needs to be converted to \"<refrain>セカイ</refrain><refrain>セカイ</refrain><refrain>セカイ</refrain>\". "
         const ret_refrain = await llm.getResponse(prompt_refrain);
@@ -806,8 +806,8 @@ async function loadLLMAnalysis() {
 
         // メロディ
         const prompt_melody = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-            "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text?" +
-            "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" tag. "
+            "Analyze this lyrics, identifying the words related to melody, sound, song, and voice, and their apperrances in the text, and return the words with melody tag?" +
+            "For example, the words like \"メロディ\", \"歌\", \"声\", \"音\", \"響\", and \"叫\" need to be marked with melody tag like \"<melody>メロディ</melody>\" or \"<melody>歌</melody>\". "
         const ret_melody = await llm.getResponse(prompt_melody);
         console.log("llm prompt:" + prompt_melody);
         console.log("llm reply:" + ret_melody);
@@ -817,8 +817,8 @@ async function loadLLMAnalysis() {
 
         // ミライ
         const prompt_future = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-            "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text?" +
-            "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" tag. "
+            "Analyze this lyrics, identifying the words related to future, lights, magic, hope, and miracle, and their apperrances in the text, and return the words with future tag?" +
+            "For example, the words like \"未来\", \"ミライ\", \"魔法\", \"奇跡\", \"キセキ\", \"光\", \"願い\", \"想い\" need to be marked with future tag like \"<future>ミライ</future>\" or \"<future>魔法</future>\". "
         const ret_future = await llm.getResponse(prompt_future);
         console.log("llm prompt:" + prompt_future);
         console.log("llm reply:" + ret_future);
@@ -828,11 +828,16 @@ async function loadLLMAnalysis() {
 
         // フォント
         const prompt_font = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-            "Analyze this lyrics, identifying the best font that fits the context of the lyrics?" +
-            "For standard, active, energetic, positive lyrics, 'Noto Sans JP' will be the best." +
-            "For pop, cute, charming lyrics, 'Murecho' will be the best." +
-            "For negative, sad, dark lyrics, 'Noto Serif JP' will be the best." +
-            "Return one of following string with including font tag, <font>'Noto Sans JP', sans-serif</font>, <font>'Noto Serif JP', serif</font>, or <font>'Murecho', sans-serif</font>"
+            "Analyze this lyrics, identifying the best font that fits the context of the lyrics, and return the font with font tag?" +
+            "Dela Gothic One, with its bold strokes, suits impactful lyrics and powerful messages, ideal for rock, hip-hop, or energetic pop songs." +
+            "Aoboshi One, with its elegant and flowing style, complements lyrical ballads, romantic songs, and poetic folk music with a gentle touch." +
+            "Tsukimi Rounded, with its soft and friendly appearance, suits cheerful pop songs, children's music, and lighthearted love ballads with a warm feel." +
+            "Shippori Mincho B1, with its traditional serif style, suits classical music lyrics, traditional folk songs, and sophisticated jazz ballads with timeless elegance." +
+            "Murecho, with its clean and modern sans-serif design, suits contemporary pop, electronic music lyrics, and sleek indie rock songs with minimalist aesthetics." +
+            "Noto Sans JP, with its clean and versatile sans-serif design, suits modern pop, rock, and electronic music lyrics across various genres." +
+            "Noto Serif JP, with its refined and versatile serif design, suits a wide range of lyrics, from classical compositions to thoughtful contemporary songs." +
+            "Return one of following string with including font tag, <font>'Noto Sans JP', sans-serif</font>, <font>'Noto Serif JP', serif</font>, <font>'Murecho', sans-serif</font>, " +
+            "<font>'Dela Gothic One', sans-serif</font>, <font>'Aoboshi One', serif</font>, <font>'Tsukimi Rounded', sans-serif</font>, or <font>'Shippori Mincho B1', serif</font>"
         const ret_font = await llm.getResponse(prompt_font);
         console.log("llm prompt:" + prompt_font);
         console.log("llm reply:" + ret_font);
@@ -843,7 +848,7 @@ async function loadLLMAnalysis() {
         // カラーコード
         const prompt_color = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
             "I am working on visualizing this lyrics as a video." +
-            "Analyze this lyrics, identifying the best color code in hexadecimal format that fits the context of the lyrics?" +
+            "Analyze this lyrics, identifying the best color that fits the context of the lyrics, and return the color code in hexadecimal format?" +
             "Return four color codes; main color, base color, accent color, effect color with relevant tags." +
             "Main color is used as a background color. For main color, use the tag \"mainColor\" e.g. <mainColor>#00aa88</mainColor>." +
             "Base color is also used as a background color. For base color, use the tag \"baseColor\" e.g. <baseColor>#0066cc</baseColor>." +
@@ -858,7 +863,7 @@ async function loadLLMAnalysis() {
 
         // キーフレーズ
         const prompt_key = "Read this lyrics: <lyrics>" + lyrics + "</lyrics>" +
-            "Analyze this lyrics, identifying the key phrases and their apperrances in the text?" +
+            "Analyze this lyrics, identifying the key phrases and their apperrances in the text, and return the key phrase with key tag?" +
             "Key phrases are the most important messages representing the main theme of the lyrics." +
             "They typically appear 1-3 times within the song and encapsulate its core meaning or message." +
             "Return key phrases with the tag \"key\". e.g. <key>SUPERHERO</key>." +
