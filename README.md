@@ -13,7 +13,16 @@ Rhyme Traveler - ライムトラベラー - は 歌詞の意味を解析し、�
 
 ## ムービー
 
-TBD
+### アプリ全体解説
+* [Rhyme Traveler デモ動画](https://youtu.be/TWCus0RPqCg)
+
+### 曲ごとのデモ
+* [SUPERHERO / めろくる](https://youtu.be/NShtx2EVWXY)
+* [いつか君と話したミライは / タケノコ少年](https://youtu.be/e8ouklabzi4)
+* [フューチャーノーツ / shikisai](https://youtu.be/jt5sF6OrpHw)
+* [未来交響曲 / ヤマギシコージ](https://youtu.be/GBtLBDJzKJ0)
+* [リアリティ / 歩く人 & sober bear](https://youtu.be/S3167LtmMCc)
+* [The Marks / 2ouDNS](https://youtu.be/ekbZgp2JrAs)
 
 ## ポイント
 
